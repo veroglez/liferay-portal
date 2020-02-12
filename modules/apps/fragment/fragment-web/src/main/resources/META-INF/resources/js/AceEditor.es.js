@@ -119,7 +119,11 @@ class AceEditor extends Component {
 		);
 
 		const autocompleteProcessor = new FragmentAutocompleteProcessor({
-			directives: this.autocompleteTags.map(tag => tag.name)
+			directives: this.autocompleteTags.map(tag => tag.name),
+			variables: [
+				...this.freeMarkerTaglibs,
+				...this.freeMarkerVariables
+			]
 		});
 
 		editor.plug(A.Plugin.AceAutoComplete, {
@@ -143,7 +147,10 @@ class AceEditor extends Component {
 		let matchContent = content;
 		let matchIndex = null;
 
-		if (matchContent.lastIndexOf('<') >= 0) {
+		if (matchContent.lastIndexOf('<') >= 0 ||
+			matchContent.lastIndexOf('${') >= 0 ||
+			matchContent.lastIndexOf('[@') >= 0) {
+
 			matchIndex = matchContent.lastIndexOf('<');
 
 			matchContent = matchContent.substring(matchIndex);
@@ -153,6 +160,15 @@ class AceEditor extends Component {
 					content: matchContent.substring(1),
 					start: matchIndex,
 					type: 0
+				};
+			}
+			else if (/\$\{*[^\}]*$/.test(matchContent) ||
+					 /\[\@*[^\]]*$/.test(matchContent)) {
+
+				match = {
+					content: matchContent.substring(2),
+					start: matchIndex,
+					type: 1
 				};
 			}
 		}
@@ -279,6 +295,27 @@ AceEditor.STATE = {
 			name: Config.string()
 		})
 	),
+
+	/**
+	 * List of FreeMarker tags for custom autocompletion in the HTML editor.
+	 *
+	 * @default []
+	 * @instance
+	 * @memberOf AceEditor
+	 * @type Array
+	 */
+	freeMarkerTaglibs: Config.arrayOf(Config.string()),
+
+	/**
+	 * List of FreeMarker variables for custom autocompletion in the HTML
+	 * editor.
+	 *
+	 * @default []
+	 * @instance
+	 * @memberOf AceEditor
+	 * @type Array
+	 */
+	freeMarkerVariables: Config.arrayOf(Config.string()),
 
 	/**
 	 * Initial content sent to the editor.
