@@ -26,9 +26,11 @@ import com.liferay.layout.page.template.service.LayoutPageTemplateEntryLocalServ
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.comment.CommentManager;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.service.LayoutLocalServiceUtil;
 import com.liferay.portal.kernel.util.Validator;
+import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.template.soy.util.SoyContext;
 import com.liferay.portal.template.soy.util.SoyContextFactoryUtil;
 
@@ -86,11 +88,26 @@ public class ContentPageEditorLayoutPageTemplateDisplayContext
 			soyContext.put("selectedMappingTypes", _getSelectedMappingTypes());
 		}
 
-		_editorSoyContext = soyContext.put(
-			"sidebarPanels", getSidebarPanelSoyContexts(_pageIsDisplayPage)
-		).put(
-			"workflowEnabled", false
-		);
+		soyContext.put(
+			"sidebarPanels", getSidebarPanelSoyContexts(_pageIsDisplayPage));
+
+		LayoutPageTemplateEntry layoutPageTemplateEntry =
+			_getLayoutPageTemplateEntry();
+
+		if ((layoutPageTemplateEntry != null) &&
+			(layoutPageTemplateEntry.getStatus() !=
+				WorkflowConstants.STATUS_APPROVED)) {
+
+			String statusLabel = WorkflowConstants.getStatusLabel(
+				layoutPageTemplateEntry.getStatus());
+
+			soyContext.put(
+				"status", LanguageUtil.get(httpServletRequest, statusLabel));
+		}
+
+		soyContext.put("workflowEnabled", false);
+
+		_editorSoyContext = soyContext;
 
 		return _editorSoyContext;
 	}
