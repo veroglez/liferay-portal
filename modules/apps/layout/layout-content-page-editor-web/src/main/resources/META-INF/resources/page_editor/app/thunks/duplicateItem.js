@@ -31,9 +31,22 @@ export default function duplicateItem({
 			segmentsExperienceId
 		}).then(
 			({duplicatedFragmentEntryLinks, duplicatedItemId, layoutData}) => {
+				const addedFragmentEntryLinks = duplicatedFragmentEntryLinks.map(
+					fragmentEntryLink => {
+						// TODO: LPS-106738
+						fragmentEntryLink.content = {
+							value: {
+								content: fragmentEntryLink.content
+							}
+						};
+
+						return fragmentEntryLink;
+					}
+				);
+
 				dispatch(
 					updateLayoutData({
-						duplicatedFragmentEntryLinks,
+						addedFragmentEntryLinks,
 						layoutData
 					})
 				);

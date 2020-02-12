@@ -208,7 +208,7 @@ function Fragment({fragmentEntryLinks, item}) {
 
 	return (
 		<FragmentContent
-			content={fragmentEntryLink.content}
+			content={fragmentEntryLink.content.value.content}
 			editableValues={fragmentEntryLink.editableValues}
 			languageId={languageId || config.defaultLanguageId}
 		/>

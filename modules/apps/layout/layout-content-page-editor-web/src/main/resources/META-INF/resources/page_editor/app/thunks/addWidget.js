@@ -33,6 +33,15 @@ export default function addWidget({
 			position,
 			segmentsExperienceId
 		}).then(({fragmentEntryLink, layoutData}) => {
+			// TODO: This is a temporary "hack"
+			//       until the backend is consitent
+			//       between both "metal+soy" and "react" versions
+			fragmentEntryLink.content = {
+				value: {
+					content: fragmentEntryLink.content
+				}
+			};
+
 			dispatch(
 				addFragmentEntryLink({
 					fragmentEntryLink,
