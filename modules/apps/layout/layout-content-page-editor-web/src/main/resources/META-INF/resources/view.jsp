@@ -16,4 +16,15 @@
 
 <%@ include file="/init.jsp" %>
 
-<liferay-util:include page="/view_react.jsp" servletContext="<%= application %>" />
+<%
+ContentPageEditorDisplayContext contentPageEditorDisplayContext = (ContentPageEditorDisplayContext)request.getAttribute(ContentPageEditorWebKeys.LIFERAY_SHARED_CONTENT_PAGE_EDITOR_DISPLAY_CONTEXT);
+%>
+
+<c:choose>
+	<c:when test='<%= Objects.equals(contentPageEditorDisplayContext.getEditorType(), "react") %>'>
+		<liferay-util:include page="/view_react.jsp" servletContext="<%= application %>" />
+	</c:when>
+	<c:otherwise>
+		<liferay-util:include page="/view_soy.jsp" servletContext="<%= application %>" />
+	</c:otherwise>
+</c:choose>
