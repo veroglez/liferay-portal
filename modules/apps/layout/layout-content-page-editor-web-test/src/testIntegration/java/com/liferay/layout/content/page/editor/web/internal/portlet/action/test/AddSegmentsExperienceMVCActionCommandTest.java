@@ -77,7 +77,6 @@ public class AddSegmentsExperienceMVCActionCommandTest {
 		_group = GroupTestUtil.addGroup();
 
 		_company = _companyLocalService.getCompany(_group.getCompanyId());
-		_layout = LayoutTestUtil.addLayout(_group);
 
 		ServiceContextThreadLocal.pushServiceContext(new ServiceContext());
 	}
@@ -89,13 +88,16 @@ public class AddSegmentsExperienceMVCActionCommandTest {
 
 	@Test
 	public void testAddSegmentsExperiment() throws Exception {
+		Layout layout = LayoutTestUtil.addLayout(_group);
+
 		String name = RandomTestUtil.randomString(10);
 
 		SegmentsEntry segmentsEntry = SegmentsTestUtil.addSegmentsEntry(
 			_group.getGroupId());
 
 		JSONObject responseJSONObject = _addSegmentsExperience(
-			name, segmentsEntry.getSegmentsEntryId());
+			layout.getClassNameId(), layout.getPlid(), name,
+			segmentsEntry.getSegmentsEntryId());
 
 		JSONObject segmentsExperienceJSONObject =
 			responseJSONObject.getJSONObject("segmentsExperience");
@@ -123,11 +125,13 @@ public class AddSegmentsExperienceMVCActionCommandTest {
 			segmentsExperienceId, segmentsExperience.getSegmentsExperienceId());
 	}
 
-	private JSONObject _addSegmentsExperience(String name, long segmentsEntryId)
+	private JSONObject _addSegmentsExperience(
+			long classNameId, long classPK, String name, long segmentsEntryId)
 		throws Exception {
 
 		AddSegmentsExperienceMVCActionCommandTest.MockActionRequest
-			mockActionRequest = _getMockActionRequest(name, segmentsEntryId);
+			mockActionRequest = _getMockActionRequest(
+				classNameId, classPK, name, segmentsEntryId);
 
 		return ReflectionTestUtil.invoke(
 			_mvcActionCommand, "addSegmentsExperience",
@@ -135,11 +139,14 @@ public class AddSegmentsExperienceMVCActionCommandTest {
 	}
 
 	private MockActionRequest _getMockActionRequest(
-			String name, long segmentsEntryId)
+			long classNameId, long classPK, String name, long segmentsEntryId)
 		throws PortalException {
 
 		MockActionRequest mockActionRequest = new MockActionRequest();
 
+		mockActionRequest.addParameter(
+			"classNameId", String.valueOf(classNameId));
+		mockActionRequest.addParameter("classPK", String.valueOf(classPK));
 		mockActionRequest.addParameter("name", name);
 		mockActionRequest.addParameter(
 			"segmentsEntryId", String.valueOf(segmentsEntryId));
@@ -153,10 +160,7 @@ public class AddSegmentsExperienceMVCActionCommandTest {
 		ThemeDisplay themeDisplay = new ThemeDisplay();
 
 		themeDisplay.setCompany(_company);
-		themeDisplay.setLayout(_layout);
-		themeDisplay.setLayoutSet(_layout.getLayoutSet());
 		themeDisplay.setLocale(LocaleUtil.getDefault());
-		themeDisplay.setPlid(_layout.getPlid());
 		themeDisplay.setPermissionChecker(
 			PermissionThreadLocal.getPermissionChecker());
 		themeDisplay.setRequest(new MockHttpServletRequest());
@@ -176,8 +180,6 @@ public class AddSegmentsExperienceMVCActionCommandTest {
 
 	@DeleteAfterTestRun
 	private Group _group;
-
-	private Layout _layout;
 
 	@Inject(filter = "mvc.command.name=/content_layout/add_segments_experience")
 	private MVCActionCommand _mvcActionCommand;

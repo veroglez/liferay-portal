@@ -218,7 +218,6 @@ public class AddPortletMVCActionCommandTest {
 
 		themeDisplay.setLookAndFeel(layoutSet.getTheme(), null);
 
-		themeDisplay.setPlid(_layout.getPlid());
 		themeDisplay.setPermissionChecker(
 			PermissionThreadLocal.getPermissionChecker());
 		themeDisplay.setRealUser(TestPropsValues.getUser());
