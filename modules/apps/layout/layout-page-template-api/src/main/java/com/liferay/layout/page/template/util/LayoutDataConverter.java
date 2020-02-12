@@ -209,32 +209,14 @@ public class LayoutDataConverter {
 				JSONArray fragmentEntryLinkIdsJSONArray =
 					columnJSONObject.getJSONArray("fragmentEntryLinkIds");
 
-				String fragmentEntryLinkId =
-					fragmentEntryLinkIdsJSONArray.getString(0);
-
 				JSONObject fragmentConfigJSONObject = JSONUtil.put(
-					"fragmentEntryLinkId", fragmentEntryLinkId);
+					"fragmentEntryLinkId",
+					fragmentEntryLinkIdsJSONArray.get(0));
 
-				JSONObject fragmentJSONObject = null;
-
-				if (fragmentEntryLinkId.equals(
-						LayoutDataItemTypeConstants.TYPE_DROP_ZONE)) {
-
-					dropZoneUUID = fragmentUUID;
-
-					fragmentJSONObject = _getItemJSONObject(
-						JSONFactoryUtil.createJSONArray(),
-						JSONFactoryUtil.createJSONObject(),
-						dropZoneUUID.toString(), mainUUID.toString(),
-						LayoutDataItemTypeConstants.TYPE_DROP_ZONE);
-				}
-				else {
-					fragmentJSONObject = _getItemJSONObject(
-						JSONFactoryUtil.createJSONArray(),
-						fragmentConfigJSONObject, fragmentUUID.toString(),
-						mainUUID.toString(),
-						LayoutDataItemTypeConstants.TYPE_FRAGMENT);
-				}
+				JSONObject fragmentJSONObject = _getItemJSONObject(
+					JSONFactoryUtil.createJSONArray(), fragmentConfigJSONObject,
+					fragmentUUID.toString(), mainUUID.toString(),
+					LayoutDataItemTypeConstants.TYPE_FRAGMENT);
 
 				itemsJSONObject.put(
 					fragmentUUID.toString(), fragmentJSONObject);
