@@ -20,6 +20,7 @@ import debounceRAF from '../../core/debounceRAF';
 import {config} from '../config/index';
 import {useSelector} from '../store/index';
 import {useSelectItem} from './Controls';
+import Frame, {FrameContextProvider} from './Frame';
 import Layout from './Layout';
 import MasterLayout from './MasterLayout';
 
@@ -126,11 +127,15 @@ export default function LayoutViewport({
 				ref={setElement}
 				style={{width: layoutWidth}}
 			>
-				{useMasterLayout ? (
-					<MasterLayout />
-				) : (
-					<Layout mainItemId={mainItemId} />
-				)}
+				<FrameContextProvider>
+					<Frame>
+						{useMasterLayout ? (
+							<MasterLayout />
+						) : (
+							<Layout mainItemId={mainItemId} />
+						)}
+					</Frame>
+				</FrameContextProvider>
 			</div>
 
 			{selectedViewportSize !== 'desktop' && (
