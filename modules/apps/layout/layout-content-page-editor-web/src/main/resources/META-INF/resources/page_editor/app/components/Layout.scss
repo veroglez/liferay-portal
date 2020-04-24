@@ -89,6 +89,22 @@
 		}
 	}
 
+	&__row.align-bottom,
+	&__row.align-middle {
+		.page-editor__col {
+			display: flex;
+			flex-flow: row wrap;
+		}
+	}
+
+	&__row.align-middle .page-editor__col {
+		align-content: center;
+	}
+
+	&__row.align-bottom .page-editor__col {
+		align-content: flex-end;
+	}
+
 	&__collection-item {
 		&:after {
 			left: 0;
