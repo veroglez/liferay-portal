@@ -199,7 +199,7 @@ public class RenderFragmentLayoutDisplayContext {
 			defaultLayoutListRetrieverContext);
 	}
 
-	public String getColumnSizeClass(
+	public String getColumnClass(
 		RowLayoutStructureItem rowLayoutStructureItem,
 		ColumnLayoutStructureItem columnLayoutStructureItem) {
 
@@ -212,6 +212,10 @@ public class RenderFragmentLayoutDisplayContext {
 
 		sb.append("col-lg-");
 		sb.append(columnSize);
+
+		if (!rowLayoutStructureItem.isGutters()) {
+			sb.append("pl-lg-0 pr-lg-0");
+		}
 
 		Map<String, JSONObject> viewportSizeConfigurations =
 			rowLayoutStructureItem.getViewportSizeConfigurations();
@@ -234,8 +238,23 @@ public class RenderFragmentLayoutDisplayContext {
 					rowLayoutStructureItem.getNumberOfColumns() / modulesPerRow;
 
 			sb.append(StringPool.SPACE);
+			sb.append("col");
 			sb.append(viewportSize.getCssClassPrefix());
 			sb.append(columnSize);
+
+			boolean gutters = viewportSizeConfigurationJSONObject.getBoolean(
+				"gutters", rowLayoutStructureItem.isGutters());
+
+			if (!gutters) {
+				sb.append(StringPool.SPACE);
+				sb.append("pl");
+				sb.append(viewportSize.getCssClassPrefix());
+				sb.append("0");
+				sb.append(StringPool.SPACE);
+				sb.append("pr");
+				sb.append(viewportSize.getCssClassPrefix());
+				sb.append("0");
+			}
 		}
 
 		return sb.toString();
@@ -295,6 +314,68 @@ public class RenderFragmentLayoutDisplayContext {
 		return unsyncStringWriter.toString();
 	}
 
+	public String getRowClass(RowLayoutStructureItem rowLayoutStructureItem) {
+		StringBundler sb = new StringBundler();
+
+		sb.append("align-items-lg-");
+		sb.append(
+			_getVerticalAlignmentClass(
+				rowLayoutStructureItem.getVerticalAlignment()));
+
+		Map<String, JSONObject> viewportSizeConfigurations =
+			rowLayoutStructureItem.getViewportSizeConfigurations();
+
+		for (ViewportSize viewportSize : ViewportSize.values()) {
+			if (Objects.equals(viewportSize, ViewportSize.DESKTOP)) {
+				continue;
+			}
+
+			JSONObject viewportSizeConfigurationJSONObject =
+				viewportSizeConfigurations.getOrDefault(
+					viewportSize.getViewportSizeId(),
+					JSONFactoryUtil.createJSONObject());
+
+			String verticalAlignment =
+				viewportSizeConfigurationJSONObject.getString(
+					"verticalAlignment",
+					rowLayoutStructureItem.getVerticalAlignment());
+
+			sb.append(StringPool.SPACE);
+			sb.append("align-items");
+			sb.append(viewportSize.getCssClassPrefix());
+			sb.append(_getVerticalAlignmentClass(verticalAlignment));
+		}
+
+		if (rowLayoutStructureItem.isReverseOrder()) {
+			sb.append(StringPool.SPACE);
+			sb.append("flex-lg-row-reverse");
+		}
+
+		for (ViewportSize viewportSize : ViewportSize.values()) {
+			if (Objects.equals(viewportSize, ViewportSize.DESKTOP)) {
+				continue;
+			}
+
+			JSONObject viewportSizeConfigurationJSONObject =
+				viewportSizeConfigurations.getOrDefault(
+					viewportSize.getViewportSizeId(),
+					JSONFactoryUtil.createJSONObject());
+
+			boolean reverseOrder =
+				viewportSizeConfigurationJSONObject.getBoolean(
+					"reverseOrder", rowLayoutStructureItem.isReverseOrder());
+
+			if (reverseOrder) {
+				sb.append(StringPool.SPACE);
+				sb.append("flex");
+				sb.append(viewportSize.getCssClassPrefix());
+				sb.append("row-reverse");
+			}
+		}
+
+		return sb.toString();
+	}
+
 	private List<Portlet> _getPortlets() {
 		if (_portlets != null) {
 			return _portlets;
@@ -319,6 +400,17 @@ public class RenderFragmentLayoutDisplayContext {
 		}
 
 		return _portlets;
+	}
+
+	private String _getVerticalAlignmentClass(String verticalAlignment) {
+		if (Objects.equals(verticalAlignment, "bottom")) {
+			return "end";
+		}
+		else if (Objects.equals(verticalAlignment, "middle")) {
+			return "center";
+		}
+
+		return "start";
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(

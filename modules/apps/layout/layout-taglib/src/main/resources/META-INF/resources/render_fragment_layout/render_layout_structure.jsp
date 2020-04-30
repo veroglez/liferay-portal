@@ -79,7 +79,7 @@ for (String childrenItemId : childrenItemIds) {
 			RowLayoutStructureItem rowLayoutStructureItem = (RowLayoutStructureItem)layoutStructure.getLayoutStructureItem(columnLayoutStructureItem.getParentItemId());
 			%>
 
-			<div class="<%= renderFragmentLayoutDisplayContext.getColumnSizeClass(rowLayoutStructureItem, columnLayoutStructureItem) %>">
+			<div class="<%= renderFragmentLayoutDisplayContext.getColumnClass(rowLayoutStructureItem, columnLayoutStructureItem) %>">
 
 				<%
 				request.setAttribute("render_layout_structure.jsp-childrenItemIds", layoutStructureItem.getChildrenItemIds());
@@ -215,7 +215,7 @@ for (String childrenItemId : childrenItemIds) {
 			<c:choose>
 				<c:when test="<%= includeContainer %>">
 					<div class="container-fluid p-0">
-						<div class="row <%= !rowLayoutStructureItem.isGutters() ? "no-gutters" : StringPool.BLANK %>">
+						<div class="row <%= renderFragmentLayoutDisplayContext.getRowClass(rowLayoutStructureItem) %>">
 
 							<%
 							request.setAttribute("render_layout_structure.jsp-childrenItemIds", layoutStructureItem.getChildrenItemIds());
