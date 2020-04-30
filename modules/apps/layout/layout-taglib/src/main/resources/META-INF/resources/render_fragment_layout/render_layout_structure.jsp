@@ -75,9 +75,11 @@ for (String childrenItemId : childrenItemIds) {
 
 			<%
 			ColumnLayoutStructureItem columnLayoutStructureItem = (ColumnLayoutStructureItem)layoutStructureItem;
+
+			RowLayoutStructureItem rowLayoutStructureItem = (RowLayoutStructureItem)layoutStructure.getLayoutStructureItem(columnLayoutStructureItem.getParentItemId());
 			%>
 
-			<div class="<%= (columnLayoutStructureItem.getSize() > 0) ? "col-md-" + columnLayoutStructureItem.getSize() : "col-md" %>">
+			<div class="<%= renderFragmentLayoutDisplayContext.getColumnSizeClass(rowLayoutStructureItem, columnLayoutStructureItem) %>">
 
 				<%
 				request.setAttribute("render_layout_structure.jsp-childrenItemIds", layoutStructureItem.getChildrenItemIds());

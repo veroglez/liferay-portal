@@ -19,13 +19,17 @@ import com.liferay.info.display.contributor.InfoDisplayContributor;
 import com.liferay.info.display.contributor.InfoDisplayContributorTracker;
 import com.liferay.info.display.contributor.InfoDisplayObjectProvider;
 import com.liferay.info.pagination.Pagination;
+import com.liferay.layout.constants.ViewportSize;
 import com.liferay.layout.list.retriever.DefaultLayoutListRetrieverContext;
 import com.liferay.layout.list.retriever.LayoutListRetriever;
 import com.liferay.layout.list.retriever.LayoutListRetrieverTracker;
 import com.liferay.layout.list.retriever.ListObjectReferenceFactory;
 import com.liferay.layout.list.retriever.ListObjectReferenceFactoryTracker;
 import com.liferay.layout.util.structure.CollectionLayoutStructureItem;
+import com.liferay.layout.util.structure.ColumnLayoutStructureItem;
+import com.liferay.layout.util.structure.RowLayoutStructureItem;
 import com.liferay.petra.io.unsync.UnsyncStringWriter;
+import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
@@ -48,6 +52,8 @@ import com.liferay.taglib.servlet.PipingServletResponse;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -191,6 +197,48 @@ public class RenderFragmentLayoutDisplayContext {
 			listObjectReferenceFactory.getListObjectReference(
 				collectionJSONObject),
 			defaultLayoutListRetrieverContext);
+	}
+
+	public String getColumnSizeClass(
+		RowLayoutStructureItem rowLayoutStructureItem,
+		ColumnLayoutStructureItem columnLayoutStructureItem) {
+
+		StringBundler sb = new StringBundler();
+
+		int columnSize =
+			columnLayoutStructureItem.getSize() *
+				rowLayoutStructureItem.getNumberOfColumns() /
+					rowLayoutStructureItem.getModulesPerRow();
+
+		sb.append("col-lg-");
+		sb.append(columnSize);
+
+		Map<String, JSONObject> viewportSizeConfigurations =
+			rowLayoutStructureItem.getViewportSizeConfigurations();
+
+		for (ViewportSize viewportSize : ViewportSize.values()) {
+			if (Objects.equals(viewportSize, ViewportSize.DESKTOP)) {
+				continue;
+			}
+
+			JSONObject viewportSizeConfigurationJSONObject =
+				viewportSizeConfigurations.getOrDefault(
+					viewportSize.getViewportSizeId(),
+					JSONFactoryUtil.createJSONObject());
+
+			int modulesPerRow = viewportSizeConfigurationJSONObject.getInt(
+				"modulesPerRow", rowLayoutStructureItem.getModulesPerRow());
+
+			columnSize =
+				columnLayoutStructureItem.getSize() *
+					rowLayoutStructureItem.getNumberOfColumns() / modulesPerRow;
+
+			sb.append(StringPool.SPACE);
+			sb.append(viewportSize.getCssClassPrefix());
+			sb.append(columnSize);
+		}
+
+		return sb.toString();
 	}
 
 	public String getPortletFooterPaths() {
