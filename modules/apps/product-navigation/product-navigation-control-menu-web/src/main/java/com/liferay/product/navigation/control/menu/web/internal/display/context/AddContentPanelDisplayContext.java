@@ -58,6 +58,7 @@ import com.liferay.portal.kernel.util.comparator.PortletCategoryComparator;
 import com.liferay.portal.kernel.util.comparator.PortletTitleComparator;
 import com.liferay.portal.util.PortletCategoryUtil;
 import com.liferay.portal.util.WebAppPool;
+import com.liferay.product.navigation.control.menu.web.internal.constants.ProductNavigationControlMenuPortletKeys;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -95,8 +96,16 @@ public class AddContentPanelDisplayContext {
 		return HashMapBuilder.<String, Object>put(
 			"contents", _getContents()
 		).put(
+			"namespace", getNamespace()
+		).put(
 			"widgets", _getWidgets()
 		).build();
+	}
+
+	public String getNamespace() {
+		return PortalUtil.getPortletNamespace(
+			ProductNavigationControlMenuPortletKeys.
+				PRODUCT_NAVIGATION_CONTROL_MENU);
 	}
 
 	private String _getAssetEntryTypeLabel(long classNameId, long classTypeId) {

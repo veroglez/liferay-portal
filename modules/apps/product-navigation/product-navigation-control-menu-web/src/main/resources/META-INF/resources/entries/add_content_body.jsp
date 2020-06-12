@@ -16,15 +16,14 @@
 
 <%@ include file="/init.jsp" %>
 
+<%
+AddContentPanelDisplayContext addContentPanelDisplayContext = new AddContentPanelDisplayContext(request);
+%>
+
 <liferay-util:body-bottom
 	outputKey="addContentMenu"
 >
-
-	<%
-	String portletNamespace = PortalUtil.getPortletNamespace(ProductNavigationControlMenuPortletKeys.PRODUCT_NAVIGATION_CONTROL_MENU);
-	%>
-
-	<div class="closed d-print-none lfr-add-panel lfr-admin-panel sidenav-fixed sidenav-menu-slider sidenav-right" id="<%= portletNamespace %>addPanelId">
+	<div class="closed d-print-none lfr-add-panel lfr-admin-panel sidenav-fixed sidenav-menu-slider sidenav-right" id="<%= addContentPanelDisplayContext.getNamespace() %>addPanelId">
 		<div class="product-menu sidebar sidebar-inverse sidenav-menu">
 			<div class="sidebar-header">
 				<h1 class="sr-only"><liferay-ui:message key="widget-selection-panel" /></h1>
@@ -40,10 +39,6 @@
 		</div>
 	</div>
 
-	<%
-	AddContentPanelDisplayContext addContentPanelDisplayContext = new AddContentPanelDisplayContext(request);
-	%>
-
 	<div>
 		<react:component
 			data="<%= addContentPanelDisplayContext.getAddContentPanelData() %>"
@@ -52,7 +47,9 @@
 	</div>
 
 	<aui:script>
-		var addToggle = document.getElementById('<%= portletNamespace %>addToggleId');
+		var addToggle = document.getElementById(
+			'<%= addContentPanelDisplayContext.getNamespace() %>addToggleId'
+		);
 
 		Liferay.SideNavigation.initialize(addToggle);
 
