@@ -20,6 +20,7 @@ import {RowConfigurationPanel} from '../../../../src/main/resources/META-INF/res
 import {StoreAPIContextProvider} from '../../../../src/main/resources/META-INF/resources/page_editor/app/store';
 import updateItemConfig from '../../../../src/main/resources/META-INF/resources/page_editor/app/thunks/updateItemConfig';
 import updateRowColumns from '../../../../src/main/resources/META-INF/resources/page_editor/app/thunks/updateRowColumns';
+import {config} from '../../../../src/main/resources/META-INF/resources/page_editor/app/config';
 
 const renderComponent = (dispatch = () => {}) =>
 	render(
@@ -44,7 +45,14 @@ const renderComponent = (dispatch = () => {}) =>
 
 jest.mock(
 	'../../../../src/main/resources/META-INF/resources/page_editor/app/config',
-	() => ({config: {availableViewportSizes: {tablet: {label: 'Tablet'}}}})
+	() => ({
+		config: {
+			availableViewportSizes: {
+				tablet: {label: 'Tablet'},
+			},
+			responsiveEnabled: true,
+		},
+	})
 );
 
 jest.mock(
@@ -65,6 +73,8 @@ describe('RowConfigurationPanel', () => {
 	});
 
 	it('allows changing the number of columns of a row', async () => {
+		config.responsiveEnabled = false;
+
 		const {getByLabelText} = renderComponent();
 		const input = getByLabelText('number-of-columns');
 
