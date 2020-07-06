@@ -167,7 +167,7 @@ public class AddContentPanelDisplayContext {
 		assetEntryQuery.setEnd(_getDelta());
 		assetEntryQuery.setGroupIds(
 			new long[] {_themeDisplay.getScopeGroupId()});
-		assetEntryQuery.setAllKeywords(new String[] {_getKeywords()});
+		assetEntryQuery.setKeywords(_getKeywords());
 		assetEntryQuery.setOrderByCol1("modifiedDate");
 		assetEntryQuery.setOrderByCol2("title");
 		assetEntryQuery.setOrderByType1("DESC");
