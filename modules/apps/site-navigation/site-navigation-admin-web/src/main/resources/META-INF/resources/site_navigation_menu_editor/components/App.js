@@ -13,9 +13,12 @@
  */
 
 import React from 'react';
+import {DndProvider} from 'react-dnd';
+import {HTML5Backend} from 'react-dnd-html5-backend';
 
 import {SIDEBAR_PANEL_IDS} from '../constants/sidebarPanelIds';
 import {ConstantsProvider} from '../contexts/ConstantsContext';
+import {ItemsProvider} from '../contexts/ItemsContext';
 import {SelectedMenuItemIdProvider} from '../contexts/SelectedMenuItemIdContext';
 import {SidebarPanelIdProvider} from '../contexts/SidebarPanelIdContext';
 import {AppLayout} from './AppLayout';
@@ -40,22 +43,26 @@ export function App(props) {
 	const {siteNavigationMenuItems} = props;
 
 	return (
-		<ConstantsProvider constants={props}>
-			<SelectedMenuItemIdProvider>
-				<SidebarPanelIdProvider>
-					<AppLayout
-						contentChildren={
-							!siteNavigationMenuItems.length ? (
-								<EmptyState />
-							) : (
-								<Menu />
-							)
-						}
-						sidebarPanels={SIDEBAR_PANELS}
-						toolbarChildren={<Toolbar />}
-					/>
-				</SidebarPanelIdProvider>
-			</SelectedMenuItemIdProvider>
-		</ConstantsProvider>
+		<DndProvider backend={HTML5Backend}>
+			<ConstantsProvider constants={props}>
+				<ItemsProvider initialItems={siteNavigationMenuItems}>
+					<SelectedMenuItemIdProvider>
+						<SidebarPanelIdProvider>
+							<AppLayout
+								contentChildren={
+									!siteNavigationMenuItems.length ? (
+										<EmptyState />
+									) : (
+										<Menu />
+									)
+								}
+								sidebarPanels={SIDEBAR_PANELS}
+								toolbarChildren={<Toolbar />}
+							/>
+						</SidebarPanelIdProvider>
+					</SelectedMenuItemIdProvider>
+				</ItemsProvider>
+			</ConstantsProvider>
+		</DndProvider>
 	);
 }
