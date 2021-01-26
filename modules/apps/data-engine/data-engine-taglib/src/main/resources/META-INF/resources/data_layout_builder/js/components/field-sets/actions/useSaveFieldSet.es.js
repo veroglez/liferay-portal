@@ -18,6 +18,7 @@ import AppContext from '../../../AppContext.es';
 import {UPDATE_DATA_DEFINITION, UPDATE_FIELDSETS} from '../../../actions.es';
 import DataLayoutBuilderContext from '../../../data-layout-builder/DataLayoutBuilderContext.es';
 import {updateItem} from '../../../utils/client.es';
+import {FIELD_TYPES} from '../../../utils/constants.es';
 import {getDataDefinitionFieldSet} from '../../../utils/dataDefinition.es';
 import {containsField} from '../../../utils/dataLayoutVisitor.es';
 import {
@@ -67,6 +68,47 @@ export default ({
 			newDataDefinition = normalizeDataDefinition(
 				newDataDefinition,
 				fieldSet.defaultLanguageId
+			);
+		}
+
+		const fieldTypesWithOptions = [
+			FIELD_TYPES.grid,
+			FIELD_TYPES.radio,
+			FIELD_TYPES.checkboxMultiple,
+			FIELD_TYPES.select,
+		];
+
+		const optionFieldHasOptions = (options) => {
+			return (
+				options[defaultLanguageId][0].edited &&
+				options[defaultLanguageId][0].label
+			);
+		};
+
+		const fieldsWithoutOptions = dataDefinitionFields.filter((field) => {
+			const {customProperties, fieldType} = field;
+
+			return (
+				fieldTypesWithOptions.includes(fieldType) &&
+				(customProperties.options
+					? !optionFieldHasOptions(customProperties.options)
+					: !(
+							optionFieldHasOptions(customProperties.columns) &&
+							optionFieldHasOptions(customProperties.rows)
+					  ))
+			);
+		});
+
+		if (fieldsWithoutOptions.length) {
+			return Promise.reject(
+				new Error(
+					Liferay.Util.sub(
+						Liferay.Language.get(
+							'at-least-one-option-should-be-set-for-field-x'
+						),
+						fieldsWithoutOptions[0].label[defaultLanguageId]
+					)
+				)
 			);
 		}
 
