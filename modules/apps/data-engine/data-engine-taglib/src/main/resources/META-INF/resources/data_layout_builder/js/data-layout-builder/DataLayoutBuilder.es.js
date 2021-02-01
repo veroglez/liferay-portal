@@ -296,6 +296,17 @@ class DataLayoutBuilder extends React.Component {
 		if (dataType === 'json' && typeof value !== 'string') {
 			return JSON.stringify(value);
 		}
+		else if (dataType === 'ddm-options') {
+			const newValue = {};
+
+			Object.keys(value).forEach((locale) => {
+				newValue[locale] = value[locale]?.filter(
+					(localizedValue) => localizedValue.value !== ''
+				);
+			});
+
+			return newValue;
+		}
 
 		return value;
 	}
