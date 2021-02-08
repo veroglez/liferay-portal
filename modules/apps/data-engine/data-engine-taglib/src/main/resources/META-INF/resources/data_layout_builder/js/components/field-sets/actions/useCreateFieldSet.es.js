@@ -56,6 +56,30 @@ export default ({
 			);
 		}
 
+		const fieldsWithoutOptions = dataDefinitionFields.filter((field) => {
+			const {customProperties} = field;
+
+			return customProperties.options
+				? !customProperties.options[defaultLanguageId].length
+				: !(
+						customProperties.columns?.[defaultLanguageId].length &&
+						customProperties.rows?.[defaultLanguageId].length
+				  );
+		});
+
+		if (fieldsWithoutOptions.length) {
+			return Promise.reject(
+				new Error(
+					Liferay.Util.sub(
+						Liferay.Language.get(
+							'at-least-one-option-should-be-set-for-field-x'
+						),
+						fieldsWithoutOptions[0].label[defaultLanguageId]
+					)
+				)
+			);
+		}
+
 		if (!allowInvalidAvailableLocalesForProperty) {
 			dataDefinition = normalizeDataDefinition(
 				dataDefinition,
