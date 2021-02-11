@@ -301,7 +301,9 @@ class DataLayoutBuilder extends React.Component {
 
 			Object.keys(value).forEach((locale) => {
 				newValue[locale] = value[locale]?.filter(
-					(localizedValue) => localizedValue.value !== ''
+					(localizedValue) =>
+						localizedValue.value !== '' &&
+						localizedValue.label !== ''
 				);
 			});
 
@@ -541,7 +543,8 @@ class DataLayoutBuilder extends React.Component {
 								Object.keys(value).forEach((locale) => {
 									newValue[locale] = value[locale]?.filter(
 										(localizedValue) =>
-											localizedValue.value !== ''
+											localizedValue.value !== '' &&
+											localizedValue.label !== ''
 									);
 								});
 
