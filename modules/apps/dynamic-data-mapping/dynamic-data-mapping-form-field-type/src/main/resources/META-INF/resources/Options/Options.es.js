@@ -200,17 +200,24 @@ const Options = ({
 
 	useEffect(() => {
 		const availableLanguageIds = Object.getOwnPropertyNames(value);
+		const getOption = (value, option) =>
+			value[defaultLanguageId].find(
+				(defaultOption) => defaultOption.value === option.value
+			);
 
 		availableLanguageIds.forEach((languageId) => {
 			normalizedValue[languageId] = normalizeFields(
 				value[languageId].map((option) => {
 					if (option.edited) {
-						return option;
+						const activeOption = getOption(normalizedValue, option);
+
+						return {
+							...option,
+							...(activeOption && {id: activeOption.id}),
+						};
 					}
 
-					const {label} = value[defaultLanguageId].find(
-						(defaultOption) => defaultOption.value === option.value
-					);
+					const {label} = getOption(value, option);
 
 					return {
 						...option,
