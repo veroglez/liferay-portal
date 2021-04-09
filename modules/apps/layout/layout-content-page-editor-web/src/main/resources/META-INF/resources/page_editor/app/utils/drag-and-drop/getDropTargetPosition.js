@@ -12,7 +12,7 @@
  * details.
  */
 
-import {TARGET_POSITION} from './constants/targetPosition';
+import {TARGET_POSITIONS} from './constants/targetPositions';
 
 /**
  * Returns the cursor vertical position (extracted from provided dnd monitor)
@@ -22,22 +22,23 @@ import {TARGET_POSITION} from './constants/targetPosition';
  * @return {Array} Returns a tuple with targetPositionWithMiddle and
  *  targetPositionWithoutMiddle
  */
-export default function getTargetPosition(
-	clientOffsetY,
-	hoverBoundingRect,
-	elevationBorderSize
+export default function getDropTargetPosition(
+	clientOffset,
+	elevationBorderSize,
+	targetPositions,
+	targetData
 ) {
-	const hoverMiddleY = hoverBoundingRect.top + hoverBoundingRect.height / 2;
+	const hoverMiddle = targetData.start + targetData.length / 2;
 
 	const targetPositionWithoutMiddle =
-		clientOffsetY < hoverMiddleY
-			? TARGET_POSITION.TOP
-			: TARGET_POSITION.BOTTOM;
+		clientOffset < hoverMiddle
+			? targetPositions.start
+			: targetPositions.end;
 
 	const targetPositionWithMiddle =
-		clientOffsetY < hoverBoundingRect.bottom - elevationBorderSize &&
-		clientOffsetY > hoverBoundingRect.top + elevationBorderSize
-			? TARGET_POSITION.MIDDLE
+		clientOffset < targetData.end - elevationBorderSize &&
+		clientOffset > targetData.start + elevationBorderSize
+			? TARGET_POSITIONS.MIDDLE
 			: targetPositionWithoutMiddle;
 
 	return [targetPositionWithMiddle, targetPositionWithoutMiddle];
