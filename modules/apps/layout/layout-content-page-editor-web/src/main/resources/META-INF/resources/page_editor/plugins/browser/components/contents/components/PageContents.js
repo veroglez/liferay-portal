@@ -19,10 +19,10 @@ import Collapse from '../../../../../common/components/Collapse';
 import PageContent from './PageContent';
 
 export default function PageContents({pageContents}) {
-	return pageContents.map((content) => (
-		<Collapse key={content.label} label={content.label} open>
-			<ul className="list-unstyled">
-				{content.items.map((pageContent, index) => (
+	return Object.keys(pageContents).map((type) => (
+		<Collapse key={type} label={type} open>
+			<ul className="list-unstyled mb-1">
+				{pageContents[type].map((pageContent, index) => (
 					<PageContent
 						key={`${pageContent.classPK}${index}`}
 						{...pageContent}
@@ -33,11 +33,7 @@ export default function PageContents({pageContents}) {
 	));
 }
 
+
 PageContents.propTypes = {
-	pageContents: PropTypes.arrayOf(
-		PropTypes.shape({
-			items: PropTypes.array,
-			label: PropTypes.string,
-		})
-	),
+	pageContents: PropTypes.object,
 };
