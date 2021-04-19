@@ -13,20 +13,29 @@
  */
 
 import classNames from 'classnames';
-import React, {useCallback} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 
 import useSetRef from '../../../core/hooks/useSetRef';
 import {getLayoutDataItemPropTypes} from '../../../prop-types/index';
+import {FREEMARKER_FRAGMENT_ENTRY_PROCESSOR} from '../../config/constants/freemarkerFragmentEntryProcessor';
 import {useSelector} from '../../store/index';
 import {getFrontendTokenValue} from '../../utils/getFrontendTokenValue';
 import {getResponsiveConfig} from '../../utils/getResponsiveConfig';
+import {useHoveredItemId, useHoveredItemType} from '../Controls';
 import Topper from '../Topper';
 import FragmentContent from '../fragment-content/FragmentContent';
 import FragmentContentInteractionsFilter from '../fragment-content/FragmentContentInteractionsFilter';
 import FragmentContentProcessor from '../fragment-content/FragmentContentProcessor';
 import getAllPortals from './getAllPortals';
+import isHovered from './isHovered';
+
+const FIELD_TYPES = ['itemSelector', 'collectionSelector'];
 
 const FragmentWithControls = React.forwardRef(({item}, ref) => {
+	const fragmentEntryLinks = useSelector((state) => state.fragmentEntryLinks);
+	const hoveredItemType = useHoveredItemType();
+	const hoveredItemId = useHoveredItemId();
+	const [hovered, setHovered] = useState(false);
 	const selectedViewportSize = useSelector(
 		(state) => state.selectedViewportSize
 	);
@@ -34,6 +43,43 @@ const FragmentWithControls = React.forwardRef(({item}, ref) => {
 	const getPortals = useCallback((element) => getAllPortals(element), []);
 	const itemConfig = getResponsiveConfig(item.config, selectedViewportSize);
 	const [setRef, itemElement] = useSetRef(ref);
+
+	useEffect(() => {
+		const fieldNames = [];
+		const fragment = fragmentEntryLinks[item.config.fragmentEntryLinkId];
+
+		if (fragment) {
+			fragment.configuration.fieldSets?.forEach((fieldSet) => {
+				fieldSet.fields.forEach((field) => {
+					if (FIELD_TYPES.includes(field.type)) {
+						fieldNames.push(field.name);
+					}
+				});
+			});
+
+			const fieldName = fieldNames.find(
+				(fieldName) =>
+					fragment.editableValues[
+						FREEMARKER_FRAGMENT_ENTRY_PROCESSOR
+					][fieldName].classPK
+			);
+
+			const editableValue =
+				fragment.editableValues[FREEMARKER_FRAGMENT_ENTRY_PROCESSOR][
+					fieldName
+				] || {};
+
+			if (editableValue) {
+				setHovered(
+					isHovered({
+						editableValue,
+						hoveredItemId,
+						hoveredItemType,
+					})
+				);
+			}
+		}
+	}, [item, fragmentEntryLinks, hoveredItemId, hoveredItemType]);
 
 	const {
 		marginBottom,
@@ -60,6 +106,7 @@ const FragmentWithControls = React.forwardRef(({item}, ref) => {
 				[`ml-${marginLeft}`]: marginLeft != null,
 				[`mr-${marginRight}`]: marginRight != null,
 				[`mt-${marginTop}`]: marginTop != null,
+				'page-editor__topper--hovered': hovered,
 			})}
 			item={item}
 			itemElement={itemElement}
