@@ -301,7 +301,7 @@ public class AssetListEntryUsagesUtil {
 				"collectionType",
 				InfoListItemSelectorReturnType.class.getName());
 			portletURL.setParameter(
-				"showActions", String.valueOf(Boolean.TRUE));
+				"showActions", String.valueOf(Boolean.FALSE));
 
 			portletURL.setWindowState(LiferayWindowState.POP_UP);
 		}
@@ -370,7 +370,7 @@ public class AssetListEntryUsagesUtil {
 				"collectionType",
 				InfoListProviderItemSelectorReturnType.class.getName());
 			portletURL.setParameter(
-				"showActions", String.valueOf(Boolean.TRUE));
+				"showActions", String.valueOf(Boolean.FALSE));
 
 			portletURL.setWindowState(LiferayWindowState.POP_UP);
 		}
