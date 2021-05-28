@@ -54,8 +54,9 @@ export const selectPageContentDropdownItems = (classPK, itemName = '') => (
 
 	if (addItems) {
 		dropdownItems.push({
-			child: 'mappedItemsMenu',
+			child: 'menuForAddItems',
 			label: Liferay.Language.get('add-items'),
+			menuItems: addItems,
 		});
 	}
 

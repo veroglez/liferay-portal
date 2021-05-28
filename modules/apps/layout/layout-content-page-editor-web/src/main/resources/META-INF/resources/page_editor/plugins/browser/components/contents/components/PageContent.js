@@ -13,7 +13,7 @@
  */
 
 import ClayButton from '@clayui/button';
-import {ClayDropDownWithItems} from '@clayui/drop-down';
+import {ClayDropDownWithDrilldown} from '@clayui/drop-down';
 import ClayIcon from '@clayui/icon';
 import ClayLayout from '@clayui/layout';
 import classNames from 'classnames';
@@ -47,7 +47,7 @@ export default function PageContent({
 	subtype,
 	title,
 }) {
-	const [active, setActive] = useState(false);
+	const [menuForAddItems, setMenuForAddItems] = useState([]);
 	const dropdownItems = useSelectorCallback(
 		selectPageContentDropdownItems(classPK),
 		[classPK]
@@ -152,6 +152,25 @@ export default function PageContent({
 		setEditableNextProcessorUniqueId(toControlsId(editableId));
 	};
 
+	const mainMenu = useMemo(() => {
+		const addItemsAction = dropdownItems?.find(
+			(item) => item.label === Liferay.Language.get('add-items')
+		);
+
+		if (addItemsAction) {
+			setMenuForAddItems(addItemsAction.menuItems);
+		}
+
+		return dropdownItems?.map((item) => {
+			delete item.menuItems;
+
+			return {
+				...item,
+				title: item.label,
+			};
+		});
+	}, [dropdownItems]);
+
 	return (
 		<li
 			className={classNames('page-editor__page-contents__page-content', {
@@ -185,10 +204,12 @@ export default function PageContent({
 				</ClayLayout.ContentCol>
 
 				{dropdownItems ? (
-					<ClayDropDownWithItems
-						active={active}
-						items={dropdownItems}
-						onActiveChange={setActive}
+					<ClayDropDownWithDrilldown
+						initialActiveMenu="mainMenu"
+						menus={{
+							mainMenu,
+							menuForAddItems,
+						}}
 						trigger={
 							<ClayButton
 								className="btn-monospaced btn-sm text-secondary"
