@@ -28,10 +28,18 @@ import PageContents from './PageContents';
 const getEditableTitle = (editable, languageId) => {
 	const div = document.createElement('div');
 
-	div.innerHTML =
-		editable[languageId] ||
-		editable[config.defaultLanguageId] ||
-		editable.defaultValue;
+	if (
+		editable[config.defaultLanguageId] === '' &&
+		languageId === config.defaultLanguageId
+	) {
+		div.innerHTML = '';
+	}
+	else {
+		div.innerHTML =
+			editable[languageId] ||
+			editable[config.defaultLanguageId] ||
+			editable.defaultValue;
+	}
 
 	return div.textContent;
 };
@@ -74,13 +82,11 @@ const getEditableValues = (fragmentEntryLinks, segmentsExperienceId) =>
 			[]
 		);
 
-const normalizeEditableValues = (editable, languageId) => {
-	return {
-		...editable,
-		icon: 'align-left',
-		title: getEditableTitle(editable, languageId),
-	};
-};
+const normalizeEditableValues = (editable, languageId) => ({
+	...editable,
+	icon: 'align-left',
+	title: getEditableTitle(editable, languageId),
+});
 
 const normalizePageContents = (pageContents) =>
 	pageContents.reduce(
@@ -101,10 +107,11 @@ export default function ContentsSidebar() {
 
 	const inlineTextContents = useMemo(
 		() =>
-			getEditableValues(
-				fragmentEntryLinks,
-				segmentsExperienceId
-			).map((editable) => normalizeEditableValues(editable, languageId)),
+			getEditableValues(fragmentEntryLinks, segmentsExperienceId)
+				.map((editable) =>
+					normalizeEditableValues(editable, languageId)
+				)
+				.filter((editable) => editable.title),
 		[fragmentEntryLinks, languageId, segmentsExperienceId]
 	);
 
