@@ -21,6 +21,15 @@ import {EDITABLE_FRAGMENT_ENTRY_PROCESSOR} from '../../../../../../../../src/mai
 import {StoreContextProvider} from '../../../../../../../../src/main/resources/META-INF/resources/page_editor/app/contexts/StoreContext';
 import ContentsSidebar from '../../../../../../../../src/main/resources/META-INF/resources/page_editor/plugins/browser/components/contents/components/ContentsSidebar';
 
+jest.mock(
+	'../../../../../../../../src/main/resources/META-INF/resources/page_editor/app/config',
+	() => ({
+		config: {
+			defaultLanguageId: 'en_US',
+		},
+	})
+);
+
 const pageContents = [
 	{
 		subtype: 'Basic Web Content',
@@ -114,6 +123,60 @@ describe('ContentsSidebar', () => {
 
 		expect(getByText('Heading Example')).toBeInTheDocument();
 		expect(getByText('A paragraph')).toBeInTheDocument();
+	});
+
+	it('does not show empty inline text in content list', () => {
+		const {baseElement} = renderPageContent({
+			fragmentEntryLinks: {
+				...fragmentEntryLinks,
+				39685: {
+					editableTypes: {'element-text': 'text'},
+					editableValues: {
+						[EDITABLE_FRAGMENT_ENTRY_PROCESSOR]: {
+							'element-text': {
+								defaultValue: '\n\tHeading Example\n',
+								en_US: '',
+							},
+						},
+					},
+					fragmentEntryLinkId: '39685',
+					name: 'Heading',
+					segmentsExperienceId: '0',
+				},
+			},
+		});
+
+		expect(
+			baseElement.querySelectorAll(
+				'.page-editor__page-contents__page-content'
+			).length
+		).toBe(2);
+	});
+
+	it('shows the default translation when the current translation is empty', () => {
+		const {queryByText} = renderPageContent({
+			fragmentEntryLinks: {
+				...fragmentEntryLinks,
+				39685: {
+					editableTypes: {'element-text': 'text'},
+					editableValues: {
+						[EDITABLE_FRAGMENT_ENTRY_PROCESSOR]: {
+							'element-text': {
+								ca_ES: '',
+								defaultValue: '\n\tHeading Example\n',
+								en_US: 'This is a heading',
+							},
+						},
+					},
+					fragmentEntryLinkId: '39685',
+					name: 'Heading',
+					segmentsExperienceId: '0',
+				},
+			},
+			languageId: 'ca_ES',
+		});
+
+		expect(queryByText('This is a heading')).toBeInTheDocument();
 	});
 
 	it('shows inline text corresponding to an experience', () => {
