@@ -420,6 +420,9 @@ public class ContentPageEditorDisplayContext {
 				getResourceURL(
 					"/layout_content_page_editor/get_experience_used_portlets")
 			).put(
+				"getFileEntryURL",
+				getResourceURL("/layout_content_page_editor/get_file_entry_url")
+			).put(
 				"getIframeContentCssURL",
 				PortalUtil.getStaticResourceURL(
 					httpServletRequest,
