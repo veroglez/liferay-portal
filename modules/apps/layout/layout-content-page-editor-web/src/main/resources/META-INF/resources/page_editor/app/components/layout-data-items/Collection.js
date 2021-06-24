@@ -30,6 +30,7 @@ import {useDispatch, useSelector} from '../../contexts/StoreContext';
 import selectLanguageId from '../../selectors/selectLanguageId';
 import CollectionService from '../../services/CollectionService';
 import UnsafeHTML from '../UnsafeHTML';
+import CollectionSimplePagination from './CollectionSimplePagination';
 
 const COLLECTION_ID_DIVIDER = '$';
 const TOTAL_ENTRIES = 20;
@@ -194,7 +195,7 @@ const CollectionPagination = ({
 				),
 			})}
 		>
-			{paginationType === 'regular' && (
+			{paginationType === 'regular' ? (
 				<ClayPaginationBar>
 					<ClayPaginationBar.Results>
 						{Liferay.Util.sub(
@@ -214,6 +215,12 @@ const CollectionPagination = ({
 						totalPages={totalPages}
 					/>
 				</ClayPaginationBar>
+			) : (
+				<CollectionSimplePagination
+					activePage={activePage}
+					onChangePage={setActivePage}
+					totalPages={totalPages}
+				/>
 			)}
 		</div>
 	);
