@@ -33,7 +33,6 @@ import UnsafeHTML from '../UnsafeHTML';
 import CollectionSimplePagination from './CollectionSimplePagination';
 
 const COLLECTION_ID_DIVIDER = '$';
-const TOTAL_ENTRIES = 20;
 
 function collectionIsMapped(collectionConfig) {
 	return collectionConfig.collection;
@@ -181,11 +180,12 @@ const CollectionPagination = ({
 	collectionId,
 	onPageChange,
 	paginationType,
+	totalItems,
 }) => {
 	const isActive = useIsActive();
 
 	const totalPages = Math.ceil(
-		TOTAL_ENTRIES / collectionConfig.numberOfItemsPerPage
+		totalItems / (collectionConfig.numberOfItemsPerPage || 1)
 	);
 
 	return (
@@ -206,7 +206,7 @@ const CollectionPagination = ({
 									(activePage - 1) || 1,
 								collectionConfig.numberOfItemsPerPage *
 									activePage,
-								TOTAL_ENTRIES,
+								totalItems,
 							]
 						)}
 					</ClayPaginationBar.Results>
@@ -237,6 +237,9 @@ const Collection = React.forwardRef(({children, item}, ref) => {
 
 	const [activePage, setActivePage] = useState(1);
 	const [collection, setCollection] = useState(DEFAULT_COLLECTION);
+	const [totalItems, setTotalItems] = useState(
+		collectionConfig.numberOfItems
+	);
 
 	const context = useContext(CollectionItemContext);
 	const {classNameId, classPK} = context.collectionItem || {};
@@ -264,6 +267,8 @@ const Collection = React.forwardRef(({children, item}, ref) => {
 				templateKey: collectionConfig.templateKey || null,
 			})
 				.then((response) => {
+					setTotalItems(response.length);
+
 					setCollection(
 						response.length > 0 && response.items?.length > 0
 							? response
@@ -322,6 +327,7 @@ const Collection = React.forwardRef(({children, item}, ref) => {
 					collectionId={item.itemId}
 					onPageChange={setActivePage}
 					paginationType={collectionConfig.paginationType}
+					totalItems={totalItems}
 				/>
 			)}
 		</div>
