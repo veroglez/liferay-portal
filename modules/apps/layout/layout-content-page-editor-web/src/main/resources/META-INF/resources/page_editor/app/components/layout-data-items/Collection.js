@@ -176,11 +176,12 @@ const DEFAULT_COLLECTION = {
 };
 
 const CollectionPagination = ({
+	activePage,
 	collectionConfig,
 	collectionId,
+	onPageChange,
 	paginationType,
 }) => {
-	const [activePage, setActivePage] = useState(1);
 	const isActive = useIsActive();
 
 	const totalPages = Math.ceil(
@@ -188,7 +189,7 @@ const CollectionPagination = ({
 	);
 
 	const onActivePage = (direction) => {
-		setActivePage(
+		onPageChange(
 			direction === 'previous' ? activePage - 1 : activePage + 1
 		);
 	};
@@ -218,7 +219,7 @@ const CollectionPagination = ({
 
 					<ClayPaginationWithBasicItems
 						activePage={activePage}
-						onPageChange={setActivePage}
+						onPageChange={onPageChange}
 						totalPages={totalPages}
 					/>
 				</ClayPaginationBar>
@@ -252,13 +253,13 @@ const CollectionPagination = ({
 };
 
 const Collection = React.forwardRef(({children, item}, ref) => {
-	const activePage = 1;
 	const child = React.Children.toArray(children)[0];
 	const collectionConfig = item.config;
 
 	const dispatch = useDispatch();
 	const languageId = useSelector(selectLanguageId);
 
+	const [activePage, setActivePage] = useState(1);
 	const [collection, setCollection] = useState(DEFAULT_COLLECTION);
 
 	const context = useContext(CollectionItemContext);
@@ -340,8 +341,10 @@ const Collection = React.forwardRef(({children, item}, ref) => {
 
 			{collectionConfig.paginationType && (
 				<CollectionPagination
+					activePage={activePage}
 					collectionConfig={collectionConfig}
 					collectionId={item.itemId}
+					onPageChange={setActivePage}
 					paginationType={collectionConfig.paginationType}
 				/>
 			)}
