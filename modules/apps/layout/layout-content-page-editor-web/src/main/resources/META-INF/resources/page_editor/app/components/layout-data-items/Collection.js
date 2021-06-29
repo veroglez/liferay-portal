@@ -88,7 +88,9 @@ const Grid = ({
 }) => {
 	const maxNumberOfItems = Math.min(
 		collectionLength,
-		collectionConfig.numberOfItems
+		collectionConfig.paginationType
+			? collectionConfig.numberOfItemsPerPage
+			: collectionConfig.numberOfItems
 	);
 	const numberOfRows = Math.ceil(
 		maxNumberOfItems / collectionConfig.numberOfColumns
@@ -183,16 +185,27 @@ const CollectionPagination = ({
 	totalItems,
 }) => {
 	const isActive = useIsActive();
+	const {numberOfItems, numberOfItemsPerPage} = collectionConfig;
 
-	const totalPages = Math.ceil(
-		totalItems / (collectionConfig.numberOfItemsPerPage || 1)
-	);
+	const totalPages =
+		Number.isFinite(Math.ceil(totalItems / numberOfItemsPerPage)) || 0;
 
 	const onActivePage = (direction) => {
 		onPageChange(
 			direction === 'previous' ? activePage - 1 : activePage + 1
 		);
 	};
+
+	const regularPaginationLabel = [
+		numberOfItemsPerPage && numberOfItems && totalItems
+			? (activePage - 1) * numberOfItemsPerPage + 1
+			: 0,
+		Math.min(
+			Math.min(activePage * numberOfItemsPerPage, numberOfItems),
+			totalItems
+		),
+		Math.min(numberOfItems, totalItems),
+	];
 
 	return (
 		<div
@@ -207,13 +220,7 @@ const CollectionPagination = ({
 					<ClayPaginationBar.Results>
 						{Liferay.Util.sub(
 							Liferay.Language.get('showing-x-to-x-of-x-entries'),
-							[
-								collectionConfig.numberOfItemsPerPage *
-									(activePage - 1) || 1,
-								collectionConfig.numberOfItemsPerPage *
-									activePage,
-								totalItems,
-							]
+							regularPaginationLabel
 						)}
 					</ClayPaginationBar.Results>
 
@@ -291,7 +298,7 @@ const Collection = React.forwardRef(({children, item}, ref) => {
 				templateKey: collectionConfig.templateKey || null,
 			})
 				.then((response) => {
-					setTotalItems(response.length);
+					setTotalItems(response.totalNumberOfItems);
 
 					setCollection(
 						response.length > 0 && response.items?.length > 0
