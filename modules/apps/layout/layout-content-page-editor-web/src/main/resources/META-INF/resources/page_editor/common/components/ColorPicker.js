@@ -12,9 +12,11 @@
  * details.
  */
 
+import ClayButton from '@clayui/button';
 import DropDown from '@clayui/drop-down';
 import ClayEmptyState from '@clayui/empty-state';
 import {ClayInput} from '@clayui/form';
+import ClayIcon from '@clayui/icon';
 import {FocusScope} from '@clayui/shared';
 import classNames from 'classnames';
 import React, {useEffect, useMemo, useRef, useState} from 'react';
@@ -116,7 +118,7 @@ const ColorPicker = ({
 						active={active}
 						alignElementRef={triggerElementRef}
 						className={classNames('clay-color-dropdown-menu', {
-							'px-0': config.tokenOptimizationEnabled,
+							'px-0 pt-0': config.tokenOptimizationEnabled,
 						})}
 						containerProps={{
 							className: 'cadmin',
@@ -127,31 +129,13 @@ const ColorPicker = ({
 					>
 						{config.tokenOptimizationEnabled ? (
 							active ? (
-								<>
-									<SearchForm
-										className="flex-grow-1 px-3"
-										onChange={setSearchValue}
-									/>
-									{Object.keys(filteredColors).length ? (
-										<ColorPalette
-											colors={filteredColors}
-											onSetActive={setActive}
-											onValueChange={onValueChange}
-											splotchRef={splotchRef}
-										/>
-									) : (
-										<ClayEmptyState
-											className="mt-4 page-editor__ColorPicker__empty-result"
-											description={Liferay.Language.get(
-												'try-again-with-a-different-search'
-											)}
-											imgSrc={`${themeDisplay.getPathThemeImages()}/states/empty_state.gif`}
-											title={Liferay.Language.get(
-												'no-results-found'
-											)}
-										/>
-									)}
-								</>
+								<DrillDown
+									colors={filteredColors}
+									onSetActive={setActive}
+									onSetSearchValue={setSearchValue}
+									onValueChange={onValueChange}
+									splotchRef={splotchRef}
+								/>
 							) : null
 						) : (
 							<div className="clay-color-swatch mt-0">
@@ -251,5 +235,83 @@ const ColorPalette = ({colors, onSetActive, onValueChange, splotchRef}) =>
 			))}
 		</div>
 	));
+
+const DrillDown = ({
+	colors,
+	onSetActive,
+	onSetSearchValue,
+	onValueChange,
+	splotchRef,
+}) => {
+	const [customColor, setCustomColor] = useState(false);
+
+	return (
+		<div className="drilldown-inner page-editor__ColorPicker__drilldown">
+			<div
+				className={classNames('drilldown-item', {
+					current: !customColor,
+				})}
+			>
+				<ClayButton
+					className="dropdown-item"
+					displayType="unstyled"
+					onClick={() => {
+						setCustomColor(true);
+					}}
+				>
+					<span className="c-inner py-3" tabIndex="-1">
+						<ClayIcon className="mr-3" symbol="color-picker" />
+						{Liferay.Language.get('custom-color')}
+						<span className="dropdown-item-indicator-end pt-3">
+							<ClayIcon symbol="angle-right" />
+						</span>
+					</span>
+				</ClayButton>
+
+				<SearchForm
+					className="flex-grow-1 mb-2 mt-3 px-3"
+					onChange={onSetSearchValue}
+				/>
+				{Object.keys(colors).length ? (
+					<ColorPalette
+						colors={colors}
+						onSetActive={onSetActive}
+						onValueChange={onValueChange}
+						splotchRef={splotchRef}
+					/>
+				) : (
+					<ClayEmptyState
+						className="mt-4 page-editor__ColorPicker__empty-result"
+						description={Liferay.Language.get(
+							'try-again-with-a-different-search'
+						)}
+						imgSrc={`${themeDisplay.getPathThemeImages()}/states/empty_state.gif`}
+						title={Liferay.Language.get('no-results-found')}
+					/>
+				)}
+			</div>
+			<div
+				className={classNames('drilldown-item', {
+					current: customColor,
+				})}
+			>
+				<ClayButton
+					className="dropdown-item"
+					displayType="unstyled"
+					onClick={() => setCustomColor(false)}
+				>
+					<span className="c-inner py-3" tabIndex="-1">
+						<span className="dropdown-item-indicator-text-start">
+							{Liferay.Language.get('color-system')}
+						</span>
+						<span className="dropdown-item-indicator-start pt-3">
+							<ClayIcon symbol="angle-left" />
+						</span>
+					</span>
+				</ClayButton>
+			</div>
+		</div>
+	);
+};
 
 export default ColorPicker;

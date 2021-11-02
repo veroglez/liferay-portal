@@ -2,6 +2,10 @@
 
 html#{$cadmin-selector} {
 	.cadmin {
+		.form-group + .page-editor__ColorPicker__color-palette .sheet-subtitle {
+			border: none;
+		}
+
 		.form-group-sm
 			.input-group
 			> .input-group-item
@@ -14,6 +18,38 @@ html#{$cadmin-selector} {
 				border-color: $cadmin-secondary-l3;
 				border-width: 1px 0 0;
 				font-size: 0.75rem;
+			}
+
+			&__drilldown {
+				.drilldown-item {
+					display: block;
+					width: 100%;
+
+					.dropdown-item {
+						background: none;
+						border-bottom: 1px solid $cadmin-secondary-l3;
+					}
+
+					&.current {
+						visibility: visible;
+					}
+
+					&:not(.current) {
+						visibility: hidden;
+					}
+
+					&:first-child,
+					&:last-child.current {
+						transform: translateX(-100%);
+						transition: all 400ms;
+					}
+
+					&:last-child,
+					&:first-child.current {
+						transform: translateX(0);
+						transition: all 400ms;
+					}
+				}
 			}
 
 			&__empty-result {
