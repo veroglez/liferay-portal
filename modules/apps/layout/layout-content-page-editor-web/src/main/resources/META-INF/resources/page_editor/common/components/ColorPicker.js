@@ -236,6 +236,19 @@ const ColorPalette = ({colors, onSetActive, onValueChange, splotchRef}) =>
 		</div>
 	));
 
+const PickerA = () => {
+	return (
+		<div className="clay-color-map-group">
+			<div className="clay-color-map clay-color-map-hsb">
+				<button
+					className="clay-color-map-pointerclay-color-pointer"
+					type="button"
+				>hola</button>
+			</div>
+		</div>
+	);
+};
+
 const DrillDown = ({
 	colors,
 	onSetActive,
@@ -309,6 +322,7 @@ const DrillDown = ({
 						</span>
 					</span>
 				</ClayButton>
+				<PickerA />
 			</div>
 		</div>
 	);
