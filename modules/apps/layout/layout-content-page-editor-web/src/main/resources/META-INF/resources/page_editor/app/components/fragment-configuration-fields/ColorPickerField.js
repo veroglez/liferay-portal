@@ -21,13 +21,18 @@ import ColorPicker from '../../../common/components/ColorPicker';
 import useControlledState from '../../../core/hooks/useControlledState';
 import {useStyleBook} from '../../../plugins/page-design-options/hooks/useStyleBook';
 import {ConfigurationFieldPropTypes} from '../../../prop-types/index';
+import {config} from '../../config/index';
 import {ColorPaletteField} from './ColorPaletteField';
 
 const COLOR_PICKER_TYPE = 'ColorPicker';
 
 export function ColorPickerField({field, onValueSelect, value}) {
 	const {tokenValues} = useStyleBook();
-	const [color, setColor] = useControlledState(tokenValues[value]?.value);
+	const [color, setColor] = useControlledState(
+		config.tokenReuseEnabled
+			? tokenValues[value]?.value || value
+			: tokenValues[value]?.value
+	);
 	const colors = {};
 
 	Object.values(tokenValues)
@@ -73,29 +78,30 @@ export function ColorPickerField({field, onValueSelect, value}) {
 			<label>{field.label}</label>
 
 			<ClayInput.Group>
-				<ClayInput.GroupItem prepend shrink>
-					<ColorPicker
-						colors={colors}
-						onValueChange={({name, value}) => {
-							setColor(value);
-
-							onValueSelect(field.name, name);
-						}}
-						showHex={false}
-						value={color}
-					/>
-				</ClayInput.GroupItem>
-
-				<ClayInput.GroupItem append>
-					<ClayInput
-						readOnly
-						value={
-							tokenValues[value]
-								? tokenValues[value].label
-								: Liferay.Language.get('default')
-						}
-					/>
-				</ClayInput.GroupItem>
+				{config.tokenReuseEnabled ? null : (
+					<>
+						<ClayInput.GroupItem prepend shrink>
+							<ColorPicker
+								colors={colors}
+								onValueChange={({name, value}) => {
+									setColor(value);
+									onValueSelect(field.name, name);
+								}}
+								value={color}
+							/>
+						</ClayInput.GroupItem>
+						<ClayInput.GroupItem append>
+							<ClayInput
+								readOnly
+								value={
+									tokenValues[value]
+										? tokenValues[value].label
+										: Liferay.Language.get('default')
+								}
+							/>
+						</ClayInput.GroupItem>
+					</>
+				)}
 
 				{color && (
 					<ClayButtonWithIcon
@@ -103,11 +109,14 @@ export function ColorPickerField({field, onValueSelect, value}) {
 						displayType="secondary"
 						onClick={() => {
 							setColor('');
-
 							onValueSelect(field.name, '');
 						}}
 						small
-						symbol="times-circle"
+						symbol={
+							config.tokenReuseEnabled
+								? 'restore'
+								: 'times-circle'
+						}
 						title={Liferay.Language.get('clear-selection')}
 					/>
 				)}
