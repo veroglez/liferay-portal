@@ -12,6 +12,7 @@
  * details.
  */
 
+import {ClayButtonWithIcon} from '@clayui/button';
 import DropDown from '@clayui/drop-down';
 import ClayEmptyState from '@clayui/empty-state';
 import {ClayInput} from '@clayui/form';
@@ -27,6 +28,7 @@ const ColorPicker = ({
 	onValueChange = () => {},
 	small,
 	value = '#FFFFFF',
+	showSplotch = true,
 }) => {
 	const dropdownContainerRef = useRef(null);
 	const splotchRef = useRef(null);
@@ -94,21 +96,33 @@ const ColorPicker = ({
 					small={small}
 				>
 					<ClayInput.GroupItem shrink>
-						<ClayInput.GroupText className="page-editor__ColorPicker__input-group-text--rounded-left">
-							<Splotch
-								className="dropdown-toggle"
-								disabled={disabled}
-								onClick={() => {
-									setActive((active) => !active);
+						{showSplotch ? (
+							<ClayInput.GroupText className="page-editor__ColorPicker__input-group-text--rounded-left">
+								<Splotch
+									className="dropdown-toggle"
+									disabled={disabled}
+									onClick={() => {
+										setActive((active) => !active);
 
-									if (splotchRef.current) {
-										splotchRef.current.focus();
-									}
-								}}
-								ref={splotchRef}
-								value={value}
+										if (splotchRef.current) {
+											splotchRef.current.focus();
+										}
+									}}
+									ref={splotchRef}
+									value={value}
+								/>
+							</ClayInput.GroupText>
+						) : (
+							<ClayButtonWithIcon
+								className="ml-2"
+								displayType="secondary"
+								onClick={() => setActive(!active)}
+								symbol="theme"
+								title={Liferay.Language.get(
+									'value-from-stylebook'
+								)}
 							/>
-						</ClayInput.GroupText>
+						)}
 					</ClayInput.GroupItem>
 
 					<DropDown.Menu
