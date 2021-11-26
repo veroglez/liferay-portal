@@ -44,6 +44,7 @@ export function ColorPickerField({field, onValueSelect, value}) {
 	);
 	const colors = {};
 	const [customColors, setCustomColors] = useState([value || '']);
+	const [isToken, setIsToken] = useState(!value || !!tokenValues[value]);
 	const id = useId();
 
 	Object.values(tokenValues)
@@ -89,7 +90,7 @@ export function ColorPickerField({field, onValueSelect, value}) {
 			<label>{field.label}</label>
 
 			<ClayInput.Group>
-				{config.tokenReuseEnabled ? (
+				{config.tokenReuseEnabled && !isToken ? (
 					<>
 						<ClayInput.GroupItem prepend shrink>
 							<ClayColorPicker
@@ -135,6 +136,7 @@ export function ColorPickerField({field, onValueSelect, value}) {
 								colors={colors}
 								onValueChange={({name, value}) => {
 									setColor(value);
+									setIsToken(true);
 									onValueSelect(field.name, name);
 								}}
 								value={color}
@@ -154,17 +156,50 @@ export function ColorPickerField({field, onValueSelect, value}) {
 				)}
 
 				{color && (
-					<ClayButtonWithIcon
-						className="ml-2"
-						displayType="secondary"
-						onClick={() => {
-							setColor('');
-							onValueSelect(field.name, '');
-						}}
-						small
-						symbol="times-circle"
-						title={Liferay.Language.get('clear-selection')}
-					/>
+					<>
+						{config.tokenReuseEnabled &&
+							(isToken ? (
+								<ClayButtonWithIcon
+									className="ml-2"
+									displayType="secondary"
+									onClick={() => {
+										setIsToken(false);
+										setColor(tokenValues[value].value);
+										onValueSelect(
+											field.name,
+											tokenValues[value].value
+										);
+									}}
+									small
+									symbol="link"
+									title={Liferay.Language.get('detach-token')}
+								/>
+							) : (
+								<ColorPicker
+									colors={colors}
+									onValueChange={({name, value}) => {
+										setColor(value);
+										setIsToken(true);
+										onValueSelect(field.name, name);
+									}}
+									showSplotch={false}
+									value={color}
+								/>
+							))}
+
+						<ClayButtonWithIcon
+							className="ml-2"
+							displayType="secondary"
+							onClick={() => {
+								setColor('');
+								setIsToken(true);
+								onValueSelect(field.name, '');
+							}}
+							small
+							symbol="times-circle"
+							title={Liferay.Language.get('clear-selection')}
+						/>
+					</>
 				)}
 			</ClayInput.Group>
 		</ClayForm.Group>
