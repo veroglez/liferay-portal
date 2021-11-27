@@ -2,14 +2,13 @@
 
 html#{$cadmin-selector} {
 	.cadmin {
-		.form-group-sm
-			.input-group
-			> .input-group-item
-			> .input-group-text.page-editor__ColorPicker__input-group-text--rounded-left {
-			border-radius: 4px 0 0 4px;
-		}
+		.page-editor__color-picker {
+			&__selector-splotch {
+				border: 1px solid $cadmin-gray-300;
+				height: 20px;
+				width: 20px;
+			}
 
-		.page-editor__ColorPicker {
 			&__color-palette .sheet-subtitle {
 				border-color: $cadmin-secondary-l3;
 				border-width: 1px 0 0;

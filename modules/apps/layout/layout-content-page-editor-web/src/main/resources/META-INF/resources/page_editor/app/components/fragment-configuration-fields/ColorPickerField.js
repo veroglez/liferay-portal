@@ -131,7 +131,7 @@ export function ColorPickerField({field, onValueSelect, value}) {
 					</>
 				) : (
 					<>
-						<ClayInput.GroupItem prepend shrink>
+						<ClayInput.GroupItem>
 							<ColorPicker
 								colors={colors}
 								onValueChange={({name, value}) => {
@@ -140,12 +140,7 @@ export function ColorPickerField({field, onValueSelect, value}) {
 									onValueSelect(field.name, name);
 								}}
 								value={color}
-							/>
-						</ClayInput.GroupItem>
-						<ClayInput.GroupItem append>
-							<ClayInput
-								readOnly
-								value={
+								valueLabel={
 									tokenValues[value]
 										? tokenValues[value].label
 										: Liferay.Language.get('default')
