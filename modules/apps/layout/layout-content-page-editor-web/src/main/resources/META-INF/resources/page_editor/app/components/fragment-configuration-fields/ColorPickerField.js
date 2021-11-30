@@ -17,6 +17,7 @@ import {ClayButtonWithIcon} from '@clayui/button';
 import ClayColorPicker from '@clayui/color-picker';
 import ClayDropDown from '@clayui/drop-down';
 import ClayForm, {ClayInput} from '@clayui/form';
+import ClayIcon from '@clayui/icon';
 import classNames from 'classnames';
 import {debounce} from 'frontend-js-web';
 import PropTypes from 'prop-types';
@@ -49,6 +50,7 @@ export function ColorPickerField({field, onValueSelect, value}) {
 			: tokenValues[value]?.value
 	);
 	const [customColors, setCustomColors] = useState([value || '']);
+	const [error, setError] = useState(false);
 	const [isToken, setIsToken] = useState(!value || !!tokenValues[value]);
 
 	const tokenColorValues = Object.values(tokenValues).filter(
@@ -96,7 +98,12 @@ export function ColorPickerField({field, onValueSelect, value}) {
 	}
 
 	return (
-		<ClayForm.Group className="page-editor__color-picker-field" small>
+		<ClayForm.Group
+			className={classNames('page-editor__color-picker-field', {
+				'has-warning': error,
+			})}
+			small
+		>
 			<label>{field.label}</label>
 
 			<ClayInput.Group>
@@ -147,12 +154,33 @@ export function ColorPickerField({field, onValueSelect, value}) {
 											className="page-editor__color-picker-field__autocomplete__input"
 											id={id}
 											onBlur={(event) => {
-												onValueSelect(
-													field.name,
-													event.target.value
+												const nextValue =
+													event.target.value;
+												const token = tokenColorValues.find(
+													(token) =>
+														token.label.toLowerCase() ===
+														nextValue
 												);
+
+												if (
+													token ||
+													nextValue.includes('#')
+												) {
+													setColor(token.value);
+													setIsToken(true);
+													onValueSelect(
+														field.name,
+														token.name
+													);
+												}
+												else {
+													setError(true);
+												}
 											}}
 											onChange={(event) => {
+												if (error) {
+													setError(false);
+												}
 												setActiveDropdown(true);
 												setColor(event.target.value);
 											}}
@@ -193,6 +221,10 @@ export function ColorPickerField({field, onValueSelect, value}) {
 										</ClayAutocomplete.DropDown>
 									</ClayAutocomplete>
 								</ClayInput.GroupItem>
+
+								{error && (
+									<FeedbackMessage message="this is an error" />
+								)}
 							</ClayInput.Group>
 						</ClayInput.GroupItem>
 					)
@@ -300,3 +332,17 @@ ColorPickerField.propTypes = {
 	onValueSelect: PropTypes.func.isRequired,
 	value: PropTypes.string,
 };
+
+const FeedbackMessage = ({message}) => (
+	<div className="autofit-row mt-2 small text-warning">
+		<div className="autofit-col">
+			<div className="autofit-section mr-2">
+				<ClayIcon symbol="warning-full" />
+			</div>
+		</div>
+
+		<div className="autofit-col autofit-col-expand">
+			<div className="autofit-section">{message}</div>
+		</div>
+	</div>
+);
