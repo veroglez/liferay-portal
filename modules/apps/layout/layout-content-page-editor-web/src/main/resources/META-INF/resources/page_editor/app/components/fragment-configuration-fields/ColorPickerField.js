@@ -141,10 +141,14 @@ export function ColorPickerField({field, onValueSelect, value}) {
 												`#${color}`
 											);
 											setColor(`#${color}`);
+
+											if (error) {
+												setError(false);
+											}
 										}}
 										showHex={false}
 										showPalette={false}
-										value={color?.replace('#', '') ?? ''}
+										value={error ? '#ffffff' : color?.replace('#', '') ?? ''}
 									/>
 								</ClayInput.GroupItem>
 
@@ -164,14 +168,17 @@ export function ColorPickerField({field, onValueSelect, value}) {
 
 												if (
 													token ||
-													nextValue.includes('#')
+													nextValue.startsWith('#')
 												) {
-													setColor(token.value);
-													setIsToken(true);
+													setColor(token?.value || nextValue);
 													onValueSelect(
 														field.name,
-														token.name
+														token?.name || nextValue
 													);
+
+													if(token) {
+														setIsToken(true);
+													}
 												}
 												else {
 													setError(true);
@@ -221,10 +228,6 @@ export function ColorPickerField({field, onValueSelect, value}) {
 										</ClayAutocomplete.DropDown>
 									</ClayAutocomplete>
 								</ClayInput.GroupItem>
-
-								{error && (
-									<FeedbackMessage message="this is an error" />
-								)}
 							</ClayInput.Group>
 						</ClayInput.GroupItem>
 					)
@@ -278,7 +281,7 @@ export function ColorPickerField({field, onValueSelect, value}) {
 											);
 										}}
 										small
-										symbol="link"
+										symbol="chain-broken"
 										title={Liferay.Language.get(
 											'detach-token'
 										)}
@@ -290,6 +293,9 @@ export function ColorPickerField({field, onValueSelect, value}) {
 											setColor(value);
 											setIsToken(true);
 											onValueSelect(field.name, name);
+											if(error) {
+												setError(false)
+											}
 										}}
 										showSelector={false}
 										value={color}
@@ -314,6 +320,10 @@ export function ColorPickerField({field, onValueSelect, value}) {
 									setColor('');
 									setIsToken(true);
 									onValueSelect(field.name, '');
+
+									if(config.tokenReuseEnabled && error) {
+										setError(false)
+									}
 								}}
 								small
 								symbol="times-circle"
@@ -323,6 +333,9 @@ export function ColorPickerField({field, onValueSelect, value}) {
 					</>
 				)}
 			</ClayInput.Group>
+			{config.tokenReuseEnabled && error && (
+				<FeedbackMessage message={Liferay.Language.get('this-token-does-not-exist')} />
+			)}
 		</ClayForm.Group>
 	);
 }

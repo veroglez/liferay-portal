@@ -1,10 +1,36 @@
 html#{$cadmin-selector} {
 	.cadmin {
 		.page-editor__color-picker-field {
+			&.has-warning {
+				.page-editor__color-picker-field__color-picker {
+					&:not(:hover) {
+						.input-group
+							> .input-group-item
+							> .form-control.page-editor__color-picker-field__autocomplete__input {
+							background-color: transparent;
+						}
+					}
+
+					&:hover
+						.clay-color
+						> .input-group-item
+						> .input-group-text {
+						border-color: $cadmin-warning-l1;
+					}
+				}
+			}
+
+			&:not(.has-warning) {
+				.input-group
+					> .input-group-item
+					> .form-control.page-editor__color-picker-field__autocomplete__input {
+					background-color: transparent;
+				}
+			}
+
 			.input-group
 				> .input-group-item
 				> .form-control.page-editor__color-picker-field__autocomplete__input {
-				background-color: transparent;
 				border-radius: 0 4px 4px 0;
 				font-weight: 600;
 				transition: none;
@@ -21,7 +47,7 @@ html#{$cadmin-selector} {
 				}
 			}
 
-			&:not(:hover)
+			.input-group:not(:hover)
 				.page-editor__color-picker-field__action-button
 				button:not(:focus) {
 				opacity: 0;

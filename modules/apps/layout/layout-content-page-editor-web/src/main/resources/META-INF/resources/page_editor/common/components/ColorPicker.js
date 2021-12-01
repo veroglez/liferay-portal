@@ -23,6 +23,8 @@ import React, {useEffect, useMemo, useRef, useState} from 'react';
 import {config} from '../../app/config/index';
 import SearchForm from '../../common/components/SearchForm';
 
+const DEFAULT_SELECTED_COLOR = '#0b5fff';
+
 const ColorPicker = ({
 	colors,
 	disabled,
@@ -101,6 +103,8 @@ const ColorPicker = ({
 					onClick={() => {
 						setActive((active) => !active);
 
+						console.log(splotchRef.current)
+
 						if (splotchRef.current) {
 							splotchRef.current.focus();
 						}
@@ -152,6 +156,7 @@ const ColorPicker = ({
 								colors={filteredColors}
 								onSetActive={setActive}
 								onValueChange={onValueChange}
+								selectedColor={value || DEFAULT_SELECTED_COLOR}
 								splotchRef={splotchRef}
 							/>
 						) : (
@@ -205,7 +210,7 @@ const ColorPicker = ({
 						onSetActive={setActive}
 						ref={dropdownContainerRef}
 					>
-						{active ? (
+						{active && (
 							<>
 								<SearchForm
 									className="flex-grow-1 mb-2 page-editor__color-picker__search-form px-3"
@@ -231,7 +236,7 @@ const ColorPicker = ({
 									/>
 								)}
 							</>
-						) : null}
+						)}
 					</DropDown.Menu>
 				</ClayInput.Group>
 			</div>
@@ -240,9 +245,10 @@ const ColorPicker = ({
 };
 
 const Splotch = React.forwardRef(
-	({active, className, onClick, size, title, value}, ref) => {
+	({active, autofocus, className, onClick, size, title, value}, ref) => {
 		return (
 			<button
+				autoFocus={autofocus}
 				className={classNames(
 					`btn clay-color-btn clay-color-btn-bordered lfr-portal-tooltip rounded${
 						config.tokenReuseEnabled ? '-circle' : ''
@@ -267,7 +273,7 @@ const Splotch = React.forwardRef(
 	}
 );
 
-const ColorPalette = ({colors, onSetActive, onValueChange, splotchRef}) =>
+const ColorPalette = ({colors, onSetActive, onValueChange, selectedColor, splotchRef}) =>
 	Object.keys(colors).map((category) => (
 		<div
 			className="page-editor__color-picker__color-palette"
@@ -287,6 +293,7 @@ const ColorPalette = ({colors, onSetActive, onValueChange, splotchRef}) =>
 									key={name}
 								>
 									<Splotch
+										autofocus={name === selectedColor.name}
 										onClick={() => {
 											onValueChange({
 												label,
