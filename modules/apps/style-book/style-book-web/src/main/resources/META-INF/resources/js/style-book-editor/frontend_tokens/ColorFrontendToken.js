@@ -14,6 +14,7 @@
 
 import ClayColorPicker from '@clayui/color-picker';
 import ClayForm, {ClayInput} from '@clayui/form';
+import { ColorPickerField } from '@liferay/layout-content-page-editor-web';
 import {debounce} from 'frontend-js-web';
 import PropTypes from 'prop-types';
 import React, {useEffect, useRef, useState} from 'react';
@@ -30,6 +31,8 @@ export default function ColorFrontendToken({
 	value,
 }) {
 	const {label} = frontendToken;
+
+	console.log('a', ColorPickerField)
 
 	const [customColors, setCustomColors] = useState([]);
 	const [color, setColor] = useState(value || '');
