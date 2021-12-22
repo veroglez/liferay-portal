@@ -202,6 +202,13 @@ public class FlagsTag extends IncludeTag {
 				).put(
 					"forceLogin", !FlagsTagUtil.isFlagsEnabled(themeDisplay)
 				).put(
+					"isViewMode",
+					Objects.equals(
+						Constants.VIEW,
+						ParamUtil.getString(
+							themeDisplay.getRequest(), "p_l_mode",
+							Constants.VIEW))
+				).put(
 					"message",
 					() -> {
 						if (Validator.isNotNull(message)) {
