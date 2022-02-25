@@ -95,9 +95,9 @@ export default function FrontendTokenSet({frontendTokens, label}) {
 						frontendToken={frontendToken}
 						frontendTokensValues={frontendTokensValues}
 						key={frontendToken.name}
-						onValueSelect={(_, value) => {
-							updateFrontendTokensValues(frontendToken, value);
-						}}
+						onValueSelect={(value) =>
+							updateFrontendTokensValues(frontendToken, value)
+						}
 						tokenValues={tokenValues}
 						value={
 							frontendTokensValues[frontendToken.name]?.name ||

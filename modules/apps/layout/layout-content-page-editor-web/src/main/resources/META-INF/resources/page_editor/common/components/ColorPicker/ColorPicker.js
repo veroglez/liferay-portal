@@ -38,7 +38,7 @@ import {parseColorValue} from './parseColorValue';
 import './ColorPicker.scss';
 
 const debouncedOnValueSelect = debounce(
-	(onValueSelect, fieldName, value) => onValueSelect(fieldName, value),
+	(onValueSelect, fieldName, value) => onValueSelect(value, fieldName),
 	300
 );
 
@@ -120,7 +120,7 @@ export function ColorPicker({
 	const onSetValue = (value, label, name) => {
 		setColor(value);
 		setTokenLabel(label);
-		onValueSelect(field.name, name ?? value);
+		onValueSelect(name ?? value, field.name);
 	};
 
 	const onBlurAutocompleteInput = ({target}) => {
@@ -159,7 +159,7 @@ export function ColorPicker({
 			}
 
 			if (nextValue.value) {
-				onValueSelect(field.name, nextValue.value);
+				onValueSelect(nextValue.value, field.name);
 			}
 
 			if (nextValue.label) {
