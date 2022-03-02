@@ -20,26 +20,6 @@ describe('MapBase', () => {
 	let mapImpl;
 	let bounds;
 
-	class MapImpl extends MapBase {
-		_handlePositionChanged(data) {
-			const geolocation = (data && data.location) || getLocation();
-
-			return super._handlePositionChanged({
-				newVal: {location: geolocation},
-			});
-		}
-
-		_createMap(location, controlsConfig) {
-			return {controlsConfig, location, name: 'map'};
-		}
-
-		getBounds() {
-			return bounds;
-		}
-
-		setCenter() {}
-	}
-
 	const MarkerImpl = jest.fn().mockImplementation(function (location) {
 		this.location = location;
 
@@ -65,6 +45,36 @@ describe('MapBase', () => {
 	};
 
 	const GeoJSONImpl = jest.fn().mockImplementation(() => geoJSONImpl);
+
+	class MapImpl extends MapBase {
+		constructor(...args) {
+			super({
+				dialogImpl: DialogImpl,
+				geoJSONBase: geoJSONImpl,
+				geocoderImpl,
+				markerImpl: MarkerImpl,
+				searchImpl: null
+			},...args);
+		}
+
+		_handlePositionChanged(data) {
+			const geolocation = (data && data.location) || getLocation();
+
+			return super._handlePositionChanged({
+				newVal: {location: geolocation},
+			});
+		}
+
+		_createMap(location, controlsConfig) {
+			return {controlsConfig, location, name: 'map'};
+		}
+
+		getBounds() {
+			return bounds;
+		}
+
+		setCenter() {}
+	}
 
 	beforeEach(() => {
 		window.Liferay = {
