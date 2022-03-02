@@ -69,8 +69,14 @@ class MapBase extends State {
 	 * @param  {Array} args List of arguments to be sent to State constructor
 	 * @review
 	 */
-	constructor(...args) {
+	constructor(implementations, ...args) {
 		super(...args);
+
+		MapBase.DialogImpl = implementations.dialogImpl;
+		MapBase.GeocoderImpl = implementations.geocoderImpl;
+		MapBase.GeoJSONImpl = implementations.geoJSONBase;
+		MapBase.MarkerImpl = implementations.markerImpl;
+		MapBase.SearchImpl = implementations.searchImpl;
 
 		this._customControls = {};
 		this._dialog = null;

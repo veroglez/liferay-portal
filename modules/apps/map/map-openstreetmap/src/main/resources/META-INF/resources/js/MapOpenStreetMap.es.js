@@ -32,13 +32,16 @@ class MapOpenStreetMap extends MapBase {
 	 * @review
 	 */
 	constructor(...args) {
-		super(...args);
-
-		MapBase.DialogImpl = OpenStreetMapDialog;
-		MapBase.GeocoderImpl = OpenStreetMapGeocoder;
-		MapBase.GeoJSONImpl = OpenStreetMapGeoJSON;
-		MapBase.MarkerImpl = OpenStreetMapMarker;
-		MapBase.SearchImpl = null;
+		super(
+			{
+				dialogImpl: OpenStreetMapDialog,
+				geoJSON: OpenStreetMapGeoJSON,
+				geocoderImpl: OpenStreetMapGeocoder,
+				markerImpl: OpenStreetMapMarker,
+				searchImpl: null,
+			},
+			...args
+		);
 
 		this._map = null;
 	}

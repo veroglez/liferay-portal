@@ -32,13 +32,16 @@ class MapGoogleMaps extends MapBase {
 	 * @review
 	 */
 	constructor(...args) {
-		super(...args);
-
-		MapBase.DialogImpl = GoogleMapsDialog;
-		MapBase.GeocoderImpl = GoogleMapsGeocoder;
-		MapBase.GeoJSONImpl = GoogleMapsGeoJSON;
-		MapBase.MarkerImpl = GoogleMapsMarker;
-		MapBase.SearchImpl = GoogleMapsSearch;
+		super(
+			{
+				dialogImpl: GoogleMapsDialog,
+				geoJSON: GoogleMapsGeoJSON,
+				geocoderImpl: GoogleMapsGeocoder,
+				markerImpl: GoogleMapsMarker,
+				searchImpl: GoogleMapsSearch,
+			},
+			...args
+		);
 
 		this._bounds = null;
 	}
