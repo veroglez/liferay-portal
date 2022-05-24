@@ -23,6 +23,7 @@ import {
 	SET_PREVIEW_LAYOUT,
 	SET_PREVIEW_LAYOUT_TYPE,
 	SET_TOKEN_VALUE,
+	UPDATE_UNDO_REDO_HISTORY,
 } from './constants/actionTypes';
 import {DRAFT_STATUS} from './constants/draftStatusConstants';
 import reducer from './reducer';
@@ -54,11 +55,12 @@ export function StyleBookContextProvider({children, initialState}) {
 export function useAddUndoAction() {
 	const dispatch = useDispatch();
 
-	return (name, value) => {
+	return ({isRedo, name, previousValue}) => {
 		dispatch({
+			isRedo,
 			name,
+			previousValue,
 			type: ADD_UNDO_ACTION,
-			value,
 		});
 	};
 }
@@ -189,14 +191,22 @@ export function useOnUndo() {
 }
 
 export function useOnRedo() {
-	const addRedoAction = useAddRedoAction();
-	const saveTokenValue = useSaveTokenValue();
+	const dispatch = useDispatch();
+	const frontendTokensValues = useFrontendTokensValues();
 	const redoHistory = useRedoHistory();
+	const saveTokenValue = useSaveTokenValue();
 
 	return () => {
-		const [{name, value}] = redoHistory.slice(-1);
+		const [lastRedo] = redoHistory;
+		const previousValue = frontendTokensValues[lastRedo.name];
 
-		addRedoAction(name, value);
-		saveTokenValue(name, value);
+		saveTokenValue(lastRedo.name, lastRedo.value).then(() => {
+			dispatch({
+				isRedo: true,
+				name: lastRedo.name,
+				previousValue,
+				type: ADD_UNDO_ACTION,
+			});
+		});
 	};
 }
