@@ -197,10 +197,14 @@ export function useOnRedo() {
 	const saveTokenValue = useSaveTokenValue();
 
 	return () => {
-		const [lastRedo] = redoHistory;
+		const [lastRedo, ...redos] = redoHistory;
 		const previousValue = frontendTokensValues[lastRedo.name];
 
 		saveTokenValue(lastRedo.name, lastRedo.value).then(() => {
+			dispatch({
+				redoHistory: redos,
+				type: UPDATE_UNDO_REDO_HISTORY,
+			});
 			dispatch({
 				isRedo: true,
 				name: lastRedo.name,
