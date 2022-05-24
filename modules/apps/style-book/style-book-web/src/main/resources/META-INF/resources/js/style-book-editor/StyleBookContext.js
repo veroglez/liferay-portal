@@ -65,18 +65,6 @@ export function useAddUndoAction() {
 	};
 }
 
-export function useAddRedoAction() {
-	const dispatch = useDispatch();
-
-	return (name, value) => {
-		dispatch({
-			name,
-			type: ADD_REDO_ACTION,
-			value,
-		});
-	};
-}
-
 export function useDispatch() {
 	return useContext(StyleBookDispatchContext);
 }
@@ -178,15 +166,26 @@ export function useSetPreviewLayoutType() {
 }
 
 export function useOnUndo() {
-	const addUndoAction = useAddUndoAction();
+	const dispatch = useDispatch();
+	const frontendTokensValues = useFrontendTokensValues();
 	const saveTokenValue = useSaveTokenValue();
 	const undoHistory = useUndoHistory();
 
 	return () => {
-		const [{name, value}] = undoHistory.slice(-1);
+		const [lastUndo, ...undos] = undoHistory;
+		const previousValue = frontendTokensValues[lastUndo.name];
 
-		addUndoAction(name, value);
-		saveTokenValue(name, value, true);
+		saveTokenValue(lastUndo.name, lastUndo.value).then(() => {
+			dispatch({
+				type: UPDATE_UNDO_REDO_HISTORY,
+				undoHistory: undos,
+			});
+			dispatch({
+				name: lastUndo.name,
+				previousValue,
+				type: ADD_REDO_ACTION,
+			});
+		});
 	};
 }
 
