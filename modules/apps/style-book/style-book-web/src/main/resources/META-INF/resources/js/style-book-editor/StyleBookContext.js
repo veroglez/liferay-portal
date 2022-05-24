@@ -111,42 +111,46 @@ export function useSaveTokenValue() {
 	const dispatch = useDispatch();
 	const frontendTokensValues = useFrontendTokensValues();
 
-	return (name, value, isUndoAction) => {
-		dispatch({
-			type: SET_DRAFT_STATUS,
-			value: DRAFT_STATUS.saving,
-		});
-
-		dispatch({
-			isUndoAction,
-			name,
-			type: SET_TOKEN_VALUE,
-			value,
-		});
-
-		saveDraft({...frontendTokensValues, [name]: value})
-			.then(() => {
-				dispatch({
-					type: SET_DRAFT_STATUS,
-					value: DRAFT_STATUS.draftSaved,
-				});
-			})
-			.catch((error) => {
-				if (process.env.NODE_ENV === 'development') {
-					console.error(error);
-				}
-
-				dispatch({
-					type: SET_DRAFT_STATUS,
-					value: DRAFT_STATUS.notSaved,
-				});
-
-				openToast({
-					message: error.message,
-					type: 'danger',
-				});
+	return (name, value) =>
+		new Promise((resolve, reject) => {
+			dispatch({
+				type: SET_DRAFT_STATUS,
+				value: DRAFT_STATUS.saving,
 			});
-	};
+
+			saveDraft({...frontendTokensValues, [name]: value})
+				.then(() => {
+					dispatch({
+						type: SET_DRAFT_STATUS,
+						value: DRAFT_STATUS.draftSaved,
+					});
+
+					dispatch({
+						name,
+						type: SET_TOKEN_VALUE,
+						value,
+					});
+
+					resolve();
+				})
+				.catch((error) => {
+					if (process.env.NODE_ENV === 'development') {
+						console.error(error);
+					}
+
+					dispatch({
+						type: SET_DRAFT_STATUS,
+						value: DRAFT_STATUS.notSaved,
+					});
+
+					openToast({
+						message: error.message,
+						type: 'danger',
+					});
+
+					reject();
+				});
+		});
 }
 
 export function useSetLoading() {
