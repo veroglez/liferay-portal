@@ -40,8 +40,6 @@ const STATUS_TO_LABEL = {
 
 export default function Toolbar() {
 	const previewLayout = usePreviewLayout();
-	const onUndo = useOnUndo();
-	const onRedo = useOnRedo();
 
 	return (
 		<div className="management-bar navbar style-book-editor__toolbar">
@@ -63,11 +61,9 @@ export default function Toolbar() {
 						<DraftStatus />
 					</li>
 
-					{config.featureFlagLps142363 ? (
-						<li className="nav-item">
-							<Undo onRedo={onRedo} onUndo={onUndo} />
-						</li>
-					) : null}
+					<li className="nav-item">
+						<Undo />
+					</li>
 
 					{config.featureFlagLps142363 ? (
 						<li className="nav-item">

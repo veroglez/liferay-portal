@@ -16,11 +16,7 @@ import {Collapse} from '@liferay/layout-content-page-editor-web';
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import {
-	useAddUndoAction,
-	useFrontendTokensValues,
-	useSaveTokenValue,
-} from './StyleBookContext';
+import {useFrontendTokensValues, useSaveTokenValue} from './StyleBookContext';
 import {config} from './config';
 import {FRONTEND_TOKEN_TYPES} from './constants/frontendTokenTypes';
 import BooleanFrontendToken from './frontend_tokens/BooleanFrontendToken';
@@ -59,7 +55,6 @@ const getColorFrontendTokens = (
 };
 
 export default function FrontendTokenSet({frontendTokens, label, open}) {
-	const addUndoAction = useAddUndoAction();
 	const frontendTokensValues = useFrontendTokensValues();
 	const saveTokenValue = useSaveTokenValue();
 
@@ -74,17 +69,12 @@ export default function FrontendTokenSet({frontendTokens, label, open}) {
 		const cssVariableMapping = mappings.find(
 			(mapping) => mapping.type === 'cssVariable'
 		);
-		const previousValue = frontendTokensValues[name];
 
 		if (value) {
 			saveTokenValue(name, {
 				cssVariableMapping: cssVariableMapping.value,
 				name: tokenValues[value]?.name,
 				value: tokenValues[value]?.value || value,
-			}).then(() => {
-				if (config.featureFlagLps142363) {
-					addUndoAction({isRedo: false, name, previousValue});
-				}
 			});
 		}
 	};

@@ -65,7 +65,7 @@ export default function reducer(state, action) {
 		}
 
 		case ADD_UNDO_ACTION: {
-			const {isRedo, name, previousValue} = action;
+			const {isRedo = false, name, previousValue} = action;
 
 			const nextRedoHistory = isRedo ? state.redoHistory : [];
 

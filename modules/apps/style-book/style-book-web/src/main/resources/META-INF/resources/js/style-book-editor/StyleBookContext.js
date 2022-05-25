@@ -97,49 +97,63 @@ export function useUndoHistory() {
 	return useContext(StyleBookStoreContext).undoHistory;
 }
 
+{
+}
+
+function internalSaveTokenValue({dispatch, frontendTokensValues, name, value}) {
+	dispatch({
+		type: SET_DRAFT_STATUS,
+		value: DRAFT_STATUS.saving,
+	});
+
+	return saveDraft({...frontendTokensValues, [name]: value})
+		.then(() => {
+			dispatch({
+				type: SET_DRAFT_STATUS,
+				value: DRAFT_STATUS.draftSaved,
+			});
+
+			dispatch({
+				name,
+				type: SET_TOKEN_VALUE,
+				value,
+			});
+		})
+		.catch((error) => {
+			if (process.env.NODE_ENV === 'development') {
+				console.error(error);
+			}
+
+			dispatch({
+				type: SET_DRAFT_STATUS,
+				value: DRAFT_STATUS.notSaved,
+			});
+
+			openToast({
+				message: error.message,
+				type: 'danger',
+			});
+		});
+}
+
 export function useSaveTokenValue() {
 	const dispatch = useDispatch();
 	const frontendTokensValues = useFrontendTokensValues();
 
+	const previousValue = frontendTokensValues[name];
+
 	return (name, value) =>
-		new Promise((resolve, reject) => {
+		internalSaveTokenValue({
+			dispatch,
+			frontendTokensValues,
+			name,
+			value,
+		}).then(() => {
 			dispatch({
-				type: SET_DRAFT_STATUS,
-				value: DRAFT_STATUS.saving,
+				name,
+				type: ADD_UNDO_ACTION,
+				value: previousValue,
 			});
-
-			saveDraft({...frontendTokensValues, [name]: value})
-				.then(() => {
-					dispatch({
-						type: SET_DRAFT_STATUS,
-						value: DRAFT_STATUS.draftSaved,
-					});
-
-					dispatch({
-						name,
-						type: SET_TOKEN_VALUE,
-						value,
-					});
-
-					resolve();
-				})
-				.catch((error) => {
-					if (process.env.NODE_ENV === 'development') {
-						console.error(error);
-					}
-
-					dispatch({
-						type: SET_DRAFT_STATUS,
-						value: DRAFT_STATUS.notSaved,
-					});
-
-					openToast({
-						message: error.message,
-						type: 'danger',
-					});
-
-					reject();
-				});
 		});
 }
 
@@ -168,14 +182,18 @@ export function useSetPreviewLayoutType() {
 export function useOnUndo() {
 	const dispatch = useDispatch();
 	const frontendTokensValues = useFrontendTokensValues();
-	const saveTokenValue = useSaveTokenValue();
 	const undoHistory = useUndoHistory();
 
 	return () => {
 		const [lastUndo, ...undos] = undoHistory;
 		const previousValue = frontendTokensValues[lastUndo.name];
 
-		saveTokenValue(lastUndo.name, lastUndo.value).then(() => {
+		internalSaveTokenValue({
+			dispatch,
+			frontendTokensValues,
+			name: lastUndo.name,
+			value: lastUndo.value,
+		}).then(() => {
 			dispatch({
 				type: UPDATE_UNDO_REDO_HISTORY,
 				undoHistory: undos,
@@ -193,13 +211,17 @@ export function useOnRedo() {
 	const dispatch = useDispatch();
 	const frontendTokensValues = useFrontendTokensValues();
 	const redoHistory = useRedoHistory();
-	const saveTokenValue = useSaveTokenValue();
 
 	return () => {
 		const [lastRedo, ...redos] = redoHistory;
 		const previousValue = frontendTokensValues[lastRedo.name];
 
-		saveTokenValue(lastRedo.name, lastRedo.value).then(() => {
+		internalSaveTokenValue({
+			dispatch,
+			frontendTokensValues,
+			name: lastRedo.name,
+			value: lastRedo.value,
+		}).then(() => {
 			dispatch({
 				redoHistory: redos,
 				type: UPDATE_UNDO_REDO_HISTORY,
