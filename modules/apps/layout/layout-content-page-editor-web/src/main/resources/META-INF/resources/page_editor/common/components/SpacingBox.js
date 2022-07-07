@@ -213,7 +213,6 @@ function SpacingSelectorButton({field, onChange, position, type, value}) {
 					<span ref={setLabelElement}>
 						<SpacingOptionValue
 							position={position}
-							removeValueUnit
 							type={type}
 							value={value || field?.defaultValue}
 						/>
@@ -258,12 +257,7 @@ function SpacingSelectorButton({field, onChange, position, type, value}) {
 	);
 }
 
-function SpacingOptionValue({
-	position,
-	removeValueUnit = false,
-	type,
-	value: optionValue,
-}) {
+function SpacingOptionValue({position, type, value: optionValue}) {
 	const globalContext = useGlobalContext();
 	const [value, setValue] = useState(optionValue);
 
@@ -276,10 +270,9 @@ function SpacingOptionValue({
 		const nextValue = globalContext.window
 			.getComputedStyle(element)
 			.getPropertyValue(`${type}-${position}`);
-
 		setValue(nextValue);
 		globalContext.document.body.removeChild(element);
-	}, [globalContext, optionValue, position, removeValueUnit, type]);
+	}, [globalContext, optionValue, position, type]);
 
 	return value === undefined ? '' : value;
 }
