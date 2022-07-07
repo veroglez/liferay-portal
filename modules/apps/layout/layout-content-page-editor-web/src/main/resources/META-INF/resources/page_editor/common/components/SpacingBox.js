@@ -273,20 +273,9 @@ function SpacingOptionValue({
 		element.classList.add(`${type[0]}${position[0]}-${optionValue}`);
 		globalContext.document.body.appendChild(element);
 
-		let nextValue = globalContext.window
+		const nextValue = globalContext.window
 			.getComputedStyle(element)
 			.getPropertyValue(`${type}-${position}`);
-
-		if (removeValueUnit) {
-			nextValue = parseFloat(nextValue);
-
-			if (isNaN(nextValue)) {
-				nextValue = '0';
-			}
-			else {
-				nextValue = nextValue.toString();
-			}
-		}
 
 		setValue(nextValue);
 		globalContext.document.body.removeChild(element);
