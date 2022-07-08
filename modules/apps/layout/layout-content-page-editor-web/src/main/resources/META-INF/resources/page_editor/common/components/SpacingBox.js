@@ -17,8 +17,8 @@ import ClayDropDown from '@clayui/drop-down';
 import classNames from 'classnames';
 import React, {useEffect, useRef, useState} from 'react';
 
-import {useGlobalContext} from '../../app/contexts/GlobalContext';
 import {useId} from '../../app/utils/useId';
+import {useStyleBook} from '../../plugins/page-design-options/hooks/useStyleBook';
 import {Tooltip} from './Tooltip';
 
 /**
@@ -54,6 +54,7 @@ const DROPDOWN_CLASSNAME = 'page-editor__spacing-selector__dropdown';
 
 export default function SpacingBox({fields, onChange, value}) {
 	const ref = useRef();
+	const {tokenValues} = useStyleBook();
 
 	const focusButton = (type, position) => {
 		const button = document.querySelector(
@@ -138,6 +139,7 @@ export default function SpacingBox({fields, onChange, value}) {
 								key={key}
 								onChange={(value) => onChange(key, value)}
 								position={position}
+								tokenValues={tokenValues}
 								type={type}
 								value={value[key]}
 							/>
@@ -149,7 +151,14 @@ export default function SpacingBox({fields, onChange, value}) {
 	);
 }
 
-function SpacingSelectorButton({field, onChange, position, type, value}) {
+function SpacingSelectorButton({
+	field,
+	onChange,
+	position,
+	tokenValues,
+	type,
+	value,
+}) {
 	const [active, setActive] = useState(false);
 	const disabled = !field || field.disabled;
 	const itemListRef = useRef();
@@ -199,11 +208,13 @@ function SpacingSelectorButton({field, onChange, position, type, value}) {
 							label={
 								<>
 									{field.label} -{' '}
-									<SpacingOptionValue
-										position={position}
-										type={type}
-										value={value || field.defaultValue}
-									/>
+									{
+										tokenValues[
+											`spacer${
+												value || field?.defaultValue
+											}`
+										].value
+									}
 								</>
 							}
 							positionElement={labelElement}
@@ -211,11 +222,10 @@ function SpacingSelectorButton({field, onChange, position, type, value}) {
 					) : null}
 
 					<span ref={setLabelElement}>
-						<SpacingOptionValue
-							position={position}
-							type={type}
-							value={value || field?.defaultValue}
-						/>
+						{
+							tokenValues[`spacer${value || field?.defaultValue}`]
+								?.value
+						}
 					</span>
 				</ClayButton>
 			}
@@ -238,15 +248,11 @@ function SpacingSelectorButton({field, onChange, position, type, value}) {
 								}}
 							>
 								<span className="flex-grow-1 text-truncate">
-									{option.label}
+									{tokenValues[`spacer${option.value}`].label}
 								</span>
 
 								<strong className="flex-shrink-0 pl-2">
-									<SpacingOptionValue
-										position={position}
-										type={type}
-										value={option.value}
-									/>
+									{tokenValues[`spacer${option.value}`].value}
 								</strong>
 							</ClayDropDown.Item>
 						))}
@@ -255,26 +261,6 @@ function SpacingSelectorButton({field, onChange, position, type, value}) {
 			</div>
 		</ClayDropDown>
 	);
-}
-
-function SpacingOptionValue({position, type, value: optionValue}) {
-	const globalContext = useGlobalContext();
-	const [value, setValue] = useState(optionValue);
-
-	useEffect(() => {
-		const element = globalContext.document.createElement('div');
-		element.style.display = 'none';
-		element.classList.add(`${type[0]}${position[0]}-${optionValue}`);
-		globalContext.document.body.appendChild(element);
-
-		const nextValue = globalContext.window
-			.getComputedStyle(element)
-			.getPropertyValue(`${type}-${position}`);
-		setValue(nextValue);
-		globalContext.document.body.removeChild(element);
-	}, [globalContext, optionValue, position, type]);
-
-	return value === undefined ? '' : value;
 }
 
 function capitalize(str) {
