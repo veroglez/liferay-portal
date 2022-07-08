@@ -11,6 +11,8 @@ html#{$cadmin-selector} {
 			$paddingButtonWidth: 0.175 * $selectorWidth;
 			$horizontalSpacing: 0.02 * $selectorWidth;
 
+			$marginDropdownButton: 1px;
+
 			display: grid;
 			grid:
 				#{$marginButtonHeight} #{$verticalSpacing} #{$paddingButtonHeight} auto #{$paddingButtonHeight} #{$verticalSpacing} #{$marginButtonHeight} /
@@ -25,6 +27,7 @@ html#{$cadmin-selector} {
 
 			&__dropdown {
 				font-size: 10px;
+				overflow: hidden;
 
 				& > .page-editor__spacing-selector__button {
 					background: none;
@@ -48,6 +51,7 @@ html#{$cadmin-selector} {
 
 					&-left {
 						grid-area: 1 / 1 / 8 / 2;
+						margin: 0 $marginDropdownButton;
 						clip-path: polygon(
 							0 0,
 							#{$marginButtonWidth} #{$marginButtonHeight},
@@ -58,6 +62,7 @@ html#{$cadmin-selector} {
 
 					&-right {
 						grid-area: 1 / 7 / 8 / 8;
+						margin: 0 $marginDropdownButton;
 						clip-path: polygon(
 							0 #{$marginButtonHeight},
 							100% 0,
@@ -95,6 +100,7 @@ html#{$cadmin-selector} {
 
 					&-left {
 						grid-area: 3 / 3 / 6 / 4;
+						margin: 0 $marginDropdownButton;
 						clip-path: polygon(
 							0 0,
 							#{$paddingButtonWidth} #{$paddingButtonHeight},
@@ -105,6 +111,7 @@ html#{$cadmin-selector} {
 
 					&-right {
 						grid-area: 3 / 5 / 6 / 6;
+						margin: 0 $marginDropdownButton;
 						clip-path: polygon(
 							0 #{$paddingButtonHeight},
 							100% 0,
