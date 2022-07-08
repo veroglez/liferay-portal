@@ -169,9 +169,13 @@ function SpacingSelectorButton({
 
 	useEffect(() => {
 		if (active && itemListRef.current) {
-			itemListRef.current.querySelector('button')?.focus();
+			itemListRef.current
+				.querySelector(
+					`button[data-value="${value || field?.defaultValue}"]`
+				)
+				?.focus();
 		}
-	}, [active]);
+	}, [active, value, field.defaultValue]);
 
 	return (
 		<ClayDropDown
@@ -240,6 +244,7 @@ function SpacingSelectorButton({
 									[field.label, option.label]
 								)}
 								className="d-flex"
+								data-value={option.value}
 								key={option.value}
 								onClick={() => {
 									onChange(option.value);
