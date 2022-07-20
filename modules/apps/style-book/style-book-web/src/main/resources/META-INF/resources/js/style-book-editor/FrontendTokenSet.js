@@ -62,6 +62,7 @@ export default function FrontendTokenSet({
 	return (
 		<Collapse label={label} open={open}>
 			{frontendTokens.map((frontendToken) => {
+				const {editorType} = frontendToken;
 				const FrontendTokenComponent = getFrontendTokenComponent(
 					frontendToken
 				);
@@ -76,12 +77,10 @@ export default function FrontendTokenSet({
 						frontendToken.defaultValue,
 				};
 
-				if (frontendToken.editorType === 'ColorPicker') {
+				if (editorType === 'ColorPicker') {
 					props = {
 						...props,
 						frontendTokensValues,
-						onValueSelect: (name, value) =>
-							updateFrontendTokensValues(frontendToken, value),
 						tokenValues,
 					};
 				}
