@@ -29,21 +29,11 @@ const CUSTOM = 'custom';
 
 const KEYS_NOT_ALLOWED = ['+', ',', 'e'];
 
-const REGEX = /[-(0-9).]+|[a-zA-Z]+|%/g;
+const REGEX = /^(-?(?:[\d]*\.?[\d]+))(px|em|vh|vw|rem|%)$/;
 
 const UNITS = ['px', '%', 'em', 'rem', 'vw', 'vh', CUSTOM];
 
 const isNumber = (value) => !isNaN(parseFloat(value));
-
-const isCustom = (value) => {
-	const matchedValue = value.match(REGEX);
-
-	if (matchedValue) {
-		return !isNumber(matchedValue[0]) || !UNITS.includes(matchedValue[1]);
-	}
-
-	return false;
-};
 
 export function LengthField({field, onValueSelect, value}) {
 	const inputId = useId();
@@ -54,13 +44,20 @@ export function LengthField({field, onValueSelect, value}) {
 			return {unit: UNITS[0], value: ''};
 		}
 
-		if (isCustomRef.current || isCustom(value)) {
-			return {unit: CUSTOM, value};
+		const match = value.match(REGEX);
+
+		if (!isCustomRef.current && match) {
+			const [, number, unit] = match;
+
+			return {
+				unit,
+				value: number,
+			};
 		}
 
 		return {
-			unit: value.match(REGEX)[1],
-			value: value.match(REGEX)[0],
+			unit: CUSTOM,
+			value,
 		};
 	}, [value]);
 
@@ -71,8 +68,7 @@ export function LengthField({field, onValueSelect, value}) {
 			<Field
 				field={field}
 				id={inputId}
-				initialUnit={initialValue.unit}
-				initialValue={initialValue.value}
+				initialValue={initialValue}
 				isCustomRef={isCustomRef}
 				onValueSelect={onValueSelect}
 				value={value}
@@ -90,7 +86,6 @@ LengthField.propTypes = {
 const Field = ({
 	field,
 	id,
-	initialUnit,
 	initialValue,
 	isCustomRef,
 	onValueSelect,
@@ -98,8 +93,8 @@ const Field = ({
 }) => {
 	const [active, setActive] = useState(false);
 	const inputRef = useRef();
-	const [nextValue, setNextValue] = useControlledState(initialValue);
-	const [nextUnit, setNextUnit] = useState(initialUnit);
+	const [nextValue, setNextValue] = useControlledState(initialValue.value);
+	const [nextUnit, setNextUnit] = useState(initialValue.unit);
 	const triggerId = useId();
 
 	const handleUnitSelect = (unit) => {
@@ -165,10 +160,10 @@ const Field = ({
 			return;
 		}
 
+		const match = value.match(REGEX);
+
 		setNextUnit(
-			!isCustomRef.current && UNITS.includes(value.match(REGEX)[1])
-				? value.match(REGEX)[1]
-				: 'custom'
+			!isCustomRef.current && match ? value.match(REGEX)[2] : 'custom'
 		);
 	}, [value, isCustomRef]);
 
