@@ -44,7 +44,7 @@ export function LengthField({field, onValueSelect, value}) {
 			return {unit: UNITS[0], value: ''};
 		}
 
-		const match = value.match(REGEX);
+		const match = value.toLowerCase().match(REGEX);
 
 		if (!isCustomRef.current && match) {
 			const [, number, unit] = match;
@@ -156,11 +156,9 @@ const Field = ({
 			return;
 		}
 
-		const match = value.match(REGEX);
+		const match = value.toLowerCase().match(REGEX);
 
-		setNextUnit(
-			!isCustomRef.current && match ? value.match(REGEX)[2] : 'custom'
-		);
+		setNextUnit(!isCustomRef.current && match ? match[2] : CUSTOM);
 	}, [value, isCustomRef]);
 
 	return (
