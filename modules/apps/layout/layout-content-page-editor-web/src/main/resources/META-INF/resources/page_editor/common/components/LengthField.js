@@ -33,8 +33,6 @@ const REGEX = /^(-?(?:[\d]*\.?[\d]+))(px|em|vh|vw|rem|%)$/;
 
 const UNITS = ['px', '%', 'em', 'rem', 'vw', 'vh', CUSTOM];
 
-const isNumber = (value) => !isNaN(parseFloat(value));
-
 export function LengthField({field, onValueSelect, value}) {
 	const inputId = useId();
 	const isCustomRef = useRef(false);
@@ -46,7 +44,7 @@ export function LengthField({field, onValueSelect, value}) {
 
 		const match = value.toLowerCase().match(REGEX);
 
-		if (!isCustomRef.current && match) {
+		if (match) {
 			const [, number, unit] = match;
 
 			return {
@@ -106,19 +104,14 @@ const Field = ({
 			return;
 		}
 
+		let valueWithUnits = `${nextValue}${unit}`;
+
 		if (unit === CUSTOM) {
-			onValueSelect(field.name, nextValue);
-
-			return;
+			valueWithUnits = nextValue;
 		}
-
-		if (unit !== CUSTOM && isNaN(nextValue)) {
-			onValueSelect(field.name, '');
-
-			return;
+		else if (isNaN(nextValue)) {
+			valueWithUnits = '';
 		}
-
-		const valueWithUnits = `${parseFloat(nextValue)}${unit}`;
 
 		if (valueWithUnits !== value) {
 			onValueSelect(field.name, valueWithUnits);
@@ -126,15 +119,19 @@ const Field = ({
 	};
 
 	const handleValueSelect = () => {
-		if (nextUnit === CUSTOM) {
-			onValueSelect(field.name, nextValue);
+		const match = nextValue.toLowerCase().match(REGEX);
+		let valueWithUnits = nextValue;
 
-			return;
+		if (match) {
+			const [, number, unit] = match;
+
+			valueWithUnits = `${number}${unit}`;
+
+			setNextValue(number);
 		}
-
-		const valueWithUnits = isNumber(nextValue)
-			? `${parseFloat(nextValue)}${nextUnit}`
-			: '';
+		else if (nextUnit !== CUSTOM && nextValue) {
+			valueWithUnits = `${nextValue}${nextUnit}`;
+		}
 
 		if (valueWithUnits !== value) {
 			onValueSelect(field.name, valueWithUnits);
@@ -158,8 +155,8 @@ const Field = ({
 
 		const match = value.toLowerCase().match(REGEX);
 
-		setNextUnit(!isCustomRef.current && match ? match[2] : CUSTOM);
-	}, [value, isCustomRef]);
+		setNextUnit(match ? match[2] : CUSTOM);
+	}, [value]);
 
 	return (
 		<ClayInput.Group>
