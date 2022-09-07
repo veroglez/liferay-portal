@@ -127,6 +127,8 @@ export function ReorderSetsModal({onCloseModal}) {
 												sortedFragmentsWidgetSets.widgets,
 										})
 									);
+
+									onClose();
 								}}
 							>
 								{Liferay.Language.get('save')}
