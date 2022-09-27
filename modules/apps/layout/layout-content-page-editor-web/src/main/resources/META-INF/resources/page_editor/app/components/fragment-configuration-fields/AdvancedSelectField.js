@@ -345,7 +345,12 @@ const SingleSelectWithIcon = ({
 				>
 					<span className="text-truncate">{selectedOptionLabel}</span>
 
-					{!value ? <span className="inherited"></span> : null}
+					{!value ? (
+						<span
+							className="inherited"
+							title={Liferay.Language.get('inherited-value')}
+						></span>
+					) : null}
 				</div>
 			) : (
 				<div
