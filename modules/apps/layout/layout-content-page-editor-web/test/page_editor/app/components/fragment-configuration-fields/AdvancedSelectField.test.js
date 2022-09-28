@@ -125,6 +125,10 @@ jest.mock(
 );
 
 describe('AdvancedSelectField', () => {
+	beforeAll(() => {
+		Liferay.FeatureFlags['LPS-163362'] = true;
+	});
+
 	it('renders AdvancedSelectField', () => {
 		renderAdvancedSelectField();
 
@@ -144,13 +148,13 @@ describe('AdvancedSelectField', () => {
 	it('displays Detach button if the selected option is a token', () => {
 		renderAdvancedSelectField({value: 'fontSizeSm'});
 
-		expect(screen.getByTitle('detach-token')).toBeInTheDocument();
+		expect(screen.getByTitle('detach-style')).toBeInTheDocument();
 	});
 
 	it('renders an input with the token value when Detach button is clicked', () => {
 		renderAdvancedSelectField({value: 'fontSizeLg'});
 
-		userEvent.click(screen.getByTitle('detach-token'));
+		userEvent.click(screen.getByTitle('detach-style'));
 
 		const input = screen.getByLabelText('font-size');
 
@@ -230,7 +234,7 @@ describe('AdvancedSelectField', () => {
 			value: 'fontSizeLg',
 		});
 
-		expect(screen.queryByTitle('detach-token')).not.toBeInTheDocument();
+		expect(screen.queryByTitle('detach-style')).not.toBeInTheDocument();
 	});
 
 	it('does not render the Value from Stylebook button when user does not have update permission', () => {
