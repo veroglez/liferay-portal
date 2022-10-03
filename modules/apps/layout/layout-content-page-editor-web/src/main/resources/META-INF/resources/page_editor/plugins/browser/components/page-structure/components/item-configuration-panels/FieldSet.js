@@ -32,6 +32,12 @@ const DISPLAY_SIZES = {
 	small: 'small',
 };
 
+const DEFAULT_VALUE_FIELDS = {
+	borderRadius: '0px',
+	opacity: '100',
+	shadow: 'none',
+};
+
 export function fieldIsDisabled(item, field) {
 	if (field.disabled) {
 		return true;
@@ -120,52 +126,63 @@ function FieldSetContent({
 	onValueSelect,
 	values,
 }) {
+	const newFields = fields.map((field) => {
+		return {
+			...field,
+			defaultValue:
+				DEFAULT_VALUE_FIELDS[field.name] || field.defaultValue,
+		};
+	});
+
 	return (
 		<div className="page-editor__sidebar__fieldset">
-			{fields.map((field, index) => {
-				let FieldComponent =
-					field.type && FRAGMENT_CONFIGURATION_FIELDS[field.type];
+			{(Liferay.FeatureFlags['LPS-163362'] ? newFields : fields).map(
+				(field, index) => {
+					let FieldComponent =
+						field.type && FRAGMENT_CONFIGURATION_FIELDS[field.type];
 
-				if (
-					!Liferay.FeatureFlags['LPS-163362'] &&
-					field.name === 'opacity'
-				) {
-					FieldComponent = FRAGMENT_CONFIGURATION_FIELDS.text;
-				}
+					if (
+						!Liferay.FeatureFlags['LPS-163362'] &&
+						field.name === 'opacity'
+					) {
+						FieldComponent = FRAGMENT_CONFIGURATION_FIELDS.text;
+					}
 
-				return (
-					<div
-						className={classNames(
-							field.cssClass,
-							'autofit-row page-editor__sidebar__fieldset__field align-items-end',
-							{
-								'page-editor__sidebar__fieldset__field-small':
-									field.displaySize === DISPLAY_SIZES.small,
-							}
-						)}
-						key={index}
-					>
-						<div className="autofit-col autofit-col-expand">
-							<FieldComponent
-								disabled={fieldIsDisabled(item, field)}
-								field={field}
-								isCustomStyle={isCustomStylesFieldSet}
-								item={item}
-								onValueSelect={onValueSelect}
-								value={getFieldValue({
-									field,
-									languageId,
-									values,
-								})}
-							/>
+					return (
+						<div
+							className={classNames(
+								field.cssClass,
+								'autofit-row page-editor__sidebar__fieldset__field align-items-end',
+								{
+									'page-editor__sidebar__fieldset__field-small':
+										field.displaySize ===
+										DISPLAY_SIZES.small,
+								}
+							)}
+							key={index}
+						>
+							<div className="autofit-col autofit-col-expand">
+								<FieldComponent
+									disabled={fieldIsDisabled(item, field)}
+									field={field}
+									isCustomStyle={isCustomStylesFieldSet}
+									item={item}
+									onValueSelect={onValueSelect}
+									value={getFieldValue({
+										field,
+										languageId,
+										values,
+									})}
+								/>
+							</div>
+
+							{field.localizable && (
+								<CurrentLanguageFlag className="ml-2" />
+							)}
 						</div>
-
-						{field.localizable && (
-							<CurrentLanguageFlag className="ml-2" />
-						)}
-					</div>
-				);
-			})}
+					);
+				}
+			)}
 		</div>
 	);
 }

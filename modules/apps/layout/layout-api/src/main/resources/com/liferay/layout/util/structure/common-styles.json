@@ -884,7 +884,7 @@
 				"cssProperty": "border-color",
 				"cssTemplate": "border-color: {value} !important;",
 				"dataType": "string",
-				"inherited": false,
+				"inherited": true,
 				"label": "border-color",
 				"name": "borderColor",
 				"responsive": false,
