@@ -56,9 +56,8 @@ import 'codemirror/mode/javascript/javascript';
 
 import 'codemirror/mode/xml/xml';
 import ClayIcon from '@clayui/icon';
-import {CodeMirrorKeyboardMessage} from '@liferay/layout-content-page-editor-web';
 import CodeMirror from 'codemirror';
-import React, {useEffect, useMemo, useRef, useState} from 'react';
+import React, {useEffect, useMemo, useRef} from 'react';
 
 const AUTOCOMPLETE_EXCLUDED_KEYS = new Set([
 	' ',
@@ -246,8 +245,6 @@ const CodeMirrorEditor = ({
 }) => {
 	const editorRef = useRef();
 	const ref = useRef();
-	const [isEnabled, setIsEnabled] = useState(true);
-	const [isFocused, setIsFocused] = useState(false);
 
 	const customEntitiesSymbolsRegex = useMemo(() => {
 		if (!customEntities) {
@@ -274,11 +271,7 @@ const CodeMirrorEditor = ({
 				autoRefresh: true,
 				extraKeys: {
 					'Ctrl-M'(cm) {
-						const tabKeyIsEnabled = hasEnabledTabKey(cm);
-
-						setIsEnabled(tabKeyIsEnabled);
-
-						if (tabKeyIsEnabled) {
+						if (hasEnabledTabKey(cm)) {
 							cm.addKeyMap({
 								'Shift-Tab': false,
 								'Tab': false,
@@ -328,8 +321,6 @@ const CodeMirrorEditor = ({
 			});
 
 			codeMirror.on('focus', (cm) => {
-				setIsFocused(true);
-
 				if (hasEnabledTabKey(cm)) {
 					cm.addKeyMap({
 						'Shift-Tab': false,
@@ -338,8 +329,6 @@ const CodeMirrorEditor = ({
 					});
 				}
 			});
-
-			codeMirror.on('blur', () => setIsFocused(false));
 
 			editorRef.current = codeMirror;
 		}
@@ -394,16 +383,7 @@ const CodeMirrorEditor = ({
 				/>
 			)}
 
-			<div className="d-flex flex-column flex-grow-1 position-relative">
-				{isFocused ? (
-					<CodeMirrorKeyboardMessage keyIsEnabled={isEnabled} />
-				) : null}
-
-				<div
-					className="codemirror-editor-wrapper h-100"
-					ref={ref}
-				></div>
-			</div>
+			<div className="codemirror-editor-wrapper" ref={ref}></div>
 
 			{codeFooterText && <FixedText text={codeFooterText} />}
 		</>
