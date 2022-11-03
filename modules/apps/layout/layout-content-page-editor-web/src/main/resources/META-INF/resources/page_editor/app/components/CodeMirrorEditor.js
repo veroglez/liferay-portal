@@ -137,13 +137,7 @@ const CodeMirrorEditor = ({
 				<CodeMirrorKeyboardMessage keyIsEnabled={isEnabled} />
 			) : null}
 
-			<div
-				aria-label={Liferay.Language.get(
-					'use-ctrl-m-to-enable-or-disable-the-tab-key'
-				)}
-				className={classNames(className, 'h-100')}
-				ref={ref}
-			/>
+			<div className={classNames(className, 'h-100')} ref={ref} />
 		</div>
 	);
 };

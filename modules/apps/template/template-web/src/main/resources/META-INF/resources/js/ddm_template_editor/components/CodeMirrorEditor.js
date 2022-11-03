@@ -278,9 +278,6 @@ export function CodeMirrorEditor({
 			) : null}
 
 			<div
-				aria-label={Liferay.Language.get(
-					'use-ctrl-m-to-enable-or-disable-the-tab-key'
-				)}
 				className="ddm_template_editor__CodeMirrorEditor"
 				ref={setEditorWrapper}
 			/>

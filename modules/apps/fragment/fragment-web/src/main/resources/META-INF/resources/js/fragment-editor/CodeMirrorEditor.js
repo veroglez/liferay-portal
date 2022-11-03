@@ -400,9 +400,6 @@ const CodeMirrorEditor = ({
 				) : null}
 
 				<div
-					aria-label={Liferay.Language.get(
-						'use-ctrl-m-to-enable-or-disable-the-tab-key'
-					)}
 					className="codemirror-editor-wrapper h-100"
 					ref={ref}
 				></div>
