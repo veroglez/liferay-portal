@@ -16,6 +16,7 @@ package com.liferay.layout.content.page.editor.web.internal.portlet.action;
 
 import com.liferay.layout.content.page.editor.constants.ContentPageEditorPortletKeys;
 import com.liferay.layout.page.template.admin.constants.LayoutPageTemplateAdminPortletKeys;
+import com.liferay.layout.page.template.constants.LayoutPageTemplateEntryTypeConstants;
 import com.liferay.layout.page.template.exception.LayoutPageTemplateEntryNameException;
 import com.liferay.layout.page.template.model.LayoutPageTemplateCollection;
 import com.liferay.layout.page.template.model.LayoutPageTemplateEntry;
@@ -43,6 +44,8 @@ import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.PropsUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
+
+import java.util.Locale;
 
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
@@ -74,10 +77,14 @@ public class CreateLayoutPageTemplateEntryMVCActionCommand
 
 		long segmentsExperienceId = ParamUtil.getLong(
 			actionRequest, "segmentsExperienceId");
+
 		Layout sourceLayout = _layoutLocalService.getLayout(
 			themeDisplay.getPlid());
 
-		String name = _language.format(locale, "x-page-tempate", sourceName);
+		String name = _getUniqueName(
+			sourceLayout.getGroupId(),
+			sourceLayout.getName(themeDisplay.getLocale()),
+			themeDisplay.getLocale());
 
 		if (!GetterUtil.getBoolean(PropsUtil.get("feature.flag.LPS-166201"))) {
 			name = ParamUtil.getString(actionRequest, "name");
@@ -193,6 +200,30 @@ public class CreateLayoutPageTemplateEntryMVCActionCommand
 
 		JSONPortletResponseUtil.writeJSON(
 			actionRequest, actionResponse, jsonObject);
+	}
+
+	private String _getUniqueName(
+		long groupId, String sourceName, Locale locale) {
+
+		String name = _language.format(locale, "x-page-tempate", sourceName);
+
+		for (int i = 2;; i++) {
+			LayoutPageTemplateEntry targetLayoutPageTemplateEntry =
+				_layoutPageTemplateEntryLocalService.
+					fetchLayoutPageTemplateEntry(
+						groupId, name,
+						LayoutPageTemplateEntryTypeConstants.TYPE_BASIC);
+
+			if (targetLayoutPageTemplateEntry == null) {
+				break;
+			}
+
+			name = _language.format(
+				locale, "x-page-tempate-x",
+				new String[] {sourceName, String.valueOf(i)});
+		}
+
+		return name;
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(
