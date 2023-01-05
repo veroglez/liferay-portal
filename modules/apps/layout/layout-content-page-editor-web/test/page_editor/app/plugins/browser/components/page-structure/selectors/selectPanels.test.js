@@ -17,6 +17,21 @@ import {LAYOUT_DATA_ITEM_TYPES} from '../../../../../../../../src/main/resources
 import {VIEWPORT_SIZES} from '../../../../../../../../src/main/resources/META-INF/resources/page_editor/app/config/constants/viewportSizes';
 import {selectPanels} from '../../../../../../../../src/main/resources/META-INF/resources/page_editor/plugins/browser/components/page-structure/selectors/selectPanels';
 
+jest.mock(
+	'../../../../../../../../src/main/resources/META-INF/resources/page_editor/app/config',
+	() => ({
+		config: {
+			formTypes: [
+				{
+					hasPermission: false,
+					label: 'object-test-1',
+					value: '1234',
+				},
+			],
+		},
+	})
+);
+
 const STATE = {
 	fragmentEntryLinks: {
 		fragmentEntryLinkId: {},
@@ -28,6 +43,16 @@ const STATE = {
 				parentId: '',
 				type: LAYOUT_DATA_ITEM_TYPES.container,
 			},
+			form: {
+				children: [],
+				config: {
+					classNameId: '1234',
+					classTypeId: '0',
+				},
+				itemId: 'form',
+				parentId: '',
+				type: LAYOUT_DATA_ITEM_TYPES.form,
+			},
 			fragment: {
 				config: {
 					fragmentEntryLinkId: 'fragmentEntryLinkId',
@@ -36,7 +61,6 @@ const STATE = {
 				parentId: '',
 				type: LAYOUT_DATA_ITEM_TYPES.fragment,
 			},
-
 			row: {
 				itemId: 'row',
 				parentId: '',
@@ -185,6 +209,41 @@ describe('selectPanels', () => {
 			expect.objectContaining({
 				panelsIds: expect.objectContaining({
 					containerStyles: true,
+				}),
+			})
+		);
+	});
+
+	it('only returns form general panel (not the styles and advanced panels) if the item mapped to the form does not have permissions', () => {
+		Liferay.FeatureFlags['LPS-169923'] = true;
+
+		const nextState = {
+			...STATE,
+			permissions: {
+				UPDATE: true,
+				UPDATE_LAYOUT_BASIC: true,
+				UPDATE_LAYOUT_LIMITED: true,
+			},
+		};
+
+		const panels = selectPanels(
+			'form',
+			ITEM_TYPES.layoutDataItem,
+			nextState
+		);
+
+		expect(panels).toEqual(
+			expect.objectContaining({
+				panelsIds: expect.objectContaining({
+					formGeneral: true,
+				}),
+			})
+		);
+		expect(panels).toEqual(
+			expect.objectContaining({
+				panelsIds: expect.not.objectContaining({
+					containerStyles: false,
+					formAdvancedPanel: false,
 				}),
 			})
 		);
