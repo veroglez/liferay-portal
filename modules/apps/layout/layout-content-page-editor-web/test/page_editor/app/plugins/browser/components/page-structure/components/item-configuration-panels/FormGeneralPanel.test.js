@@ -46,14 +46,22 @@ jest.mock(
 			commonStyles: [],
 			formTypes: [
 				{
+					hasPermission: true,
 					label: 'None',
 					subtypes: [],
 					value: '0',
 				},
 				{
+					hasPermission: true,
 					label: 'Type',
 					subtypes: [],
-					value: 'classNameId',
+					value: 'classNameId1',
+				},
+				{
+					hasPermission: false,
+					label: 'Type',
+					subtypes: [],
+					value: 'classNameId2',
 				},
 			],
 		},
@@ -63,7 +71,7 @@ jest.mock(
 const MAPPED_FORM_ITEM = {
 	children: [],
 	config: {
-		classNameId: 'classNameId',
+		classNameId: 'classNameId1',
 		classTypeId: '0',
 	},
 	itemId: 'form-item',
@@ -270,5 +278,26 @@ describe('FormGeneralPanel', () => {
 
 		expect(screen.getByLabelText('page')).toBeInTheDocument();
 		expect(screen.getByDisplayValue('My Page')).toBeInTheDocument();
+	});
+
+	it('renders the permission retriction message when the mapped item does not have permissions', () => {
+		Liferay.FeatureFlags['LPS-169923'] = true;
+
+		renderComponent({
+			item: {
+				...MAPPED_FORM_ITEM,
+
+				config: {
+					...MAPPED_FORM_ITEM.config,
+					classNameId: 'classNameId2',
+				},
+			},
+		});
+
+		expect(
+			screen.getByText(
+				'due-to-permission-restrictions,-this-content-cannot-be-displayed'
+			)
+		).toBeInTheDocument();
 	});
 });
