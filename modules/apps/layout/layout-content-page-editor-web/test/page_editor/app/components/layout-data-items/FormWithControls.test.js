@@ -35,7 +35,8 @@ jest.mock(
 		config: {
 			formTypes: [
 				{
-					label: 'Type',
+					hasPermission: true,
+					label: 'Type 1',
 					subtypes: [
 						{
 							label: 'Subtype',
@@ -43,6 +44,17 @@ jest.mock(
 						},
 					],
 					value: '1234',
+				},
+				{
+					hasPermission: false,
+					label: 'Type 2',
+					subtypes: [
+						{
+							label: 'Subtype',
+							value: '1235',
+						},
+					],
+					value: '1235',
 				},
 			],
 		},
@@ -52,6 +64,10 @@ jest.mock(
 const DEFAULT_CONFIG = {classNameId: '0'};
 
 describe('FormWithControls', () => {
+	beforeAll(() => {
+		Liferay.FeatureFlags['LPS-169923'] = true;
+	});
+
 	it('renders a container inside a form', () => {
 		const {container} = render(
 			<StoreMother.Component>
@@ -167,7 +183,52 @@ describe('FormWithControls', () => {
 			</StoreMother.Component>
 		);
 
-		expect(screen.getByText('Type')).toBeInTheDocument();
+		expect(screen.getByLabelText('content-type')).toBeInTheDocument();
 		expect(screen.getByText('map-your-form')).toBeInTheDocument();
+	});
+
+	it('only shows as options the form types that have permissions', () => {
+		render(
+			<StoreMother.Component>
+				<FormWithControls
+					item={{
+						children: [],
+						config: {
+							classNameId: '0',
+							classTypeId: '0',
+						},
+						itemId: 'form',
+						type: LAYOUT_DATA_ITEM_TYPES.form,
+					}}
+				/>
+			</StoreMother.Component>
+		);
+
+		expect(screen.getByText('Type 1')).toBeInTheDocument();
+		expect(screen.queryByText('Type 2')).not.toBeInTheDocument();
+	});
+
+	it('shows a permission restriction message when the form type does not have permissions', () => {
+		render(
+			<StoreMother.Component>
+				<FormWithControls
+					item={{
+						children: ['fragment'],
+						config: {
+							classNameId: '1235',
+							classTypeId: '0',
+						},
+						itemId: 'form',
+						type: LAYOUT_DATA_ITEM_TYPES.form,
+					}}
+				/>
+			</StoreMother.Component>
+		);
+
+		expect(
+			screen.getByText(
+				'due-to-permission-restrictions,-this-content-cannot-be-displayed'
+			)
+		).toBeInTheDocument();
 	});
 });
