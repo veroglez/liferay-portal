@@ -61,12 +61,16 @@ currentURLObj.setParameter("historyKey", liferayPortletResponse.getNamespace() +
 </clay:content-row>
 
 <liferay-util:buffer
-	var="removeOrganizationIcon"
+	var="removeButtonOrganizations"
 >
-	<liferay-ui:icon
+	<clay:button
+		aria-label=""
+		cssClass="lfr-portal-tooltip modify-link"
+		data-rowId=""
+		displayType="unstyled"
 		icon="times-circle"
-		markupView="lexicon"
-		message="remove"
+		small="<%= true %>"
+		title=""
 	/>
 </liferay-util:buffer>
 
@@ -122,7 +126,15 @@ currentURLObj.setParameter("historyKey", liferayPortletResponse.getNamespace() +
 
 		<c:if test="<%= !portletName.equals(myAccountPortletId) && ((selUser == null) || !OrganizationMembershipPolicyUtil.isMembershipProtected(permissionChecker, selUser.getUserId(), organization.getOrganizationId())) %>">
 			<liferay-ui:search-container-column-text>
-				<a class="modify-link" data-rowId="<%= organization.getOrganizationId() %>" href="javascript:void(0);"><%= removeOrganizationIcon %></a>
+				<clay:button
+					aria-label='<%= LanguageUtil.format(request, "remove-x", HtmlUtil.escape(organization.getName())) %>'
+					cssClass="lfr-portal-tooltip modify-link"
+					data-rowId="<%= organization.getOrganizationId() %>"
+					displayType="unstyled"
+					icon="times-circle"
+					small="<%= true %>"
+					title='<%= LanguageUtil.format(request, "remove-x", HtmlUtil.escape(organization.getName())) %>'
+				/>
 			</liferay-ui:search-container-column-text>
 		</c:if>
 	</liferay-ui:search-container-row>
@@ -201,18 +213,29 @@ currentURLObj.setParameter("historyKey", liferayPortletResponse.getNamespace() +
 				Util.openSelectionModal({
 					onSelect: (selectedItem) => {
 						if (selectedItem) {
-							const entityId = selectedItem.entityid;
-
+							const {
+								entityid: entityId,
+								entityname: entityName,
+								type,
+							} = selectedItem;
+							const label = Liferay.Util.sub(
+								'<liferay-ui:message key="remove-x" />',
+								entityName
+							);
 							const rowColumns = [];
 
-							rowColumns.push(selectedItem.entityname);
-							rowColumns.push(selectedItem.type);
+							let removeButton =
+								'<%= UnicodeFormatter.toString(removeButtonOrganizations) %>';
+
+							removeButton = removeButton
+								.replace('aria-label=""', `aria-label="\${label}"`)
+								.replace('data-rowId=""', `data-rowId="\${entityId}"`)
+								.replace('title=""', `title="\${label}"`);
+
+							rowColumns.push(entityName);
+							rowColumns.push(type);
 							rowColumns.push('');
-							rowColumns.push(
-								'<a class="modify-link" data-rowId="' +
-									entityId +
-									'" href="javascript:void(0);"><%= UnicodeFormatter.toString(removeOrganizationIcon) %></a>'
-							);
+							rowColumns.push(removeButton);
 
 							searchContainer.addRow(rowColumns, entityId);
 

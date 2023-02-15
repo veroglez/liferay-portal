@@ -57,12 +57,16 @@ currentURLObj.setParameter("historyKey", liferayPortletResponse.getNamespace() +
 </clay:content-row>
 
 <liferay-util:buffer
-	var="removeUserGroupIcon"
+	var="removeButtonUserGroups"
 >
-	<liferay-ui:icon
+	<clay:button
+		aria-label=""
+		cssClass="lfr-portal-tooltip modify-link"
+		data-rowId=""
+		displayType="unstyled"
 		icon="times-circle"
-		markupView="lexicon"
-		message="remove"
+		small="<%= true %>"
+		title=""
 	/>
 </liferay-util:buffer>
 
@@ -97,7 +101,15 @@ currentURLObj.setParameter("historyKey", liferayPortletResponse.getNamespace() +
 
 		<c:if test="<%= !portletName.equals(myAccountPortletId) && !UserGroupMembershipPolicyUtil.isMembershipRequired((selUser != null) ? selUser.getUserId() : 0, userGroup.getUserGroupId()) %>">
 			<liferay-ui:search-container-column-text>
-				<a class="modify-link" data-rowId="<%= userGroup.getUserGroupId() %>" href="javascript:void(0);"><%= removeUserGroupIcon %></a>
+				<clay:button
+					aria-label='<%= LanguageUtil.format(request, "remove-x", HtmlUtil.escape(userGroup.getName())) %>'
+					cssClass="lfr-portal-tooltip modify-link"
+					data-rowId="<%= userGroup.getUserGroupId() %>"
+					displayType="unstyled"
+					icon="times-circle"
+					small="<%= true %>"
+					title='<%= LanguageUtil.format(request, "remove-x", HtmlUtil.escape(userGroup.getName())) %>'
+				/>
 			</liferay-ui:search-container-column-text>
 		</c:if>
 	</liferay-ui:search-container-row>
@@ -160,18 +172,26 @@ currentURLObj.setParameter("historyKey", liferayPortletResponse.getNamespace() +
 		A.one('#<portlet:namespace />openUserGroupsLink').on('click', (event) => {
 			Liferay.Util.openSelectionModal({
 				onSelect: function (selectedItem) {
-					var A = AUI();
+					const A = AUI();
 
-					var entityId = selectedItem.entityid;
-
-					var rowColumns = [];
-
-					rowColumns.push(A.Escape.html(selectedItem.entityname));
-					rowColumns.push(
-						'<a class="modify-link" data-rowId="' +
-							entityId +
-							'" href="javascript:void(0);"><%= UnicodeFormatter.toString(removeUserGroupIcon) %></a>'
+					const entityId = selectedItem.entityid;
+					const entityName = A.Escape.html(selectedItem.entityname);
+					const label = Liferay.Util.sub(
+						'<liferay-ui:message key="remove-x" />',
+						entityName
 					);
+					const rowColumns = [];
+
+					let removeButton =
+						'<%= UnicodeFormatter.toString(removeButtonUserGroups) %>';
+
+					removeButton = removeButton
+						.replace('aria-label=""', `aria-label="\${label}"`)
+						.replace('data-rowId=""', `data-rowId="\${entityId}"`)
+						.replace('title=""', `title="\${label}"`);
+
+					rowColumns.push(entityName);
+					rowColumns.push(removeButton);
 
 					searchContainer.addRow(rowColumns, entityId);
 
