@@ -59,6 +59,7 @@ export function DisplayPagePreviewItemSelectorContent({dark = false}) {
 	const selectPreviewItem = useSelectDisplayPagePreviewItem();
 
 	const selectItem = (item) => {
+		console.log(item)
 		setActive(false);
 		selectPreviewItem(item);
 	};
