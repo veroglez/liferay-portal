@@ -12,13 +12,15 @@
  * details.
  */
 
-import {useMemo} from 'react';
-import {v4 as uuidv4} from 'uuid';
+/// <reference types="react" />
 
-const PREFIX = uuidv4();
-
-let nextId = 0;
-
-export function useId() {
-	return useMemo(() => `useId_${PREFIX}_${nextId++}`, []);
+import './CodeMirrorKeyboardMessage.scss';
+interface IProps {
+	className?: string;
+	keyIsEnabled: boolean;
 }
+export default function CodeMirrorKeyboardMessage({
+	className,
+	keyIsEnabled,
+}: IProps): JSX.Element;
+export {};
