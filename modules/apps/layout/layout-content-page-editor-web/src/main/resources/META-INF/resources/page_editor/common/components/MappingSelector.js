@@ -13,6 +13,7 @@
  */
 
 import ClayForm, {ClaySelectWithOption} from '@clayui/form';
+import {useId} from '@liferay/frontend-js-react-web';
 import classNames from 'classnames';
 import {sub} from 'frontend-js-web';
 import PropTypes from 'prop-types';
@@ -32,7 +33,6 @@ import isMappedToStructure from '../../app/utils/editable_value/isMappedToStruct
 import findPageContent from '../../app/utils/findPageContent';
 import getMappingFieldsKey from '../../app/utils/getMappingFieldsKey';
 import itemSelectorValueToInfoItem from '../../app/utils/item_selector_value/itemSelectorValueToInfoItem';
-import {useId} from '../hooks/useId';
 import ItemSelector from './ItemSelector';
 import MappingFieldSelector from './MappingFieldSelector';
 

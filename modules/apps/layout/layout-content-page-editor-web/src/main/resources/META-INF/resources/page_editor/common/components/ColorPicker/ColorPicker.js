@@ -16,6 +16,7 @@ import {ClayButtonWithIcon} from '@clayui/button';
 import ClayColorPicker from '@clayui/color-picker';
 import ClayForm, {ClayInput} from '@clayui/form';
 import ClayIcon from '@clayui/icon';
+import {useId} from '@liferay/frontend-js-react-web';
 import classNames from 'classnames';
 import {debounce} from 'frontend-js-web';
 import PropTypes from 'prop-types';
@@ -29,7 +30,6 @@ import {
 } from '../../../app/contexts/StyleErrorsContext';
 import {getResetLabelByViewport} from '../../../app/utils/getResetLabelByViewport';
 import {ConfigurationFieldPropTypes} from '../../../prop_types/index';
-import {useId} from '../../hooks/useId';
 import {DropdownColorPicker} from './DropdownColorPicker';
 import {parseColorValue} from './parseColorValue';
 

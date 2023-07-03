@@ -22,6 +22,7 @@ import {useModal} from '@clayui/modal';
 import {
 	ReactPortal,
 	useEventListener,
+	useId,
 	useIsMounted,
 } from '@liferay/frontend-js-react-web';
 import {COOKIE_TYPES, navigate, openToast} from 'frontend-js-web';
@@ -32,7 +33,6 @@ import {useDispatch, useSelector} from '../../../app/contexts/StoreContext';
 import selectCanUpdateExperiences from '../../../app/selectors/selectCanUpdateExperiences';
 import selectCanUpdateSegments from '../../../app/selectors/selectCanUpdateSegments';
 import getKeyboardFocusableElements from '../../../app/utils/getKeyboardFocusableElements';
-import {useId} from '../../../common/hooks/useId';
 import {useSessionState} from '../../../common/hooks/useSessionState';
 import createExperience from '../thunks/createExperience';
 import duplicateExperience from '../thunks/duplicateExperience';

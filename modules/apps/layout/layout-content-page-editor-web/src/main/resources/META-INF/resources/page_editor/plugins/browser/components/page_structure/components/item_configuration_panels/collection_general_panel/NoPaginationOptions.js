@@ -13,7 +13,7 @@
  */
 
 import ClayForm, {ClayCheckbox, ClayInput} from '@clayui/form';
-import {useIsMounted} from '@liferay/frontend-js-react-web';
+import {useId, useIsMounted} from '@liferay/frontend-js-react-web';
 import classNames from 'classnames';
 import {sub} from 'frontend-js-web';
 import PropTypes from 'prop-types';
@@ -24,7 +24,6 @@ import {config} from '../../../../../../../app/config/index';
 import CollectionService from '../../../../../../../app/services/CollectionService';
 import {WarningMessage} from '../../../../../../../common/components/WarningMessage';
 import useControlledState from '../../../../../../../common/hooks/useControlledState';
-import {useId} from '../../../../../../../common/hooks/useId';
 
 export function NoPaginationOptions({
 	collection,

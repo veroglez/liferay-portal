@@ -13,11 +13,11 @@
  */
 
 import ClayForm, {ClayInput} from '@clayui/form';
+import {useId} from '@liferay/frontend-js-react-web';
 import PropTypes from 'prop-types';
 import React, {useState} from 'react';
 
 import useControlledState from '../../../common/hooks/useControlledState';
-import {useId} from '../../../common/hooks/useId';
 import {ConfigurationFieldPropTypes} from '../../../prop_types/index';
 
 export function TextField({field, onValueSelect, value}) {

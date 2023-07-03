@@ -14,12 +14,12 @@
 
 import {ClayButtonWithIcon} from '@clayui/button';
 import ClayForm, {ClayCheckbox, ClayToggle} from '@clayui/form';
+import {useId} from '@liferay/frontend-js-react-web';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React from 'react';
 
 import useControlledState from '../../../common/hooks/useControlledState';
-import {useId} from '../../../common/hooks/useId';
 import {ConfigurationFieldPropTypes} from '../../../prop_types/index';
 import {VIEWPORT_SIZES} from '../../config/constants/viewportSizes';
 import {useSelector} from '../../contexts/StoreContext';

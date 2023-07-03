@@ -11,7 +11,7 @@
 
 import ClayForm, {ClayInput} from '@clayui/form';
 import ClayIcon from '@clayui/icon';
-import {useId} from '@liferay/layout-content-page-editor-web';
+import {useId} from '@liferay/frontend-js-react-web';
 import PropTypes from 'prop-types';
 import React, {useEffect, useRef, useState} from 'react';
 

@@ -14,6 +14,7 @@
 
 import ClayAlert from '@clayui/alert';
 import ClayForm, {ClayInput, ClayToggle} from '@clayui/form';
+import {useId} from '@liferay/frontend-js-react-web';
 import React, {useCallback, useEffect, useState} from 'react';
 
 import {addMappingFields} from '../../../../../../app/actions/index';
@@ -37,7 +38,6 @@ import CurrentLanguageFlag from '../../../../../../common/components/CurrentLang
 import {LayoutSelector} from '../../../../../../common/components/LayoutSelector';
 import MappingFieldSelector from '../../../../../../common/components/MappingFieldSelector';
 import useControlledState from '../../../../../../common/hooks/useControlledState';
-import {useId} from '../../../../../../common/hooks/useId';
 import {CommonStyles} from './CommonStyles';
 import ContainerDisplayOptions from './ContainerDisplayOptions';
 import FormMappingOptions from './FormMappingOptions';

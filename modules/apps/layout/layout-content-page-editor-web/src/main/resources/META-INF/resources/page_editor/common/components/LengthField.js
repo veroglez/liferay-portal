@@ -16,6 +16,7 @@ import ClayButton, {ClayButtonWithIcon} from '@clayui/button';
 import ClayDropDown, {Align} from '@clayui/drop-down';
 import ClayForm, {ClayInput} from '@clayui/form';
 import ClayIcon from '@clayui/icon';
+import {useId} from '@liferay/frontend-js-react-web';
 import classNames from 'classnames';
 import {sub} from 'frontend-js-web';
 import PropTypes from 'prop-types';
@@ -27,7 +28,6 @@ import {getResetLabelByViewport} from '../../app/utils/getResetLabelByViewport';
 import isValidStyleValue from '../../app/utils/isValidStyleValue';
 import {ConfigurationFieldPropTypes} from '../../prop_types/index';
 import useControlledState from '../hooks/useControlledState';
-import {useId} from '../hooks/useId';
 
 import './LengthField.scss';
 

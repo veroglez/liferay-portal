@@ -17,6 +17,7 @@ import ClayIcon from '@clayui/icon';
 import ClayLoadingIndicator from '@clayui/loading-indicator';
 import {
 	ReactPortal,
+	useId,
 	useIsMounted,
 	useStateSafe,
 } from '@liferay/frontend-js-react-web';
@@ -24,7 +25,6 @@ import classNames from 'classnames';
 import {sub} from 'frontend-js-web';
 import React, {useRef} from 'react';
 
-import {useId} from '../../common/hooks/useId';
 import useLazy from '../../common/hooks/useLazy';
 import useLoad from '../../common/hooks/useLoad';
 import usePlugins from '../../common/hooks/usePlugins';

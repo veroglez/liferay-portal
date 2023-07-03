@@ -19,8 +19,11 @@ import ClayLayout from '@clayui/layout';
 import ClayModal, {useModal} from '@clayui/modal';
 import ClaySticker from '@clayui/sticker';
 import ClayTabs from '@clayui/tabs';
-import {ReactDOMServer, useEventListener} from '@liferay/frontend-js-react-web';
-import {useId} from '@liferay/layout-content-page-editor-web';
+import {
+	ReactDOMServer,
+	useEventListener,
+	useId,
+} from '@liferay/frontend-js-react-web';
 import classNames from 'classnames';
 import {fetch, navigate, openSelectionModal} from 'frontend-js-web';
 import PropTypes from 'prop-types';

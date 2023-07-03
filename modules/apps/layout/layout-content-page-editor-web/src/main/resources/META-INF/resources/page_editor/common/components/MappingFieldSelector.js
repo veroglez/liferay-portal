@@ -13,6 +13,7 @@
  */
 
 import ClayForm, {ClaySelect} from '@clayui/form';
+import {useId} from '@liferay/frontend-js-react-web';
 import classNames from 'classnames';
 import {sub} from 'frontend-js-web';
 import React from 'react';
@@ -20,7 +21,6 @@ import React from 'react';
 import {EDITABLE_TYPE_LABELS} from '../../app/config/constants/editableTypeLabels';
 import {EDITABLE_TYPES} from '../../app/config/constants/editableTypes';
 import getSelectedField from '../../app/utils/getSelectedField';
-import {useId} from '../hooks/useId';
 
 const UNMAPPED_OPTION = {
 	label: `-- ${Liferay.Language.get('unmapped')} --`,

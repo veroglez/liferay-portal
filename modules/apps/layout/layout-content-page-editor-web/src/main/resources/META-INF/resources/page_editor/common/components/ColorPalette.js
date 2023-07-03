@@ -13,12 +13,12 @@
  */
 
 import ClayButton from '@clayui/button';
+import {useId} from '@liferay/frontend-js-react-web';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React, {useMemo} from 'react';
 
 import {config} from '../../app/config/index';
-import {useId} from '../hooks/useId';
 
 export default function ColorPalette({
 	label,

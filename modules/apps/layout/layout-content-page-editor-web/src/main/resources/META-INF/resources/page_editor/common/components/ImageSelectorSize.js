@@ -13,7 +13,7 @@
  */
 
 import ClayForm, {ClaySelectWithOption} from '@clayui/form';
-import {useIsMounted} from '@liferay/frontend-js-react-web';
+import {useId, useIsMounted} from '@liferay/frontend-js-react-web';
 import PropTypes from 'prop-types';
 import React, {useEffect, useState} from 'react';
 
@@ -24,7 +24,6 @@ import selectLanguageId from '../../app/selectors/selectLanguageId';
 import ImageService from '../../app/services/ImageService';
 import isMapped from '../../app/utils/editable_value/isMapped';
 import resolveEditableValue from '../../app/utils/editable_value/resolveEditableValue';
-import {useId} from '../hooks/useId';
 
 export const DEFAULT_IMAGE_SIZE_ID = 'auto';
 

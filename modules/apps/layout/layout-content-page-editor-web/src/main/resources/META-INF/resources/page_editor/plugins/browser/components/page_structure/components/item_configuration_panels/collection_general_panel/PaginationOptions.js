@@ -13,6 +13,7 @@
  */
 
 import ClayForm, {ClayCheckbox, ClayInput} from '@clayui/form';
+import {useId} from '@liferay/frontend-js-react-web';
 import classNames from 'classnames';
 import {sub} from 'frontend-js-web';
 import PropTypes from 'prop-types';
@@ -22,7 +23,6 @@ import {PAGINATION_ERROR_MESSAGES} from '../../../../../../../app/config/constan
 import {config} from '../../../../../../../app/config/index';
 import {WarningMessage} from '../../../../../../../common/components/WarningMessage';
 import useControlledState from '../../../../../../../common/hooks/useControlledState';
-import {useId} from '../../../../../../../common/hooks/useId';
 
 export function PaginationOptions({
 	displayAllPages,

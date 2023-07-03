@@ -13,6 +13,7 @@
  */
 
 import ClayForm, {ClaySelectWithOption} from '@clayui/form';
+import {useId} from '@liferay/frontend-js-react-web';
 import React, {useEffect, useState} from 'react';
 
 import LinkField from '../../../../../../app/components/fragment_configuration_fields/LinkField';
@@ -29,7 +30,6 @@ import updateEditableValues from '../../../../../../app/thunks/updateEditableVal
 import {deepEqual} from '../../../../../../app/utils/checkDeepEqual';
 import isMapped from '../../../../../../app/utils/editable_value/isMapped';
 import {getEditableLinkValue} from '../../../../../../app/utils/getEditableLinkValue';
-import {useId} from '../../../../../../common/hooks/useId';
 import {getEditableItemPropTypes} from '../../../../../../prop_types/index';
 
 const PREFIX_OPTIONS = [

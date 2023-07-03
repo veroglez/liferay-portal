@@ -13,12 +13,12 @@
  */
 
 import {ClayButtonWithIcon, default as ClayButton} from '@clayui/button';
+import {useId} from '@liferay/frontend-js-react-web';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React from 'react';
 
 import {PopoverTooltip} from '../../common/components/PopoverTooltip';
-import {useId} from '../../common/hooks/useId';
 import {VIEWPORT_SIZES} from '../config/constants/viewportSizes';
 import {config} from '../config/index';
 
