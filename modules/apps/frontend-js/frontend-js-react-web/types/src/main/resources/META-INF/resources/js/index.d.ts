@@ -19,6 +19,7 @@ export {default as useEventListener} from './hooks/useEventListener';
 export {default as useId} from './hooks/useId';
 export {default as useInterval} from './hooks/useInterval';
 export {default as useIsMounted} from './hooks/useIsMounted';
+export {default as useSessionState} from './hooks/useSessionState';
 export {default as useLiferayState} from './hooks/useLiferayState';
 export {default as usePrevious} from './hooks/usePrevious';
 export {default as useStateSafe} from './hooks/useStateSafe';

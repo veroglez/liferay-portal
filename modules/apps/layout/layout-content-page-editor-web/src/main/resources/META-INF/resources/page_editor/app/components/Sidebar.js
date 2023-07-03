@@ -19,6 +19,7 @@ import {
 	ReactPortal,
 	useId,
 	useIsMounted,
+	useSessionState,
 	useStateSafe,
 } from '@liferay/frontend-js-react-web';
 import classNames from 'classnames';
@@ -28,7 +29,6 @@ import React, {useRef} from 'react';
 import useLazy from '../../common/hooks/useLazy';
 import useLoad from '../../common/hooks/useLoad';
 import usePlugins from '../../common/hooks/usePlugins';
-import {useSessionState} from '../../common/hooks/useSessionState';
 import * as Actions from '../actions/index';
 import {config} from '../config/index';
 import {useSelectItem} from '../contexts/ControlsContext';

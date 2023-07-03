@@ -13,6 +13,7 @@
  */
 
 import {ClayButtonWithIcon} from '@clayui/button';
+import {useSessionState} from '@liferay/frontend-js-react-web';
 import {sub} from 'frontend-js-web';
 import React, {useEffect, useMemo, useState} from 'react';
 
@@ -32,7 +33,6 @@ import isNullOrUndefined from '../../../app/utils/isNullOrUndefined';
 import SearchForm from '../../../common/components/SearchForm';
 import SearchResultsMessage from '../../../common/components/SearchResultsMessage';
 import SidebarPanelHeader from '../../../common/components/SidebarPanelHeader';
-import {useSessionState} from '../../../common/hooks/useSessionState';
 import SearchResultsPanel from './SearchResultsPanel';
 import TabsPanel from './TabsPanel';
 

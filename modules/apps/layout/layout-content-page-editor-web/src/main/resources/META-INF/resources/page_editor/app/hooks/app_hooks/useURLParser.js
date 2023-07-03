@@ -12,10 +12,10 @@
  * details.
  */
 
+import {useSessionState} from '@liferay/frontend-js-react-web';
 import {COOKIE_TYPES} from 'frontend-js-web';
 import {useCallback, useEffect} from 'react';
 
-import {useSessionState} from '../../../common/hooks/useSessionState';
 import switchSidebarPanel from '../../actions/switchSidebarPanel';
 import {HIGHLIGHTED_COMMENT_ID_KEY} from '../../config/constants/highlightedCommentIdKey';
 import {useSelectItem} from '../../contexts/ControlsContext';

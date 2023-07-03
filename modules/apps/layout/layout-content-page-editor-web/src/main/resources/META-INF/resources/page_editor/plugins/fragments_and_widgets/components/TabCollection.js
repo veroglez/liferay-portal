@@ -13,6 +13,7 @@
  */
 
 import ClayIcon from '@clayui/icon';
+import {useSessionState} from '@liferay/frontend-js-react-web';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React, {useRef, useState} from 'react';
@@ -20,7 +21,6 @@ import React, {useRef, useState} from 'react';
 import {FRAGMENTS_DISPLAY_STYLES} from '../../../app/config/constants/fragmentsDisplayStyles';
 import {LIST_ITEM_TYPES} from '../../../app/config/constants/listItemTypes';
 import {config} from '../../../app/config/index';
-import {useSessionState} from '../../../common/hooks/useSessionState';
 import useKeyboardNavigation from '../hooks/useKeyboardNavigation';
 import TabItem from './TabItem';
 

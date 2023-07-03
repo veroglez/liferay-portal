@@ -16,8 +16,7 @@ import ClayButton from '@clayui/button';
 import ClayIcon from '@clayui/icon';
 import ClayLayout from '@clayui/layout';
 import ClayLoadingIndicator from '@clayui/loading-indicator';
-import {useIsMounted} from '@liferay/frontend-js-react-web';
-import {useSessionState} from '@liferay/layout-content-page-editor-web';
+import {useIsMounted, useSessionState} from '@liferay/frontend-js-react-web';
 import {
 	fetch,
 	getPortletNamespace,

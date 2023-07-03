@@ -12,13 +12,13 @@
  * details.
  */
 
+import {useSessionState} from '@liferay/frontend-js-react-web';
 import React from 'react';
 
 import {HIGHLIGHTED_COMMENT_ID_KEY} from '../../../app/config/constants/highlightedCommentIdKey';
 import {LAYOUT_DATA_ITEM_TYPES} from '../../../app/config/constants/layoutDataItemTypes';
 import {useActiveItemId} from '../../../app/contexts/ControlsContext';
 import {useSelectorCallback} from '../../../app/contexts/StoreContext';
-import {useSessionState} from '../../../common/hooks/useSessionState';
 import FragmentComments from './FragmentComments';
 import FragmentEntryLinksWithComments from './FragmentEntryLinksWithComments';
 
