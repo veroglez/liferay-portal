@@ -15,4 +15,4 @@
 /**
  * Hook to generate unique IDs.
  */
-export declare function useId(): string;
+export default function useId(): string;

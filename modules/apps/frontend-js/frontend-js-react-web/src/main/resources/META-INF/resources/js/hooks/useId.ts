@@ -26,6 +26,6 @@ let nextId = 0;
  * Hook to generate unique IDs.
  */
 
-export function useId() {
+export default function useId() {
 	return useMemo(() => `useId_${PREFIX}_${nextId++}`, []);
 }

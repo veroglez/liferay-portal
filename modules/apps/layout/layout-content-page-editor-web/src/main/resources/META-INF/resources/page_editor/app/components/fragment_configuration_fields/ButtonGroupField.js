@@ -14,11 +14,11 @@
 
 import {ClayButtonWithIcon} from '@clayui/button';
 import ClayForm from '@clayui/form';
+import {useId} from '@liferay/frontend-js-react-web';
 import PropTypes from 'prop-types';
 import React from 'react';
 
 import useControlledState from '../../../common/hooks/useControlledState';
-import {useId} from '../../../common/hooks/useId';
 import {ConfigurationFieldPropTypes} from '../../../prop_types/index';
 
 export function ButtonGroupField({field, onValueSelect, value}) {

@@ -13,13 +13,13 @@
  */
 
 import ClayForm, {ClayInput, ClaySelectWithOption} from '@clayui/form';
+import {useId} from '@liferay/frontend-js-react-web';
 import PropTypes from 'prop-types';
 import React, {useEffect, useState} from 'react';
 
 import CurrentLanguageFlag from '../../../common/components/CurrentLanguageFlag';
 import {LayoutSelector} from '../../../common/components/LayoutSelector';
 import useControlledState from '../../../common/hooks/useControlledState';
-import {useId} from '../../../common/hooks/useId';
 import {ConfigurationFieldPropTypes} from '../../../prop_types/index';
 import isMappedToLayout from '../../utils/editable_value/isMappedToLayout';
 

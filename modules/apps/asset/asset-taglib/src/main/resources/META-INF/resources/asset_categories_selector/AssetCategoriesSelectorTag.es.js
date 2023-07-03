@@ -13,7 +13,7 @@
  */
 
 import ClayLink from '@clayui/link';
-import {useId} from '@liferay/layout-content-page-editor-web';
+import {useId} from '@liferay/frontend-js-react-web';
 import PropTypes from 'prop-types';
 import React, {useState} from 'react';
 

@@ -13,10 +13,9 @@
  */
 
 import {ClayButtonWithIcon} from '@clayui/button';
-import {ReactDOMServer} from '@liferay/frontend-js-react-web';
+import {ReactDOMServer, useId} from '@liferay/frontend-js-react-web';
 import React, {useMemo} from 'react';
 
-import {useId} from '../../common/hooks/useId';
 import {useDispatch, useSelector} from '../contexts/StoreContext';
 import switchSidebarPanel from '../thunks/switchSidebarPanel';
 

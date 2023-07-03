@@ -16,12 +16,12 @@ import ClayAlert from '@clayui/alert';
 import ClayButton from '@clayui/button';
 import ClayIcon from '@clayui/icon';
 import ClayTabs from '@clayui/tabs';
+import {useId} from '@liferay/frontend-js-react-web';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React, {useEffect, useMemo, useState} from 'react';
 
 import SidebarPanelHeader from '../../common/components/SidebarPanelHeader';
-import {useId} from '../../common/hooks/useId';
 import {
 	PANELS,
 	selectPanels,
