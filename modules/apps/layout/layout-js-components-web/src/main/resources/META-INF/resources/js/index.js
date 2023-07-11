@@ -12,27 +12,9 @@
  * details.
  */
 
-import {LengthInput} from '@liferay/layout-js-components-web';
-import PropTypes from 'prop-types';
-import React from 'react';
-
-export default function LengthFrontendToken({
-	frontendToken,
-	onValueSelect,
-	value,
-}) {
-	return (
-		<LengthInput
-			field={frontendToken}
-			onValueSelect={(_, value) => onValueSelect(value)}
-			value={value}
-		/>
-	);
-}
-
-LengthFrontendToken.propTypes = {
-	frontendToken: PropTypes.shape({label: PropTypes.string.isRequired})
-		.isRequired,
-	onValueSelect: PropTypes.func.isRequired,
-	value: PropTypes.string,
-};
+export {default as LengthInput} from './components/LengthInput/LengthInput';
+export {default as useControlledState} from './hooks/useControlledState';
+export {
+	useHasStyleErrors,
+	StyleErrorsContextProvider,
+} from './contexts/StyleErrorsContext';
