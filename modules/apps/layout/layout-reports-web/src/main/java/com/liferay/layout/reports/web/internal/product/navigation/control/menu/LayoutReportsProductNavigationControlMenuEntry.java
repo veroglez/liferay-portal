@@ -165,13 +165,15 @@ public class LayoutReportsProductNavigationControlMenuEntry
 	public boolean isShow(HttpServletRequest httpServletRequest)
 		throws PortalException {
 
-		long scopeGroupId = _portal.getScopeGroupId(httpServletRequest);
+		if (!FeatureFlagManagerUtil.isEnabled("LPS-187284")) {
+			long scopeGroupId = _portal.getScopeGroupId(httpServletRequest);
 
-		if ((scopeGroupId == 0) ||
-			!_layoutReportsGooglePageSpeedConfigurationProvider.isEnabled(
-				_groupLocalService.getGroup(scopeGroupId))) {
+			if ((scopeGroupId == 0) ||
+				!_layoutReportsGooglePageSpeedConfigurationProvider.isEnabled(
+					_groupLocalService.getGroup(scopeGroupId))) {
 
-			return false;
+				return false;
+			}
 		}
 
 		ThemeDisplay themeDisplay =
