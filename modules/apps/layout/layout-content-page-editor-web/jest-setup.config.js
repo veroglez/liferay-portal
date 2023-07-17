@@ -16,6 +16,12 @@ import {initializeCache} from './src/main/resources/META-INF/resources/page_edit
 
 initializeCache();
 
+Liferay.Util.SessionStorage = {
+	getItem: () => {},
+	removeItem: () => {},
+	setItem: () => {},
+};
+
 Liferay.Util.sub.mockImplementation((key, ...args) => {
 	const argsArray = args.flatMap((arg) => arg);
 
