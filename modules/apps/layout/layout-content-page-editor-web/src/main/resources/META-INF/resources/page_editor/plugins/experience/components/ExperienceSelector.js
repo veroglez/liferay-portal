@@ -24,6 +24,7 @@ import {
 	useEventListener,
 	useId,
 	useIsMounted,
+	useSessionState,
 } from '@liferay/frontend-js-react-web';
 import {COOKIE_TYPES, navigate, openToast} from 'frontend-js-web';
 import React, {useCallback, useEffect, useRef, useState} from 'react';
@@ -33,7 +34,6 @@ import {useDispatch, useSelector} from '../../../app/contexts/StoreContext';
 import selectCanUpdateExperiences from '../../../app/selectors/selectCanUpdateExperiences';
 import selectCanUpdateSegments from '../../../app/selectors/selectCanUpdateSegments';
 import getKeyboardFocusableElements from '../../../app/utils/getKeyboardFocusableElements';
-import {useSessionState} from '../../../common/hooks/useSessionState';
 import createExperience from '../thunks/createExperience';
 import duplicateExperience from '../thunks/duplicateExperience';
 import removeExperience from '../thunks/removeExperience';

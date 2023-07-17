@@ -14,7 +14,7 @@
 
 import {TreeView as ClayTreeView} from '@clayui/core';
 import ClayIcon from '@clayui/icon';
-import {useSessionState} from '@liferay/layout-content-page-editor-web';
+import {useSessionState} from '@liferay/frontend-js-react-web';
 import PropTypes from 'prop-types';
 import React, {useRef} from 'react';
 

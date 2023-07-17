@@ -13,7 +13,7 @@
  */
 
 import ClayTabs from '@clayui/tabs';
-import {useSessionState} from '@liferay/layout-content-page-editor-web';
+import {useSessionState} from '@liferay/frontend-js-react-web';
 import PropTypes from 'prop-types';
 import React, {useContext} from 'react';
 
