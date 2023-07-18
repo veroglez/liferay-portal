@@ -12,14 +12,14 @@
  * details.
  */
 
-import React, {createContext} from 'react';
-
-export const ConstantsContext = createContext({});
-
-export function ConstantsContextProvider({children, constants}) {
-	return (
-		<ConstantsContext.Provider value={constants}>
-			{children}
-		</ConstantsContext.Provider>
-	);
+import React from 'react';
+export declare const ConstantsContext: React.Context<{}>;
+interface Props {
+	children: React.ReactNode;
+	constants: object;
 }
+export declare function ConstantsContextProvider({
+	children,
+	constants,
+}: Props): JSX.Element;
+export {};
