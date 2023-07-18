@@ -253,7 +253,7 @@ describe('IssuesList', () => {
 			layoutReportsIssues: mockLayoutReportsIssuesSEODetails,
 		});
 
-		const button = getByTitle('launch-page-audit');
+		const button = getByTitle('launch');
 
 		userEvent.click(button);
 
