@@ -12,6 +12,7 @@
  * details.
  */
 
+import ClayAlert from '@clayui/alert';
 import {ClayButtonWithIcon} from '@clayui/button';
 import ClayLabel from '@clayui/label';
 import {fetch, navigate, sub} from 'frontend-js-web';
@@ -31,6 +32,7 @@ type Fragment = {
 
 export default function RenderTimes({url}: {url: string}) {
 	const [fragments, setFragments] = useState<Fragment[]>([]);
+	const [visibleInfo, setVisibleInfo] = useState<boolean>(true);
 
 	useEffect(() => {
 		fetch(url, {method: 'GET'})
@@ -40,93 +42,110 @@ export default function RenderTimes({url}: {url: string}) {
 	}, [url]);
 
 	return (
-		<div className="page-audit__fragmentList">
-			{fragments.map(
-				({
-					fragmentCollectionURL,
-					isCache,
-					isFragment,
-					isFromMaster,
-					itemId,
-					name,
-					renderTime,
-				}) => {
-					return (
-						<div
-							className="c-p-1 d-flex flex-column page-audit__fragment"
-							key={itemId}
-						>
-							<span className="font-weight-bold position-relative">
-								{name}
+		<>
+			{visibleInfo ? (
+				<ClayAlert
+					className="c-mb-4"
+					displayType="info"
+					onClose={() => setVisibleInfo(false)}
+					role="none"
+				>
+					{Liferay.Language.get(
+						'render-times-are-approximate-and-subject-to-slight-variations-due-to-server-status-and-load'
+					)}
+				</ClayAlert>
+			) : null}
 
-								<span className="page-audit__fragment__buttons">
-									<ClayButtonWithIcon
-										aria-label={sub(
-											Liferay.Language.get(
-												'locate-x-in-page'
-											),
-											name
-										)}
-										displayType="unstyled"
-										size="sm"
-										symbol="search"
-										title={sub(
-											Liferay.Language.get(
-												'locate-x-in-page'
-											),
-											name
-										)}
-									/>
+			<div className="page-audit__fragmentList">
+				{fragments.map(
+					({
+						fragmentCollectionURL,
+						isCache,
+						isFragment,
+						isFromMaster,
+						itemId,
+						name,
+						renderTime,
+					}) => {
+						return (
+							<div
+								className="c-p-1 d-flex flex-column page-audit__fragment"
+								key={itemId}
+							>
+								<span className="font-weight-bold position-relative">
+									{name}
 
-									<ClayButtonWithIcon
-										aria-label={sub(
-											Liferay.Language.get(
-												'open-x-in-fragment-library'
-											),
-											name
-										)}
-										className="c-ml-2"
-										displayType="unstyled"
-										onClick={() =>
-											navigate(fragmentCollectionURL)
-										}
-										size="sm"
-										symbol="shortcut"
-										title={sub(
-											Liferay.Language.get(
-												'open-x-in-fragment-library'
-											),
-											name
-										)}
-									/>
+									<span className="page-audit__fragment__buttons">
+										<ClayButtonWithIcon
+											aria-label={sub(
+												Liferay.Language.get(
+													'locate-x-in-page'
+												),
+												name
+											)}
+											displayType="unstyled"
+											size="sm"
+											symbol="search"
+											title={sub(
+												Liferay.Language.get(
+													'locate-x-in-page'
+												),
+												name
+											)}
+										/>
+
+										<ClayButtonWithIcon
+											aria-label={sub(
+												Liferay.Language.get(
+													'open-x-in-fragment-library'
+												),
+												name
+											)}
+											className="c-ml-2"
+											displayType="unstyled"
+											onClick={() =>
+												navigate(fragmentCollectionURL)
+											}
+											size="sm"
+											symbol="shortcut"
+											title={sub(
+												Liferay.Language.get(
+													'open-x-in-fragment-library'
+												),
+												name
+											)}
+										/>
+									</span>
 								</span>
-							</span>
 
-							<span>{renderTime}ms</span>
+								<span>{renderTime}ms</span>
 
-							<span>
-								<ClayLabel displayType="secondary">
-									{isFragment
-										? Liferay.Language.get('fragment')
-										: Liferay.Language.get('widget')}
-								</ClayLabel>
-
-								{isFromMaster && (
+								<span>
 									<ClayLabel displayType="secondary">
-										{Liferay.Language.get('from-master')}
+										{isFragment
+											? Liferay.Language.get('fragment')
+											: Liferay.Language.get('widget')}
 									</ClayLabel>
-								)}
 
-								{isCache && (
-									<ClayLabel displayType="info">
-										{Liferay.Language.get('cached')}
-									</ClayLabel>
-								)}
-							</span>
-						</div>
-					);
-				}
-			)}
-		</div>
+									{isFromMaster && (
+										<ClayLabel displayType="secondary">
+											{Liferay.Language.get(
+												'from-master'
+											)}
+										</ClayLabel>
+									)}
+
+									{isCache && (
+										<ClayLabel displayType="info">
+											{Liferay.Language.get('cached')}
+										</ClayLabel>
+									)}
+								</span>
+							</div>
+						);
+					}
+				)}
+			</div>
+		</>
 	);
 }
