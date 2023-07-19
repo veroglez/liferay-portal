@@ -26,7 +26,10 @@ import com.liferay.layout.taglib.servlet.taglib.renderer.LayoutStructureRenderer
 import com.liferay.layout.util.structure.LayoutStructure;
 import com.liferay.layout.util.structure.LayoutStructureItem;
 import com.liferay.petra.string.CharPool;
+import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
+import com.liferay.portal.kernel.cache.MultiVMPool;
+import com.liferay.portal.kernel.cache.PortalCache;
 import com.liferay.portal.kernel.io.DummyWriter;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactory;
@@ -136,18 +139,16 @@ public class GetLayoutReportsRenderTimesDataStrutsAction
 				FragmentEntryLink fragmentEntryLink = _getFragmentEntryLink(
 					layoutStructureItem);
 
+				FragmentEntry fragmentEntry = _getFragmentEntry(
+					fragmentEntryLink);
+
 				jsonArray.put(
 					JSONUtil.put(
 						"fragmentCollectionURL",
 						() -> {
-							if (fragmentEntryLink == null) {
-								return StringPool.BLANK;
-							}
+							if ((fragmentEntryLink == null) ||
+								(fragmentEntry == null)) {
 
-							FragmentEntry fragmentEntry = _getFragmentEntry(
-								fragmentEntryLink);
-
-							if (fragmentEntry == null) {
 								return StringPool.BLANK;
 							}
 
@@ -212,6 +213,45 @@ public class GetLayoutReportsRenderTimesDataStrutsAction
 							return sb.toString();
 						}
 					).put(
+						"isCached",
+						() -> {
+							if ((fragmentEntryLink == null) ||
+								((fragmentEntry == null) &&
+								 !fragmentEntryLink.isCacheable())) {
+
+								return false;
+							}
+
+							if (!fragmentEntry.isCacheable()) {
+								return false;
+							}
+
+							PortalCache<String, String> portalCache =
+								(PortalCache<String, String>)
+									_multiVMPool.getPortalCache(
+										FragmentEntryLink.class.getName());
+
+							StringBundler portalCacheKeySB = new StringBundler(
+								5);
+
+							portalCacheKeySB.append(
+								fragmentEntryLink.getFragmentEntryLinkId());
+							portalCacheKeySB.append(StringPool.DASH);
+							portalCacheKeySB.append(themeDisplay.getLocale());
+							portalCacheKeySB.append(StringPool.DASH);
+							portalCacheKeySB.append(
+								fragmentEntryLink.getSegmentsExperienceId());
+
+							if (Validator.isNotNull(
+									portalCache.get(
+										portalCacheKeySB.toString()))) {
+
+								return true;
+							}
+
+							return false;
+						}
+					).put(
 						"isFragment",
 						Validator.isNull(_getPortletId(fragmentEntryLink))
 					).put(
@@ -248,6 +288,10 @@ public class GetLayoutReportsRenderTimesDataStrutsAction
 
 	private FragmentEntry _getFragmentEntry(
 		FragmentEntryLink fragmentEntryLink) {
+
+		if (fragmentEntryLink == null) {
+			return null;
+		}
 
 		long fragmentEntryId = fragmentEntryLink.getFragmentEntryId();
 
@@ -403,6 +447,9 @@ public class GetLayoutReportsRenderTimesDataStrutsAction
 
 	@Reference
 	private LayoutStructureProvider _layoutStructureProvider;
+
+	@Reference
+	private MultiVMPool _multiVMPool;
 
 	@Reference
 	private Portal _portal;
