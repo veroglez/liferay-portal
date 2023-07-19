@@ -130,6 +130,31 @@ public class GetLayoutReportsRenderTimesDataStrutsAction
 
 				jsonArray.put(
 					JSONUtil.put(
+						"hierarchy",
+						() -> {
+							List<String> layoutStructureHierarchy =
+								_getLayoutStructureHierarchy(
+									new ArrayList<>(), layoutStructure,
+									layoutStructureItem,
+									themeDisplay.getLocale());
+
+							StringBuilder sb = new StringBuilder();
+
+							for (int i = 0; i < layoutStructureHierarchy.size();
+								 i++) {
+
+								sb.append(layoutStructureHierarchy.get(i));
+
+								if (i < (layoutStructureHierarchy.size() - 1)) {
+									sb.append(StringPool.SPACE);
+									sb.append(StringPool.GREATER_THAN);
+									sb.append(StringPool.SPACE);
+								}
+							}
+
+							return sb.toString();
+						}
+					).put(
 						"isFragment",
 						Validator.isNull(_getPortletId(fragmentEntryLink))
 					).put(
@@ -181,6 +206,33 @@ public class GetLayoutReportsRenderTimesDataStrutsAction
 
 		return _fragmentEntryLinkLocalService.fetchFragmentEntryLink(
 			fragmentEntryLinkId);
+	}
+
+	private List<String> _getLayoutStructureHierarchy(
+			List<String> fragmentHierarchy, LayoutStructure layoutStructure,
+			LayoutStructureItem layoutStructureItem, Locale locale)
+		throws Exception {
+
+		if ((layoutStructureItem.getItemId() !=
+				layoutStructure.getMainItemId()) &&
+			Validator.isNotNull(layoutStructureItem.getParentItemId())) {
+
+			_getLayoutStructureHierarchy(
+				fragmentHierarchy, layoutStructure,
+				layoutStructure.getLayoutStructureItem(
+					layoutStructureItem.getParentItemId()),
+				locale);
+		}
+
+		String name = _getLayoutStructureItemName(
+			_getFragmentEntryLink(layoutStructureItem), layoutStructureItem,
+			locale);
+
+		if (Validator.isNotNull(name)) {
+			fragmentHierarchy.add(name);
+		}
+
+		return fragmentHierarchy;
 	}
 
 	private String _getLayoutStructureItemName(
