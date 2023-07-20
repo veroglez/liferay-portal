@@ -15,6 +15,7 @@
 import ClayAlert from '@clayui/alert';
 import {ClayButtonWithIcon} from '@clayui/button';
 import ClayLabel from '@clayui/label';
+import {SearchResultsMessage} from '@liferay/layout-js-components-web';
 import {fetch, navigate, sub} from 'frontend-js-web';
 import React, {useEffect, useMemo, useState} from 'react';
 
@@ -64,6 +65,8 @@ export default function RenderTimes({url}: {url: string}) {
 				onSearchValue={setSearchValue}
 				onSort={setAscending}
 			/>
+
+			<SearchResultsMessage numberOfResults={filteredFragments.length} />
 
 			{visibleInfo ? (
 				<ClayAlert
