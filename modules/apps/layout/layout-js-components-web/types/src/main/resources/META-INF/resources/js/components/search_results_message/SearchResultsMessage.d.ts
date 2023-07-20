@@ -12,8 +12,12 @@
  * details.
  */
 
-export {default as SearchForm} from './components/search_form/SearchForm';
-export {default as SearchResultsMessage} from './components/search_results_message/SearchResultsMessage';
-export {default as convertRGBtoHex} from './utils/convertRGBtoHex';
-export {default as isNullOrUndefined} from './utils/isNullOrUndefined';
-export {default as isValidStyleValue} from './utils/isValidStyleValue';
+/// <reference types="react" />
+
+export default function SearchResultsMessage({
+	numberOfResults,
+	resultType,
+}: {
+	numberOfResults: number | null;
+	resultType?: string;
+}): JSX.Element;

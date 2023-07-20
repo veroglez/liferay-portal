@@ -13,14 +13,16 @@
  */
 
 import {sub} from 'frontend-js-web';
-import PropTypes from 'prop-types';
 import React, {useEffect, useState} from 'react';
 
 import isNullOrUndefined from '../../utils/isNullOrUndefined';
 
 export default function SearchResultsMessage({
-	resultType = Liferay.Language.get('results'),
 	numberOfResults = null,
+	resultType = Liferay.Language.get('results'),
+}: {
+	numberOfResults: number | null;
+	resultType?: string;
 }) {
 	const [text, setText] = useState('');
 
@@ -29,7 +31,7 @@ export default function SearchResultsMessage({
 			const timeout = setTimeout(() => {
 				const message = numberOfResults
 					? sub(Liferay.Language.get('showing-x-x'), [
-							numberOfResults,
+							numberOfResults.toString(),
 							resultType,
 					  ])
 					: Liferay.Language.get('no-results-found');
@@ -49,8 +51,3 @@ export default function SearchResultsMessage({
 		</span>
 	);
 }
-
-SearchResultsMessage.propTypes = {
-	numberOfResults: PropTypes.number,
-	resultType: PropTypes.string,
-};
