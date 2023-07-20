@@ -12,7 +12,14 @@
  * details.
  */
 
-export {default as SearchForm} from './components/search_form/SearchForm';
-export {default as convertRGBtoHex} from './utils/convertRGBtoHex';
-export {default as isNullOrUndefined} from './utils/isNullOrUndefined';
-export {default as isValidStyleValue} from './utils/isValidStyleValue';
+/// <reference types="react" />
+
+export default function SearchForm({
+	className,
+	label,
+	onChange,
+}: {
+	className?: string;
+	label: string;
+	onChange: Function;
+}): JSX.Element;
