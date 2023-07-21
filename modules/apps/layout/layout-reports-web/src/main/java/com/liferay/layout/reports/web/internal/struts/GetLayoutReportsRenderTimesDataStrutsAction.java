@@ -49,6 +49,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -156,6 +157,30 @@ public class GetLayoutReportsRenderTimesDataStrutsAction
 						return true;
 					}
 				).put(
+					"hierarchy",
+					() -> {
+						List<String> layoutStructureHierarchy =
+							_getLayoutStructureHierarchy(
+								new ArrayList<>(), layoutStructure,
+								layoutStructureItem, themeDisplay.getLocale());
+
+						StringBuilder sb = new StringBuilder();
+
+						for (int i = 0; i < layoutStructureHierarchy.size();
+							 i++) {
+
+							sb.append(layoutStructureHierarchy.get(i));
+
+							if (i < (layoutStructureHierarchy.size() - 1)) {
+								sb.append(StringPool.SPACE);
+								sb.append(StringPool.GREATER_THAN);
+								sb.append(StringPool.SPACE);
+							}
+						}
+
+						return sb.toString();
+					}
+				).put(
 					"itemId", layoutStructureItem.getItemId()
 				).put(
 					"itemType", layoutStructureItem.getItemType()
@@ -195,6 +220,34 @@ public class GetLayoutReportsRenderTimesDataStrutsAction
 
 		return _fragmentEntryLinkLocalService.fetchFragmentEntryLink(
 			fragmentEntryLinkId);
+	}
+
+	private List<String> _getLayoutStructureHierarchy(
+			List<String> fragmentHierarchy, LayoutStructure layoutStructure,
+			LayoutStructureItem layoutStructureItem, Locale locale)
+		throws Exception {
+
+		if (!Objects.equals(
+				layoutStructureItem.getItemId(),
+				layoutStructure.getMainItemId()) &&
+			Validator.isNotNull(layoutStructureItem.getParentItemId())) {
+
+			_getLayoutStructureHierarchy(
+				fragmentHierarchy, layoutStructure,
+				layoutStructure.getLayoutStructureItem(
+					layoutStructureItem.getParentItemId()),
+				locale);
+		}
+
+		String name = _getLayoutStructureItemName(
+			_getFragmentEntryLink(layoutStructureItem), layoutStructureItem,
+			locale);
+
+		if (Validator.isNotNull(name)) {
+			fragmentHierarchy.add(name);
+		}
+
+		return fragmentHierarchy;
 	}
 
 	private String _getLayoutStructureItemName(
