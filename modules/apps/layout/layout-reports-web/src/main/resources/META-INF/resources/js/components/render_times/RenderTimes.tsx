@@ -15,22 +15,31 @@ import FragmentList from './FragmentList';
 
 export default function RenderTimes({url}: {url: string}) {
 	const [ascending, setAscending] = useState(false);
-	const [filter] = useState<FragmentsFilter>({});
+	const [filter, setFilter] = useState<FragmentsFilter>({});
 	const [fragments, setFragments] = useState<Fragment[]>([]);
 	const [searchValue, setSearchValue] = useState(null);
 	const [visibleInfo, setVisibleInfo] = useState<boolean>(true);
 
-	const filteredFragments = useMemo(
-		() =>
-			searchValue
-				? fragments.filter(
-						(fragment) =>
-							fragment.name.toLowerCase().indexOf(searchValue) !==
-							-1
-				  )
-				: fragments,
-		[fragments, searchValue]
-	);
+	const filteredFragments = useMemo(() => {
+		const fragmentsBySearchValue = searchValue
+			? fragments.filter(
+					(fragment) =>
+						fragment.name.toLowerCase().indexOf(searchValue) !== -1
+			  )
+			: fragments;
+
+		let fragmentsByFilters = fragmentsBySearchValue;
+
+		if (Object.keys(filter).length) {
+			for (const [key, value] of Object.entries(filter)) {
+				fragmentsByFilters = fragmentsByFilters.filter(
+					(fragment) => fragment[key as keyof typeof filter] === value
+				);
+			}
+		}
+
+		return fragmentsByFilters;
+	}, [fragments, searchValue, filter]);
 
 	useEffect(() => {
 		fetch(url, {method: 'GET'})
@@ -44,6 +53,7 @@ export default function RenderTimes({url}: {url: string}) {
 			<Filter
 				filter={filter}
 				isAscendingSort={ascending}
+				onFilterValue={setFilter}
 				onSearchValue={setSearchValue}
 				onSort={setAscending}
 			/>
