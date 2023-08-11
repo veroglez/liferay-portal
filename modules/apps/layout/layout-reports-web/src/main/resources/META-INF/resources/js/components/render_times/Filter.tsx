@@ -14,6 +14,7 @@ import {FragmentsFilter} from '../../constants/fragments';
 interface Props {
 	filter: FragmentsFilter;
 	isAscendingSort: boolean;
+	onFilterValue: Function;
 	onSearchValue: Function;
 	onSort: Function;
 }
@@ -21,6 +22,7 @@ interface Props {
 export default function Filter({
 	filter,
 	isAscendingSort,
+	onFilterValue,
 	onSearchValue,
 	onSort,
 }: Props) {
@@ -38,6 +40,11 @@ export default function Filter({
 			return {
 				active: filter[type as keyof typeof filter] === value,
 				label,
+				onClick: () =>
+					onFilterValue({
+						...filter,
+						[type]: value,
+					}),
 			};
 		});
 	};
