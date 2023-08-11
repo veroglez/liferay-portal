@@ -14,3 +14,9 @@ export type Fragment = {
 	name: string;
 	renderTime: number;
 };
+
+export interface FragmentsFilter {
+	cached?: boolean;
+	fragment?: boolean;
+	fromMaster?: boolean;
+}
