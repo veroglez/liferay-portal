@@ -15,7 +15,16 @@ export declare type Fragment = {
 	renderTime: number;
 };
 export interface FragmentsFilter {
-	cached?: boolean;
-	fragment?: boolean;
-	fromMaster?: boolean;
+	cached?: {
+		label: string;
+		value: boolean;
+	};
+	fragment?: {
+		label: string;
+		value: boolean;
+	};
+	fromMaster?: {
+		label: string;
+		value: boolean;
+	};
 }

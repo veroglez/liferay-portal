@@ -31,7 +31,7 @@ export default function RenderTimes({url}: {url: string}) {
 		let fragmentsByFilters = fragmentsBySearchValue;
 
 		if (Object.keys(filter).length) {
-			for (const [key, value] of Object.entries(filter)) {
+			for (const [key, {value}] of Object.entries(filter)) {
 				fragmentsByFilters = fragmentsByFilters.filter(
 					(fragment) => fragment[key as keyof typeof filter] === value
 				);
