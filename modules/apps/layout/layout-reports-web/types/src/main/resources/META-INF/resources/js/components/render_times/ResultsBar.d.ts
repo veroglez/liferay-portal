@@ -17,5 +17,5 @@ export default function ResultsBar({
 	filter,
 	fragments,
 	onSetFilter,
-}: PropsResultsBar): JSX.Element | null;
+}: PropsResultsBar): JSX.Element;
 export {};
