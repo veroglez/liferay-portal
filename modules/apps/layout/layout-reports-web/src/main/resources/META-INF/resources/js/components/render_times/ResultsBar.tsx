@@ -7,7 +7,7 @@ import ClayButton from '@clayui/button';
 import ClayLabel from '@clayui/label';
 import classNames from 'classnames';
 import {sub} from 'frontend-js-web';
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 
 import {Fragment, FragmentsFilter} from '../../constants/fragments';
 
@@ -15,6 +15,14 @@ interface PropsResultsBar {
 	className: string;
 	filter: FragmentsFilter;
 	fragments: Fragment[];
+	onSetFilter: Function;
+}
+
+interface PropsResultsBarItemLabel {
+	filter: FragmentsFilter;
+	filterKey: string;
+	label: string;
+	onSetFeedback: Function;
 	onSetFilter: Function;
 }
 
@@ -32,71 +40,113 @@ const ResultsBarItem = ({
 	);
 };
 
+const ResultsBarItemLabel = ({
+	filter,
+	filterKey,
+	label,
+	onSetFeedback,
+	onSetFilter,
+}: PropsResultsBarItemLabel) => {
+	return (
+		<ResultsBarItem>
+			<ClayLabel
+				className="component-label tbar-label"
+				closeButtonProps={{
+					['aria-label']: sub(
+						Liferay.Language.get('remove-x-filter'),
+						label
+					),
+					onClick: () => {
+						onSetFilter(
+							({
+								[filterKey as keyof typeof filter]: _,
+								...rest
+							}) => rest
+						);
+						onSetFeedback(Liferay.Language.get('filter-removed'));
+					},
+				}}
+				displayType="unstyled"
+				withClose
+			>
+				{label}
+			</ClayLabel>
+		</ResultsBarItem>
+	);
+};
+
 export default function ResultsBar({
 	className,
 	filter,
 	fragments,
 	onSetFilter,
 }: PropsResultsBar) {
-	if (!Object.keys(filter).length) {
-		return null;
-	}
+	const [feedback, setFeedback] = useState('');
+
+	useEffect(() => {
+		if (feedback) {
+			const timeout = setTimeout(() => setFeedback(''), 1000);
+
+			return () => clearTimeout(timeout);
+		}
+	}, [feedback]);
 
 	return (
-		<div
-			className={classNames('subnav-tbar subnav-tbar-primary', className)}
-		>
-			<div className="tbar-nav tbar-nav-wrap">
-				<ResultsBarItem>
-					<span className="component-text">
-						{sub(
-							Liferay.Language.get('x-results-for'),
-							fragments.length
-						)}
-					</span>
-				</ResultsBarItem>
+		<>
+			<span className="sr-only" role="alert">
+				{feedback}
+			</span>
 
-				{Object.keys(filter).length
-					? Object.entries(filter).map(([key, {label}]) => (
-							<ResultsBarItem key={key}>
-								<ClayLabel
-									className="component-label tbar-label"
-									closeButtonProps={{
-										['aria-label']: sub(
-											Liferay.Language.get(
-												'remove-x-filter'
-											),
-											label
-										),
-										onClick: () => {
-											const {
-												[key as keyof typeof filter]: _,
-												...rest
-											} = filter;
+			{Object.keys(filter).length ? (
+				<div
+					className={classNames(
+						'subnav-tbar subnav-tbar-primary',
+						className
+					)}
+				>
+					<div className="tbar-nav tbar-nav-wrap">
+						<ResultsBarItem>
+							<span className="component-text">
+								{sub(
+									Liferay.Language.get('x-results-for'),
+									fragments.length
+								)}
+							</span>
+						</ResultsBarItem>
 
-											onSetFilter(rest);
-										},
-									}}
-									displayType="unstyled"
-									withClose
-								>
-									{label}
-								</ClayLabel>
-							</ResultsBarItem>
-					  ))
-					: null}
+						{Object.keys(filter).length
+							? Object.entries(filter).map(([key, {label}]) => (
+									<ResultsBarItemLabel
+										filter={filter}
+										filterKey={key}
+										key={key}
+										label={label}
+										onSetFeedback={setFeedback}
+										onSetFilter={onSetFilter}
+									/>
+							  ))
+							: null}
 
-				<ResultsBarItem expand>
-					<ClayButton
-						aria-label={Liferay.Language.get('clear-filters')}
-						className="ml-auto"
-						displayType={null}
-						onClick={() => onSetFilter({})}
-					>
-						{Liferay.Language.get('clear')}
-					</ClayButton>
-				</ResultsBarItem>
-			</div>
-		</div>
+						<ResultsBarItem expand>
+							<ClayButton
+								aria-label={Liferay.Language.get(
+									'clear-filters'
+								)}
+								className="ml-auto"
+								displayType={null}
+								onClick={() => {
+									onSetFilter({});
+									setFeedback(
+										Liferay.Language.get('filters-cleared')
+									);
+								}}
+							>
+								{Liferay.Language.get('clear')}
+							</ClayButton>
+						</ResultsBarItem>
+					</div>
+				</div>
+			) : null}
+		</>
 	);
 }
