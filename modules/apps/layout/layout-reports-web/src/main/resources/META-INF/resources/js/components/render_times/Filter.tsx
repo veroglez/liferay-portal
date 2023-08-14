@@ -38,12 +38,12 @@ export default function Filter({
 
 		return items.map(({label, value}: {label: string; value: boolean}) => {
 			return {
-				active: filter[type as keyof typeof filter] === value,
+				active: filter[type as keyof typeof filter]?.value === value,
 				label,
 				onClick: () =>
 					onFilterValue({
 						...filter,
-						[type]: value,
+						[type]: {label, value},
 					}),
 			};
 		});
