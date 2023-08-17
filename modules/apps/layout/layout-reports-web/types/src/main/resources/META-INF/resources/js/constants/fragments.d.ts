@@ -14,17 +14,16 @@ export declare type Fragment = {
 	name: string;
 	renderTime: number;
 };
-export interface FragmentsFilter {
-	cached?: {
-		label: string;
-		value: boolean;
-	};
-	fragment?: {
-		label: string;
-		value: boolean;
-	};
-	fromMaster?: {
-		label: string;
-		value: boolean;
-	};
+export interface FragmentFilter {
+	origin?: string;
+	status?: string;
+	type?: string;
 }
+export declare const filterNames: {
+	all: string;
+	cached: string;
+	fragment: string;
+	fromMaster: string;
+	notCached: string;
+	widget: string;
+};

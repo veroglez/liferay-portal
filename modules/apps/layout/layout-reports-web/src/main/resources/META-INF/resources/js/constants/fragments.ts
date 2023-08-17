@@ -15,8 +15,17 @@ export type Fragment = {
 	renderTime: number;
 };
 
-export interface FragmentsFilter {
-	cached?: {label: string; value: boolean};
-	fragment?: {label: string; value: boolean};
-	fromMaster?: {label: string; value: boolean};
+export interface FragmentFilter {
+	origin?: 'all' | 'fromMaster';
+	status?: string;
+	type?: string;
 }
+
+export const filterNames = {
+	all: Liferay.Language.get('all'),
+	cached: Liferay.Language.get('cached'),
+	fragment: Liferay.Language.get('fragment'),
+	fromMaster: Liferay.Language.get('from-master'),
+	notCached: Liferay.Language.get('not-cached'),
+	widget: Liferay.Language.get('widget'),
+};

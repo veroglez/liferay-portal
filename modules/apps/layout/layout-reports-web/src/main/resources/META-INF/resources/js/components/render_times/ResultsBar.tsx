@@ -9,21 +9,20 @@ import classNames from 'classnames';
 import {sub} from 'frontend-js-web';
 import React, {useEffect, useState} from 'react';
 
-import {Fragment, FragmentsFilter} from '../../constants/fragments';
+import {Fragment, FragmentFilter, filterNames} from '../../constants/fragments';
 
 interface PropsResultsBar {
 	className: string;
-	filter: FragmentsFilter;
+	filters: FragmentFilter;
 	fragments: Fragment[];
-	onSetFilter: Function;
+	onSetFilters: Function;
 }
 
 interface PropsResultsBarItemLabel {
-	filter: FragmentsFilter;
 	filterKey: string;
 	label: string;
 	onSetFeedback: Function;
-	onSetFilter: Function;
+	onSetFilters: Function;
 }
 
 const ResultsBarItem = ({
@@ -41,11 +40,10 @@ const ResultsBarItem = ({
 };
 
 const ResultsBarItemLabel = ({
-	filter,
 	filterKey,
 	label,
 	onSetFeedback,
-	onSetFilter,
+	onSetFilters,
 }: PropsResultsBarItemLabel) => {
 	return (
 		<ResultsBarItem>
@@ -57,9 +55,9 @@ const ResultsBarItemLabel = ({
 						label
 					),
 					onClick: () => {
-						onSetFilter(
+						onSetFilters(
 							({
-								[filterKey as keyof typeof filter]: _,
+								[filterKey as keyof FragmentFilter]: _,
 								...rest
 							}) => rest
 						);
@@ -77,9 +75,9 @@ const ResultsBarItemLabel = ({
 
 export default function ResultsBar({
 	className,
-	filter,
+	filters,
 	fragments,
-	onSetFilter,
+	onSetFilters,
 }: PropsResultsBar) {
 	const [feedback, setFeedback] = useState('');
 
@@ -97,7 +95,7 @@ export default function ResultsBar({
 				{feedback}
 			</span>
 
-			{Object.keys(filter).length ? (
+			{Object.values(filters)?.length ? (
 				<div
 					className={classNames(
 						'subnav-tbar subnav-tbar-primary',
@@ -114,18 +112,15 @@ export default function ResultsBar({
 							</span>
 						</ResultsBarItem>
 
-						{Object.keys(filter).length
-							? Object.entries(filter).map(([key, {label}]) => (
-									<ResultsBarItemLabel
-										filter={filter}
-										filterKey={key}
-										key={key}
-										label={label}
-										onSetFeedback={setFeedback}
-										onSetFilter={onSetFilter}
-									/>
-							  ))
-							: null}
+						{Object.entries(filters).map(([key, value]) => (
+							<ResultsBarItemLabel
+								filterKey={key}
+								key={value}
+								label={filterNames[value]}
+								onSetFeedback={setFeedback}
+								onSetFilters={onSetFilters}
+							/>
+						))}
 
 						<ResultsBarItem expand>
 							<ClayButton
@@ -135,7 +130,7 @@ export default function ResultsBar({
 								className="ml-auto"
 								displayType={null}
 								onClick={() => {
-									onSetFilter({});
+									onSetFilters({});
 									setFeedback(
 										Liferay.Language.get('filters-cleared')
 									);
