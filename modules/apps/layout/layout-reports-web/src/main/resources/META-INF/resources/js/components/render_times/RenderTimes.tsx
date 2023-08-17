@@ -9,38 +9,72 @@ import {SearchResultsMessage} from '@liferay/layout-js-components-web';
 import {fetch} from 'frontend-js-web';
 import React, {useEffect, useMemo, useState} from 'react';
 
-import {Fragment, FragmentsFilter} from '../../constants/fragments';
+import {Fragment, FragmentFilter} from '../../constants/fragments';
 import Filter from './Filter';
 import FragmentList from './FragmentList';
 import ResultsBar from './ResultsBar';
 
+enum FILTERS {
+	Cached = 'cached',
+	Fragment = 'fragment',
+	FromMaster = 'fromMaster',
+	NotCached = 'notCached',
+	Widget = 'widget',
+}
+
+const getFragmentsByFilterValue = (
+	filters: FragmentFilter,
+	fragments: Fragment[]
+) => {
+	let filteredFragments = fragments;
+
+	if (filters.origin === FILTERS.FromMaster) {
+		filteredFragments = filteredFragments.filter(
+			({fromMaster}) => fromMaster
+		);
+	}
+
+	if (filters.status === FILTERS.Cached) {
+		filteredFragments = filteredFragments.filter(({cached}) => cached);
+	}
+
+	if (filters.status === FILTERS.NotCached) {
+		filteredFragments = filteredFragments.filter(({cached}) => !cached);
+	}
+
+	if (filters.type === FILTERS.Fragment) {
+		filteredFragments = filteredFragments.filter(({fragment}) => fragment);
+	}
+
+	if (filters.type === FILTERS.Widget) {
+		filteredFragments = filteredFragments.filter(({fragment}) => !fragment);
+	}
+
+	return filteredFragments;
+};
+
 export default function RenderTimes({url}: {url: string}) {
 	const [ascending, setAscending] = useState(false);
-	const [filter, setFilter] = useState<FragmentsFilter>({});
+	const [filters, setFilters] = useState<FragmentFilter>({});
 	const [fragments, setFragments] = useState<Fragment[]>([]);
 	const [searchValue, setSearchValue] = useState(null);
 	const [visibleInfo, setVisibleInfo] = useState<boolean>(true);
 
 	const filteredFragments = useMemo(() => {
+		const fragmentsByFilterValue = getFragmentsByFilterValue(
+			filters,
+			fragments
+		);
+
 		const fragmentsBySearchValue = searchValue
-			? fragments.filter(
+			? fragmentsByFilterValue.filter(
 					(fragment) =>
 						fragment.name.toLowerCase().indexOf(searchValue) !== -1
 			  )
-			: fragments;
+			: fragmentsByFilterValue;
 
-		let fragmentsByFilters = fragmentsBySearchValue;
-
-		if (Object.keys(filter).length) {
-			for (const [key, {value}] of Object.entries(filter)) {
-				fragmentsByFilters = fragmentsByFilters.filter(
-					(fragment) => fragment[key as keyof typeof filter] === value
-				);
-			}
-		}
-
-		return fragmentsByFilters;
-	}, [fragments, searchValue, filter]);
+		return fragmentsBySearchValue;
+	}, [fragments, searchValue, filters]);
 
 	useEffect(() => {
 		fetch(url, {method: 'GET'})
@@ -52,9 +86,9 @@ export default function RenderTimes({url}: {url: string}) {
 	return (
 		<>
 			<Filter
-				filter={filter}
+				filters={filters}
 				isAscendingSort={ascending}
-				onFilterValue={setFilter}
+				onFilterValue={setFilters}
 				onSearchValue={setSearchValue}
 				onSort={setAscending}
 			/>
@@ -63,9 +97,9 @@ export default function RenderTimes({url}: {url: string}) {
 
 			<ResultsBar
 				className="c-mb-3"
-				filter={filter}
+				filters={filters}
 				fragments={filteredFragments}
-				onSetFilter={setFilter}
+				onSetFilters={setFilters}
 			/>
 
 			{visibleInfo ? (

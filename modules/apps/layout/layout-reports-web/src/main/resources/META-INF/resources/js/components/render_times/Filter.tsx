@@ -9,18 +9,24 @@ import {SearchForm} from '@liferay/layout-js-components-web';
 import {sub} from 'frontend-js-web';
 import React from 'react';
 
-import {FragmentsFilter} from '../../constants/fragments';
+import {FragmentFilter} from '../../constants/fragments';
 
 interface Props {
-	filter: FragmentsFilter;
+	filters: FragmentFilter;
 	isAscendingSort: boolean;
 	onFilterValue: Function;
 	onSearchValue: Function;
 	onSort: Function;
 }
 
+interface Option {
+	group: string;
+	label: string;
+	value: string;
+}
+
 export default function Filter({
-	filter,
+	filters,
 	isAscendingSort,
 	onFilterValue,
 	onSearchValue,
@@ -33,20 +39,16 @@ export default function Filter({
 			: Liferay.Language.get('ascending')
 	);
 
-	const getItems = (filterItem: object) => {
-		const [[type, items]] = Object.entries(filterItem);
-
-		return items.map(({label, value}: {label: string; value: boolean}) => {
-			return {
-				active: filter[type as keyof typeof filter]?.value === value,
-				label,
-				onClick: () =>
-					onFilterValue({
-						...filter,
-						[type]: {label, value},
-					}),
-			};
-		});
+	const getOptions = (options: Option[]) => {
+		return options.map((option) => ({
+			...option,
+			active:
+				filters[option.group as keyof FragmentFilter] === option.value,
+			onClick: () =>
+				onFilterValue((filter: {}) => {
+					return {...filter, [option.group]: option.value};
+				}),
+		}));
 	};
 
 	return (
@@ -60,50 +62,51 @@ export default function Filter({
 			<ClayDropDownWithItems
 				items={[
 					{
-						items: getItems({
-							fromMaster: [
-								{
-									label: Liferay.Language.get('all'),
-									value: false,
-								},
-								{
-									label: Liferay.Language.get('from-master'),
-									value: true,
-								},
-							],
-						}),
-						label: Liferay.Language.get('filter-by-navigation'),
+						items: getOptions([
+							{
+								group: 'origin',
+								label: Liferay.Language.get('all'),
+								value: 'all',
+							},
+							{
+								group: 'origin',
+								label: Liferay.Language.get('from-master'),
+								value: 'fromMaster',
+							},
+						]),
+						label: `${Liferay.Language.get('filter-by')}...`,
 						type: 'group',
 					},
+
 					{
-						items: getItems({
-							fragment: [
-								{
-									label: Liferay.Language.get('fragment'),
-									value: true,
-								},
-								{
-									label: Liferay.Language.get('widget'),
-									value: false,
-								},
-							],
-						}),
+						items: getOptions([
+							{
+								group: 'type',
+								label: Liferay.Language.get('fragment'),
+								value: 'fragment',
+							},
+							{
+								group: 'type',
+								label: Liferay.Language.get('widget'),
+								value: 'widget',
+							},
+						]),
 						label: Liferay.Language.get('filter-by-type'),
 						type: 'group',
 					},
 					{
-						items: getItems({
-							cached: [
-								{
-									label: Liferay.Language.get('cached'),
-									value: true,
-								},
-								{
-									label: Liferay.Language.get('not-cached'),
-									value: false,
-								},
-							],
-						}),
+						items: getOptions([
+							{
+								group: 'status',
+								label: Liferay.Language.get('cached'),
+								value: 'cached',
+							},
+							{
+								group: 'status',
+								label: Liferay.Language.get('not-cached'),
+								value: 'notCached',
+							},
+						]),
 						label: Liferay.Language.get('filter-by-status'),
 						type: 'group',
 					},

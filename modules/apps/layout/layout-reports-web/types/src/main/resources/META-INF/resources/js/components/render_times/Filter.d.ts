@@ -5,16 +5,16 @@
 
 /// <reference types="react" />
 
-import {FragmentsFilter} from '../../constants/fragments';
+import {FragmentFilter} from '../../constants/fragments';
 interface Props {
-	filter: FragmentsFilter;
+	filters: FragmentFilter;
 	isAscendingSort: boolean;
 	onFilterValue: Function;
 	onSearchValue: Function;
 	onSort: Function;
 }
 export default function Filter({
-	filter,
+	filters,
 	isAscendingSort,
 	onFilterValue,
 	onSearchValue,

@@ -5,17 +5,17 @@
 
 /// <reference types="react" />
 
-import {Fragment, FragmentsFilter} from '../../constants/fragments';
+import {Fragment, FragmentFilter} from '../../constants/fragments';
 interface PropsResultsBar {
 	className: string;
-	filter: FragmentsFilter;
+	filters: FragmentFilter;
 	fragments: Fragment[];
-	onSetFilter: Function;
+	onSetFilters: Function;
 }
 export default function ResultsBar({
 	className,
-	filter,
+	filters,
 	fragments,
-	onSetFilter,
+	onSetFilters,
 }: PropsResultsBar): JSX.Element;
 export {};
