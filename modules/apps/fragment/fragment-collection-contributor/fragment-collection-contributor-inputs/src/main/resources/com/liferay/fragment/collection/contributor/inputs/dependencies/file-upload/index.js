@@ -57,6 +57,7 @@ else {
 	}
 	else {
 		selectButton.addEventListener('click', () => {
+			fileInput.type = 'file';
 			fileInput.click();
 		});
 	}
