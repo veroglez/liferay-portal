@@ -2,28 +2,25 @@
  * SPDX-FileCopyrightText: (c) 2000 Liferay, Inc. https://liferay.com
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
-
 export declare type Fragment = {
-	cached: boolean;
-	fragment: boolean;
-	fragmentCollectionURL: string;
-	fromMaster: boolean;
-	hierarchy: string;
-	itemId: string;
-	itemType: string;
-	name: string;
-	renderTime: number;
+    cached: boolean;
+    fragment: boolean;
+    fragmentCollectionURL: string;
+    fromMaster: boolean;
+    hierarchy: string;
+    itemId: string;
+    itemType: string;
+    name: string;
+    renderTime: number;
 };
-export interface FragmentFilter {
-	origin?: string;
-	status?: string;
-	type?: string;
-}
-export declare const filterNames: {
-	all: string;
-	cached: string;
-	fragment: string;
-	fromMaster: string;
-	notCached: string;
-	widget: string;
+export declare const FILTER_NAMES: Record<typeof FRAGMENT_FILTERS[keyof typeof FRAGMENT_FILTERS][number], // jeje vero
+string>;
+export declare const FILTER_TYPE_NAMES: Record<keyof typeof FRAGMENT_FILTERS, string>;
+export declare const FRAGMENT_FILTERS: {
+    readonly origin: readonly ["fromMaster", "all"];
+    readonly status: readonly ["cached", "notCached"];
+    readonly type: readonly ["fragment", "widget"];
+};
+export declare type FragmentFilter = {
+    [key in keyof typeof FRAGMENT_FILTERS]: typeof FRAGMENT_FILTERS[key][number];
 };

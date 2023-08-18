@@ -15,17 +15,33 @@ export type Fragment = {
 	renderTime: number;
 };
 
-export interface FragmentFilter {
-	origin?: 'all' | 'fromMaster';
-	status?: string;
-	type?: string;
-}
-
-export const filterNames = {
+export const FILTER_NAMES: Record<
+	typeof FRAGMENT_FILTERS[keyof typeof FRAGMENT_FILTERS][number],
+	string
+> = {
 	all: Liferay.Language.get('all'),
 	cached: Liferay.Language.get('cached'),
 	fragment: Liferay.Language.get('fragment'),
 	fromMaster: Liferay.Language.get('from-master'),
 	notCached: Liferay.Language.get('not-cached'),
 	widget: Liferay.Language.get('widget'),
+};
+
+export const FILTER_TYPE_NAMES: Record<
+	keyof typeof FRAGMENT_FILTERS,
+	string
+> = {
+	origin: `${Liferay.Language.get('filter-by')}...`,
+	status: Liferay.Language.get('filter-by-status'),
+	type: Liferay.Language.get('filter-by-type'),
+};
+
+export const FRAGMENT_FILTERS = {
+	origin: ['fromMaster', 'all'],
+	status: ['cached', 'notCached'],
+	type: ['fragment', 'widget'],
+} as const;
+
+export type FragmentFilter = {
+	[key in keyof typeof FRAGMENT_FILTERS]?: typeof FRAGMENT_FILTERS[key][number];
 };

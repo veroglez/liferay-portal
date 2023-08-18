@@ -1,6 +1,9 @@
 {
-	"@generated": "bcc65692001dcd09be25718764ea6db7ed77391d",
+	"@generated": "efa177aa4fa71357f493ab0fb9a2bd8aee533740",
 	"@overrides": {
+		"compilerOptions": {
+			"target": "ES2019"
+		}
 	},
 	"@readonly": "** AUTO-GENERATED: DO NOT EDIT OUTSIDE @overrides **",
 	"@see": "https://git.io/JY2EA",
@@ -28,7 +31,7 @@
 		},
 		"sourceMap": false,
 		"strict": true,
-		"target": "es6",
+		"target": "ES2019",
 		"tsBuildInfoFile": "tmp/tsconfig.tsbuildinfo",
 		"typeRoots": [
 			"../../../node_modules/@types",

@@ -14,40 +14,23 @@ import Filter from './Filter';
 import FragmentList from './FragmentList';
 import ResultsBar from './ResultsBar';
 
-enum FILTERS {
-	Cached = 'cached',
-	Fragment = 'fragment',
-	FromMaster = 'fromMaster',
-	NotCached = 'notCached',
-	Widget = 'widget',
-}
-
 const getFragmentsByFilterValue = (
 	filters: FragmentFilter,
 	fragments: Fragment[]
 ) => {
 	let filteredFragments = fragments;
 
-	if (filters.origin === FILTERS.FromMaster) {
-		filteredFragments = filteredFragments.filter(
-			({fromMaster}) => fromMaster
-		);
+
+	if (filters.origin) {
+		filteredFragments = filteredFragments.filter(({fromMaster}) => filters.origin === 'all' ? true : fromMaster);
 	}
 
-	if (filters.status === FILTERS.Cached) {
-		filteredFragments = filteredFragments.filter(({cached}) => cached);
+	if (filters.status) {
+		filteredFragments = filteredFragments.filter(({cached}) => filters.status === 'cached' ? cached : !cached);
 	}
 
-	if (filters.status === FILTERS.NotCached) {
-		filteredFragments = filteredFragments.filter(({cached}) => !cached);
-	}
-
-	if (filters.type === FILTERS.Fragment) {
-		filteredFragments = filteredFragments.filter(({fragment}) => fragment);
-	}
-
-	if (filters.type === FILTERS.Widget) {
-		filteredFragments = filteredFragments.filter(({fragment}) => !fragment);
+	if (filters.type) {
+		filteredFragments = filteredFragments.filter(({fragment}) => filters.type === 'fragment' ? fragment : !fragment);
 	}
 
 	return filteredFragments;
