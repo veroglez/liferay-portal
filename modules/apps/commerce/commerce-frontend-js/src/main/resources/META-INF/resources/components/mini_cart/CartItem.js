@@ -72,6 +72,7 @@ function CartItem({
 	skuId,
 	updateCartItem,
 	replacedSku,
+	productId,
 }) {
 	const [itemState, setItemState] = useState(INITIAL_ITEM_STATE);
 	const [selectorQuantity, setSelectorQuantity] = useState(cartItemQuantity);
@@ -87,6 +88,7 @@ function CartItem({
 		actionURLs,
 		cartState,
 		displayDiscountLevels,
+		setEditedItem,
 		setIsUpdating,
 		updateCartModel,
 	} = useContext(MiniCartContext);
@@ -318,7 +320,9 @@ function CartItem({
 						}
 					>
 						<ClayDropDown.ItemList>
-							<ClayDropDown.Item>
+							<ClayDropDown.Item
+								onClick={() => setEditedItem({name, productId})}
+							>
 								{Liferay.Language.get('edit')}
 							</ClayDropDown.Item>
 
