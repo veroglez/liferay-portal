@@ -6,9 +6,9 @@
 import ClayForm, {ClayInput} from '@clayui/form';
 import {useLiferayState} from '@liferay/frontend-js-state-web';
 import classnames from 'classnames';
-import skuOptionsAtom from '../../utilities/atoms/skuOptionsAtom';
 import React, {useEffect, useState} from 'react';
 
+import skuOptionsAtom from '../../utilities/atoms/skuOptionsAtom';
 import Asterisk from './Asterisk';
 import {
 	getProductOptionName,
@@ -20,10 +20,14 @@ import {
 const ProductOptionText = ({
 	componentId,
 	forceRequired,
+	isFromMiniCart,
+	json,
 	namespace,
 	productOption,
 }) => {
+	const errorsKey = isFromMiniCart ? 'miniCartErrors' : 'errors';
 	const [hasErrors, setHasErrors] = useState(false);
+	const skuOptionsKey = isFromMiniCart ? 'skuMiniCartOptions' : 'skuOptions';
 	const [text, setText] = useState('');
 
 	const [skuOptionsAtomState, setSkuOptionsAtomState] = useLiferayState(
@@ -34,10 +38,11 @@ const ProductOptionText = ({
 		() =>
 			setSkuOptionsAtomState({
 				...skuOptionsAtomState,
-				errors: getSkuOptionsErrors(
+				[errorsKey]: getSkuOptionsErrors(
 					hasErrors,
 					productOption,
-					skuOptionsAtomState
+					skuOptionsAtomState,
+					isFromMiniCart
 				),
 			}),
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -45,7 +50,18 @@ const ProductOptionText = ({
 	);
 
 	useEffect(() => {
-		if (productOption.required) {
+		let value = '';
+
+		if (isFromMiniCart) {
+			const option = JSON.parse(json).find(
+				({key}) => key === productOption.key
+			);
+			[value] = option.value;
+
+			setText(value);
+		}
+
+		if (productOption.required && !value) {
 			setHasErrors(true);
 		}
 
@@ -62,12 +78,22 @@ const ProductOptionText = ({
 				{
 					key: productOption.key,
 					skuOptionKey: productOption.key,
-					value: [],
+					value: [value],
 				},
 			],
+			...(isFromMiniCart && {
+				skuMiniCartOptions: skuOptionsAtomState.skuOptions,
+			}),
 		});
 
-		return () => setSkuOptionsAtomState(initialSkuOptionsAtomState);
+		return () =>
+			isFromMiniCart
+				? setSkuOptionsAtomState({
+						...skuOptionsAtomState,
+						miniCartErrors: [],
+						skuMiniCartOptions: [],
+				  })
+				: setSkuOptionsAtomState(initialSkuOptionsAtomState);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
@@ -80,22 +106,24 @@ const ProductOptionText = ({
 
 		setText(value);
 
-		let currentSkuOptions = skuOptionsAtomState.skuOptions;
+		let currentSkuOptions = skuOptionsAtomState[skuOptionsKey];
 
 		const currentSkuOption = currentSkuOptions.filter(
 			(skuOption) => skuOption.skuOptionKey === productOption.key
 		)[0];
 
 		if (currentSkuOption) {
-			const curIndex = currentSkuOptions.findIndex(
-				(skuOption) => skuOption.skuOptionKey === productOption.key
-			);
+			currentSkuOptions = currentSkuOptions.map((skuOption) => {
+				if (skuOption.skuOptionKey === productOption.key) {
+					return {
+						key: productOption.key,
+						skuOptionKey: productOption.key,
+						value: [value],
+					};
+				}
 
-			currentSkuOptions[curIndex] = {
-				key: productOption.key,
-				skuOptionKey: productOption.key,
-				value: [value],
-			};
+				return skuOption;
+			});
 		}
 		else {
 			currentSkuOptions = [
@@ -114,12 +142,13 @@ const ProductOptionText = ({
 
 		setSkuOptionsAtomState({
 			...skuOptionsAtomState,
-			errors: getSkuOptionsErrors(
+			[errorsKey]: getSkuOptionsErrors(
 				required,
 				productOption,
-				skuOptionsAtomState
+				skuOptionsAtomState,
+				isFromMiniCart
 			),
-			skuOptions: currentSkuOptions,
+			[skuOptionsKey]: currentSkuOptions,
 			updating: false,
 		});
 	};

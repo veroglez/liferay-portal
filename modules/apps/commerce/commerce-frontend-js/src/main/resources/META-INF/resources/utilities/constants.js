@@ -5,3 +5,9 @@
 
 export const CHANNEL_RESOURCE_ENDPOINT =
 	'/o/headless-commerce-delivery-catalog/v1.0/channels';
+
+export const FIELD_TYPE = {
+	radio: 'radio',
+	select: 'select',
+	text: 'text',
+};

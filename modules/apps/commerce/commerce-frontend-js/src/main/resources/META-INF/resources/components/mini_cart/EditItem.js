@@ -12,7 +12,7 @@ import React, {useContext, useEffect, useMemo, useState} from 'react';
 import ServiceProvider from '../../ServiceProvider/index';
 import {CommerceContext} from '../../index';
 import skuOptionsAtom from '../../utilities/atoms/skuOptionsAtom';
-import {CHANNEL_RESOURCE_ENDPOINT} from '../../utilities/constants';
+import {CHANNEL_RESOURCE_ENDPOINT, FIELD_TYPE} from '../../utilities/constants';
 import {
 	CP_INSTANCE_CHANGED,
 	CURRENT_ORDER_UPDATED,
@@ -21,6 +21,7 @@ import {formatCartItem} from '../add_to_cart/data';
 import {adaptLegacyPriceModel, isNonnull} from '../price/util/index';
 import ProductOptionRadio from '../product_options/ProductOptionRadio';
 import ProductOptionSelect from '../product_options/ProductOptionSelect';
+import ProductOptionText from '../product_options/ProductOptionText';
 import MiniCartContext from './MiniCartContext';
 
 const CartResource = ServiceProvider.DeliveryCartAPI('v1');
@@ -35,10 +36,6 @@ const getProductOptions = (channelId, productId) => {
 };
 
 const saveItem = async ({cartState, cpInstance, namespace, selectedItem}) => {
-	if (!Object.keys(cpInstance).length) {
-		return;
-	}
-
 	const {cartItems, id: cartId} = cartState;
 	const {skuMiniCartOptions} = cpInstance;
 
@@ -72,7 +69,9 @@ const saveItem = async ({cartState, cpInstance, namespace, selectedItem}) => {
 
 function EditItem() {
 	const [options, setOptions] = useState([]);
-	const [skuOptionsAtomState] = useLiferayState(skuOptionsAtom);
+	const [skuOptionsAtomState, setSkuOptionsAtomState] = useLiferayState(
+		skuOptionsAtom
+	);
 	const [cpInstance, setCpInstance] = useState({});
 
 	const {miniCartErrors, namespace} = skuOptionsAtomState;
@@ -100,6 +99,15 @@ function EditItem() {
 		() => cartItems.find((item) => item.productId === editedItem.productId),
 		[cartItems, editedItem]
 	);
+
+	useEffect(() => {
+		setCpInstance({
+			quantity: selectedItem.quantity,
+			replacedSkuId: selectedItem.replacedSkuId,
+			skuId: selectedItem.skuId,
+			skuMiniCartOptions: skuOptionsAtomState.skuMiniCartOptions,
+		});
+	}, [selectedItem, skuOptionsAtomState.skuMiniCartOptions]);
 
 	const [price, setPrice] = useState(selectedItem.price);
 
@@ -141,6 +149,10 @@ function EditItem() {
 		})
 			.then(() => {
 				setEditedItem(null);
+				setSkuOptionsAtomState({
+					...skuOptionsAtomState,
+					skuOptions: skuOptionsAtomState.skuMiniCartOptions,
+				});
 			})
 			.catch((error) => {
 				console.error(error);
@@ -243,27 +255,39 @@ export default EditItem;
 
 const Options = ({channelId, namespace, options, productId, selectedItem}) =>
 	options.map((option) => {
-		let Component = ProductOptionSelect;
+		let Component = ProductOptionText;
+		let props = {
+			componentId: `${namespace}_${option.id}`,
+			isFromMiniCart: true,
+			json: selectedItem.options,
+			namespace,
+			productOption: option,
+		};
 
-		if (option.fieldType === 'radio') {
+		if (option.fieldType === FIELD_TYPE.radio) {
 			Component = ProductOptionRadio;
+			props = {
+				...props,
+				accountId: CommerceContext.account.accountId,
+				channelId,
+				minQuantity: selectedItem.quantity,
+				productId,
+				sku: {skuId: selectedItem.skuId},
+			};
+		}
+		else if (option.fieldType === FIELD_TYPE.select) {
+			Component = ProductOptionSelect;
+			props = {
+				...props,
+				accountId: CommerceContext.account.accountId,
+				channelId,
+				minQuantity: selectedItem.quantity,
+				productId,
+				sku: {skuId: selectedItem.skuId},
+			};
 		}
 
-		return (
-			<Component
-				accountId={CommerceContext.account.accountId}
-				channelId={channelId}
-				componentId={`${namespace}_${option.id}`}
-				isFromMiniCart={true}
-				json={selectedItem.options}
-				key={option.id}
-				minQuantity={selectedItem.quantity}
-				namespace={namespace}
-				productId={productId}
-				productOption={option}
-				sku={{skuId: selectedItem.skuId}}
-			/>
-		);
+		return <Component key={option.id} {...props} />;
 	});
 
 const PriceRow = ({children, priceName}) => {
