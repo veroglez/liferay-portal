@@ -8,6 +8,7 @@ export const CHANNEL_RESOURCE_ENDPOINT =
 
 export const FIELD_TYPE = {
 	checkboxMultiple: 'checkbox_multiple',
+	date: 'date',
 	radio: 'radio',
 	select: 'select',
 	text: 'text',
