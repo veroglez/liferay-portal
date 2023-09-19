@@ -24,7 +24,9 @@ const ProductOptionCheckboxMultiple = ({
 	namespace,
 	productOption,
 }) => {
+	const errorsKey = isFromMiniCart ? 'miniCartErrors' : 'errors';
 	const [hasErrors, setHasErrors] = useState(false);
+	const skuOptionsKey = isFromMiniCart ? 'skuMiniCartOptions' : 'skuOptions';
 	const [skuOptionsAtomState, setSkuOptionsAtomState] = useLiferayState(
 		skuOptionsAtom
 	);
@@ -33,14 +35,21 @@ const ProductOptionCheckboxMultiple = ({
 		productOption.productOptionValues
 	);
 
+	const getHasError = (optionValues, required) => {
+		const hasSelectedOptions = optionValues.some(({selected}) => selected);
+
+		return hasSelectedOptions ? !hasSelectedOptions : required;
+	};
+
 	useEffect(
 		() =>
 			setSkuOptionsAtomState({
 				...skuOptionsAtomState,
-				errors: getSkuOptionsErrors(
+				[errorsKey]: getSkuOptionsErrors(
 					hasErrors,
 					productOption,
-					skuOptionsAtomState
+					skuOptionsAtomState,
+					isFromMiniCart
 				),
 				namespace,
 			}),
@@ -52,8 +61,8 @@ const ProductOptionCheckboxMultiple = ({
 		let hasPreselected = false;
 		let initialSkuOptions = skuOptionsAtomState.skuOptions;
 
-		setProductOptionValues(
-			productOptionValues.map((productOptionValue) => {
+		const newProductOptionValues = productOptionValues.map(
+			(productOptionValue) => {
 				let isSelected = productOptionValue.preselected;
 
 				if (isFromMiniCart) {
@@ -85,13 +94,15 @@ const ProductOptionCheckboxMultiple = ({
 					...productOptionValue,
 					selected: isSelected,
 				};
-			})
+			}
 		);
+
+		setProductOptionValues(newProductOptionValues);
 
 		const required = productOption.required && !hasPreselected;
 
 		if (required) {
-			setHasErrors(true);
+			setHasErrors(getHasError(newProductOptionValues, required));
 		}
 
 		setSkuOptionsAtomState({
@@ -103,9 +114,20 @@ const ProductOptionCheckboxMultiple = ({
 			),
 			namespace,
 			skuOptions: initialSkuOptions,
+			...(isFromMiniCart && {
+				skuMiniCartOptions: initialSkuOptions,
+			}),
 		});
 
-		return () => setSkuOptionsAtomState(initialSkuOptionsAtomState);
+		return () =>
+			isFromMiniCart
+				? setSkuOptionsAtomState({
+						...skuOptionsAtomState,
+						miniCartErrors: [],
+						skuMiniCartOptions: [],
+				  })
+				: setSkuOptionsAtomState(initialSkuOptionsAtomState);
+
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
@@ -116,7 +138,7 @@ const ProductOptionCheckboxMultiple = ({
 
 		setSkuOptionsAtomState({...skuOptionsAtomState, updating: true});
 
-		let currentSkuOptions = skuOptionsAtomState.skuOptions;
+		let currentSkuOptions = skuOptionsAtomState[skuOptionsKey];
 
 		const curSkuOptionIndex = currentSkuOptions.findIndex(
 			(skuOption) => skuOption.skuOptionKey === productOption.key
@@ -169,19 +191,20 @@ const ProductOptionCheckboxMultiple = ({
 
 		setProductOptionValues(productOptionValues);
 
-		const required =
-			(forceRequired || productOption.required) &&
-			currentSkuOptions[curSkuOptionIndex]?.value.length === 0;
+		const required = forceRequired || productOption.required;
+		const hasError = getHasError(productOptionValues, required);
 
-		setHasErrors(required);
+		setHasErrors(hasError);
+
 		setSkuOptionsAtomState({
 			...skuOptionsAtomState,
-			errors: getSkuOptionsErrors(
-				required,
+			[errorsKey]: getSkuOptionsErrors(
+				hasError,
 				productOption,
-				skuOptionsAtomState
+				skuOptionsAtomState,
+				isFromMiniCart
 			),
-			skuOptions: currentSkuOptions,
+			[skuOptionsKey]: currentSkuOptions,
 			updating: false,
 		});
 	};

@@ -7,6 +7,7 @@ export const CHANNEL_RESOURCE_ENDPOINT =
 	'/o/headless-commerce-delivery-catalog/v1.0/channels';
 
 export const FIELD_TYPE = {
+	checkboxMultiple: 'checkbox_multiple',
 	radio: 'radio',
 	select: 'select',
 	text: 'text',
