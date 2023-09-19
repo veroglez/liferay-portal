@@ -19,12 +19,16 @@ import {
 
 const ProductOptionNumeric = ({
 	componentId,
-	forceRequired,
+	forceRequired = false,
+	isFromMiniCart = false,
+	json,
 	namespace,
 	productOption,
 }) => {
+	const errorsKey = isFromMiniCart ? 'miniCartErrors' : 'errors';
 	const [hasErrors, setHasErrors] = useState(false);
 	const [number, setNumber] = useState('');
+	const skuOptionsKey = isFromMiniCart ? 'skuMiniCartOptions' : 'skuOptions';
 
 	const [skuOptionsAtomState, setSkuOptionsAtomState] = useLiferayState(
 		skuOptionsAtom
@@ -34,10 +38,11 @@ const ProductOptionNumeric = ({
 		() =>
 			setSkuOptionsAtomState({
 				...skuOptionsAtomState,
-				errors: getSkuOptionsErrors(
+				[errorsKey]: getSkuOptionsErrors(
 					hasErrors,
 					productOption,
-					skuOptionsAtomState
+					skuOptionsAtomState,
+					isFromMiniCart
 				),
 			}),
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -45,7 +50,18 @@ const ProductOptionNumeric = ({
 	);
 
 	useEffect(() => {
-		if (productOption.required) {
+		let value = '';
+
+		if (isFromMiniCart) {
+			const option = JSON.parse(json).find(
+				({key}) => key === productOption.key
+			);
+			[value] = option.value;
+
+			setNumber(value);
+		}
+
+		if (productOption.required && !value) {
 			setHasErrors(true);
 		}
 
@@ -62,13 +78,19 @@ const ProductOptionNumeric = ({
 				{
 					key: productOption.key,
 					skuOptionKey: productOption.key,
-					value: [],
+					value: [value],
 				},
 			],
 		});
 
-		return () => setSkuOptionsAtomState(initialSkuOptionsAtomState);
-		// eslint-disable-next-line react-hooks/exhaustive-deps
+		return () =>
+			isFromMiniCart
+				? setSkuOptionsAtomState({
+						...skuOptionsAtomState,
+						miniCartErrors: [],
+						skuMiniCartOptions: [],
+				  })
+				: setSkuOptionsAtomState(initialSkuOptionsAtomState); // eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	const handleChange = ({target: {value}}) => {
@@ -80,7 +102,7 @@ const ProductOptionNumeric = ({
 
 		setNumber(value);
 
-		let currentSkuOptions = skuOptionsAtomState.skuOptions;
+		let currentSkuOptions = skuOptionsAtomState[skuOptionsKey];
 
 		const currentSkuOption = currentSkuOptions.find(
 			(skuOption) => skuOption.skuOptionKey === productOption.key
@@ -116,12 +138,13 @@ const ProductOptionNumeric = ({
 
 		setSkuOptionsAtomState({
 			...skuOptionsAtomState,
-			errors: getSkuOptionsErrors(
+			[errorsKey]: getSkuOptionsErrors(
 				required,
 				productOption,
-				skuOptionsAtomState
+				skuOptionsAtomState,
+				isFromMiniCart
 			),
-			skuOptions: currentSkuOptions,
+			[skuOptionsKey]: currentSkuOptions,
 			updating: false,
 		});
 	};
