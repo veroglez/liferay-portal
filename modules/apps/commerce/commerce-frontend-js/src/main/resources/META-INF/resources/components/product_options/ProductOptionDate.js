@@ -6,9 +6,9 @@
 import ClayForm, {ClayInput} from '@clayui/form';
 import {useLiferayState} from '@liferay/frontend-js-state-web';
 import classnames from 'classnames';
-import skuOptionsAtom from '../../utilities/atoms/skuOptionsAtom';
 import React, {useEffect, useState} from 'react';
 
+import skuOptionsAtom from '../../utilities/atoms/skuOptionsAtom';
 import Asterisk from './Asterisk';
 import {
 	getProductOptionName,
@@ -82,20 +82,22 @@ const ProductOptionDate = ({
 
 		let currentSkuOptions = skuOptionsAtomState.skuOptions;
 
-		const currentSkuOption = currentSkuOptions.filter(
+		const currentSkuOption = currentSkuOptions.find(
 			(skuOption) => skuOption.skuOptionKey === productOption.key
-		)[0];
+		);
 
 		if (currentSkuOption) {
-			const curIndex = currentSkuOptions.findIndex(
-				(skuOption) => skuOption.skuOptionKey === productOption.key
-			);
+			currentSkuOptions = currentSkuOptions.map((skuOption) => {
+				if (skuOption.skuOptionKey === productOption.key) {
+					return {
+						key: productOption.key,
+						skuOptionKey: productOption.key,
+						value: [value],
+					};
+				}
 
-			currentSkuOptions[curIndex] = {
-				key: productOption.key,
-				skuOptionKey: productOption.key,
-				value: [value],
-			};
+				return skuOption;
+			});
 		}
 		else {
 			currentSkuOptions = [
