@@ -19,7 +19,9 @@ import {
 
 const ProductOptionCheckbox = ({
 	componentId,
-	forceRequired,
+	forceRequired = false,
+	isFromMiniCart = false,
+	json,
 	namespace,
 	productOption,
 }) => {
@@ -46,6 +48,18 @@ const ProductOptionCheckbox = ({
 
 	useEffect(() => {
 		setSkuOptionsAtomState({...skuOptionsAtomState, namespace});
+
+		if (isFromMiniCart) {
+			const option = JSON.parse(json).find(
+				({key}) => key === productOption.key
+			);
+
+			console.log(option);
+
+			if (option) {
+				setIsChecked(true);
+			}
+		}
 
 		if (productOption.required) {
 			setHasErrors(true);

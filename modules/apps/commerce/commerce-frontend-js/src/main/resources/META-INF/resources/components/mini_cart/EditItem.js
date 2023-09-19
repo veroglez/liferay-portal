@@ -19,6 +19,7 @@ import {
 } from '../../utilities/eventsDefinitions';
 import {formatCartItem} from '../add_to_cart/data';
 import {adaptLegacyPriceModel, isNonnull} from '../price/util/index';
+import ProductOptionCheckbox from '../product_options/ProductOptionCheckbox';
 import ProductOptionCheckboxMultiple from '../product_options/ProductOptionCheckboxMultiple';
 import ProductOptionDate from '../product_options/ProductOptionDate';
 import ProductOptionNumeric from '../product_options/ProductOptionNumeric';
@@ -269,6 +270,9 @@ const Options = ({channelId, namespace, options, productId, selectedItem}) =>
 
 		if (option.fieldType === FIELD_TYPE.checkboxMultiple) {
 			Component = ProductOptionCheckboxMultiple;
+		}
+		else if (option.fieldType === FIELD_TYPE.checkbox) {
+			Component = ProductOptionCheckbox;
 		}
 		else if (option.fieldType === FIELD_TYPE.date) {
 			Component = ProductOptionDate;
