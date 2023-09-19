@@ -6,9 +6,9 @@
 import ClayForm, {ClayCheckbox} from '@clayui/form';
 import {useLiferayState} from '@liferay/frontend-js-state-web';
 import classnames from 'classnames';
-import skuOptionsAtom from '../../utilities/atoms/skuOptionsAtom';
 import React, {useEffect, useState} from 'react';
 
+import skuOptionsAtom from '../../utilities/atoms/skuOptionsAtom';
 import Asterisk from './Asterisk';
 import {
 	getProductOptionName,
@@ -19,6 +19,8 @@ import {
 
 const ProductOptionCheckboxMultiple = ({
 	forceRequired,
+	isFromMiniCart,
+	json,
 	namespace,
 	productOption,
 }) => {
@@ -52,6 +54,20 @@ const ProductOptionCheckboxMultiple = ({
 
 		setProductOptionValues(
 			productOptionValues.map((productOptionValue) => {
+				let isSelected = productOptionValue.preselected;
+
+				if (isFromMiniCart) {
+					const option = JSON.parse(json).find(
+						({key}) => key === productOption.key
+					);
+
+					if (option) {
+						isSelected =
+							isSelected ||
+							option.value.includes(productOptionValue.key);
+					}
+				}
+
 				if (productOptionValue.preselected) {
 					hasPreselected = true;
 
@@ -67,7 +83,7 @@ const ProductOptionCheckboxMultiple = ({
 
 				return {
 					...productOptionValue,
-					selected: productOptionValue.preselected,
+					selected: isSelected,
 				};
 			})
 		);
@@ -111,15 +127,25 @@ const ProductOptionCheckboxMultiple = ({
 		)[0];
 
 		if (currentSkuOption) {
-			currentSkuOptions[curSkuOptionIndex] = {
-				key: productOption.key,
-				skuOptionKey: productOption.key,
-				value: checked
-					? [...currentSkuOptions[curSkuOptionIndex].value, value]
-					: currentSkuOptions[curSkuOptionIndex].value.filter(
-							(curVal) => !(curVal === value)
-					  ),
-			};
+			currentSkuOptions = currentSkuOptions.map((skuOption) => {
+				if (skuOption.skuOptionKey === productOption.key) {
+					return {
+						key: productOption.key,
+						skuOptionKey: productOption.key,
+						value: checked
+							? [
+									...currentSkuOptions[curSkuOptionIndex]
+										.value,
+									value,
+							  ]
+							: currentSkuOptions[curSkuOptionIndex].value.filter(
+									(curVal) => !(curVal === value)
+							  ),
+					};
+				}
+
+				return skuOption;
+			});
 		}
 		else {
 			currentSkuOptions = [
