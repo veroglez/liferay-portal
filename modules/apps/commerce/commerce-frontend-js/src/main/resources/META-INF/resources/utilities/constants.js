@@ -12,4 +12,5 @@ export const FIELD_TYPE = {
 	radio: 'radio',
 	select: 'select',
 	text: 'text',
+	numeric: 'numeric',
 };
