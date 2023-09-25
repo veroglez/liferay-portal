@@ -82,15 +82,15 @@ const ProductOptionSelect = ({
 
 	useEffect(
 		() =>
-			setSkuOptionsAtomState((prevState) => ({
-				...prevState,
+			setSkuOptionsAtomState({
+				...skuOptionsAtomState,
 				[errorsKey]: getSkuOptionsErrors(
 					hasErrors,
 					isFromMiniCart,
 					productOption,
-					prevState
+					skuOptionsAtomState
 				),
-			})),
+			}),
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 		[hasErrors]
 	);
@@ -106,56 +106,31 @@ const ProductOptionSelect = ({
 			setHasErrors(true);
 		}
 
-		if (isFromMiniCart) {
-
-			setSkuOptionsAtomState((prevState) => ({
-				...prevState,
-				miniCartErrors: getSkuOptionsErrors(
-					required,
-					isFromMiniCart,
-					productOption,
-					prevState
-				),
-				miniCartSkuOptions: [
-					...prevState.miniCartSkuOptions || [],
-					{
-						key: productOption.key,
-						price: initialProductOptionValue?.price,
-						priceType: initialProductOptionValue?.priceType,
-						quantity: initialProductOptionValue?.quantity,
-						skuId: initialProductOptionValue?.skuId,
-						skuOptionKey: productOption.key,
-						skuOptionValueKey: initialProductOptionValue?.key,
-						value: initialProductOptionValue?.key || '',
-					},
-				],
-			}));
-		}
-		else {
-			setSkuOptionsAtomState({
-				...skuOptionsAtomState,
-				errors: getSkuOptionsErrors(
-					required,
-					isFromMiniCart,
-					productOption,
-					skuOptionsAtomState
-				),
-				namespace,
-				skuOptions: [
-					...skuOptionsAtomState.skuOptions,
-					{
-						key: productOption.key,
-						price: initialProductOptionValue?.price,
-						priceType: initialProductOptionValue?.priceType,
-						quantity: initialProductOptionValue?.quantity,
-						skuId: initialProductOptionValue?.skuId,
-						skuOptionKey: productOption.key,
-						skuOptionValueKey: initialProductOptionValue?.key,
-						value: initialProductOptionValue?.key || '',
-					},
-				],
-			});
-		}
+		setSkuOptionsAtomState({
+			...skuOptionsAtomState,
+			[errorsKey]: getSkuOptionsErrors(
+				required,
+				isFromMiniCart,
+				productOption,
+				skuOptionsAtomState
+			),
+			namespace,
+			[skuOptionsKey]: isFromMiniCart
+				? JSON.parse(json)
+				: [
+						...(skuOptionsAtomState[skuOptionsKey] || []),
+						{
+							key: productOption.key,
+							price: initialProductOptionValue?.price,
+							priceType: initialProductOptionValue?.priceType,
+							quantity: initialProductOptionValue?.quantity,
+							skuId: initialProductOptionValue?.skuId,
+							skuOptionKey: productOption.key,
+							skuOptionValueKey: initialProductOptionValue?.key,
+							value: initialProductOptionValue?.key || '',
+						},
+				  ],
+		});
 
 		return () =>
 			isFromMiniCart
@@ -173,7 +148,7 @@ const ProductOptionSelect = ({
 			return;
 		}
 
-		setSkuOptionsAtomState((prevState) => ({...prevState, updating: true}));
+		setSkuOptionsAtomState({...skuOptionsAtomState, updating: true});
 
 		const valueArray = value.split('[$SEPARATOR$]');
 
@@ -184,16 +159,16 @@ const ProductOptionSelect = ({
 
 			setHasErrors(required);
 
-			return setSkuOptionsAtomState((prevState) => ({
-				...prevState,
+			return setSkuOptionsAtomState({
+				...skuOptionsAtomState,
 				[errorsKey]: getSkuOptionsErrors(
 					required,
 					isFromMiniCart,
 					productOption,
-					prevState
+					skuOptionsAtomState
 				),
 				updating: false,
-			}));
+			});
 		}
 
 		const currentProductOptionValue = productOptionValues.filter(
@@ -208,16 +183,16 @@ const ProductOptionSelect = ({
 
 			setHasErrors(required);
 
-			return setSkuOptionsAtomState((prevState) => ({
-				...prevState,
+			return setSkuOptionsAtomState({
+				...skuOptionsAtomState,
 				[errorsKey]: getSkuOptionsErrors(
 					required,
 					isFromMiniCart,
 					productOption,
-					prevState
+					skuOptionsAtomState
 				),
 				updating: false,
-			}));
+			});
 		}
 
 		setSelectedProductOptionValueKey(valueArray[1]);
@@ -265,17 +240,17 @@ const ProductOptionSelect = ({
 		if (!productOption.skuContributor && !currentProductOptionValue.skuId) {
 			setHasErrors(false);
 
-			return setSkuOptionsAtomState((prevState) => ({
-				...prevState,
+			return setSkuOptionsAtomState({
+				...skuOptionsAtomState,
 				[errorsKey]: getSkuOptionsErrors(
 					false,
 					isFromMiniCart,
 					productOption,
-					prevState
+					skuOptionsAtomState
 				),
 				[skuOptionsKey]: currentSkuOptions,
 				updating: false,
-			}));
+			});
 		}
 
 		DeliveryCatalogAPIServiceProvider.postChannelProductSkuBySkuOption(
@@ -308,10 +283,10 @@ const ProductOptionSelect = ({
 					};
 				}
 
-				setSkuOptionsAtomState((prevState) => ({
-					...prevState,
+				setSkuOptionsAtomState({
+					...skuOptionsAtomState,
 					[skuOptionsKey]: currentSkuOptions,
-				}));
+				});
 
 				cpInstance.skuOptions = currentSkuOptions;
 				cpInstance.skuId = parseInt(cpInstance.id, 10);
@@ -329,17 +304,17 @@ const ProductOptionSelect = ({
 			.finally(() => {
 				if (isMounted()) {
 					setHasErrors(false);
-					setSkuOptionsAtomState((prevState) => ({
-						...prevState,
+					setSkuOptionsAtomState({
+						...skuOptionsAtomState,
 						[errorsKey]: getSkuOptionsErrors(
 							false,
 							isFromMiniCart,
 							productOption,
-							prevState
+							skuOptionsAtomState
 						),
 						[skuOptionsKey]: currentSkuOptions,
 						updating: false,
-					}));
+					});
 				}
 			});
 	};

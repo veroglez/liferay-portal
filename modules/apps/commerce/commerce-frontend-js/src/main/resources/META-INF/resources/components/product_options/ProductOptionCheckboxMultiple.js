@@ -58,8 +58,9 @@ const ProductOptionCheckboxMultiple = ({
 	);
 
 	useEffect(() => {
+		console.log('A', skuOptionsAtomState);
 		let hasPreselected = false;
-		let initialSkuOptions = skuOptionsAtomState.skuOptions;
+		let initialSkuOptions = skuOptionsAtomState.skuOptions || [];
 
 		const newProductOptionValues = productOptionValues.map(
 			(productOptionValue) => {
@@ -114,7 +115,9 @@ const ProductOptionCheckboxMultiple = ({
 				skuOptionsAtomState
 			),
 			namespace,
-			skuOptions: initialSkuOptions,
+			[skuOptionsKey]: isFromMiniCart
+				? JSON.parse(json)
+				: initialSkuOptions,
 		});
 
 		return () =>

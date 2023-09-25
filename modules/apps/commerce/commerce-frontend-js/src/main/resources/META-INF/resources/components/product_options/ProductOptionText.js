@@ -36,15 +36,15 @@ const ProductOptionText = ({
 
 	useEffect(
 		() =>
-			setSkuOptionsAtomState((prevState) => ({
-				...prevState,
+			setSkuOptionsAtomState({
+				...skuOptionsAtomState,
 				[errorsKey]: getSkuOptionsErrors(
 					hasErrors,
 					isFromMiniCart,
 					productOption,
-					prevState
+					skuOptionsAtomState
 				),
-			})),
+			}),
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 		[hasErrors]
 	);
@@ -68,45 +68,26 @@ const ProductOptionText = ({
 			setHasErrors(true);
 		}
 
-		if (isFromMiniCart) {
-			setSkuOptionsAtomState((prevState) => ({
-				...prevState,
-				miniCartErrors: getSkuOptionsErrors(
-					productOption.required,
-					isFromMiniCart,
-					productOption,
-					prevState
-				),
-				miniCartSkuOptions: [
-					...prevState.miniCartSkuOptions || [],
-					{
-						key: productOption.key,
-						skuOptionKey: productOption.key,
-						value: [value],
-					},
-				],
-			}));
-		}
-		else {
-			setSkuOptionsAtomState({
-				...skuOptionsAtomState,
-				errors: getSkuOptionsErrors(
-					productOption.required,
-					isFromMiniCart,
-					productOption,
-					skuOptionsAtomState
-				),
-				namespace,
-				skuOptions: [
-					...skuOptionsAtomState.skuOptions,
-					{
-						key: productOption.key,
-						skuOptionKey: productOption.key,
-						value: [value],
-					},
-				],
-			});
-		}
+		setSkuOptionsAtomState({
+			...skuOptionsAtomState,
+			[errorsKey]: getSkuOptionsErrors(
+				productOption.required,
+				isFromMiniCart,
+				productOption,
+				skuOptionsAtomState
+			),
+			namespace,
+			[skuOptionsKey]: isFromMiniCart
+				? JSON.parse(json)
+				: [
+						...(skuOptionsAtomState.skuOptions || []),
+						{
+							key: productOption.key,
+							skuOptionKey: productOption.key,
+							value: [value],
+						},
+				  ],
+		});
 
 		return () =>
 			isFromMiniCart
@@ -124,15 +105,15 @@ const ProductOptionText = ({
 			return;
 		}
 
-		setSkuOptionsAtomState((prevState) => ({...prevState, updating: true}));
+		setSkuOptionsAtomState({...skuOptionsAtomState, updating: true});
 
 		setText(value);
 
 		let currentSkuOptions = skuOptionsAtomState[skuOptionsKey];
 
-		const currentSkuOption = currentSkuOptions.filter(
+		const currentSkuOption = currentSkuOptions.find(
 			(skuOption) => skuOption.skuOptionKey === productOption.key
-		)[0];
+		);
 
 		if (currentSkuOption) {
 			currentSkuOptions = currentSkuOptions.map((skuOption) => {
@@ -162,17 +143,17 @@ const ProductOptionText = ({
 
 		setHasErrors(required);
 
-		setSkuOptionsAtomState((prevState) => ({
-			...prevState,
+		setSkuOptionsAtomState({
+			...skuOptionsAtomState,
 			[errorsKey]: getSkuOptionsErrors(
 				required,
 				isFromMiniCart,
 				productOption,
-				prevState
+				skuOptionsAtomState
 			),
 			[skuOptionsKey]: currentSkuOptions,
 			updating: false,
-		}));
+		});
 	};
 
 	return (
