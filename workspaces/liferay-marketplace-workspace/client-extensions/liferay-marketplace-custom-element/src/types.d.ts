@@ -12,6 +12,7 @@ declare module 'warning';
 type Account = {
 	customFields?: CustomField[];
 	description: string;
+	emailAddress: string;
 	externalReferenceCode: string;
 	id: number;
 	logoURL?: string;
@@ -118,10 +119,10 @@ type CartItem = {
 	price: {
 		currency: string;
 		discount: number;
-		finalPrice: number;
-		price: number;
+		finalPrice?: number;
+		price?: number;
 	};
-	productId: number;
+	productId?: number;
 	quantity: number;
 	settings: {
 		maxQuantity: number;
@@ -136,6 +137,14 @@ type Catalog = {
 	id: number;
 	name: string;
 	system: boolean;
+};
+
+type EmailAppInformation = {
+	dashboardLink: string;
+	orderID: number;
+	priceModel?: string;
+	productName?: string;
+	productType: string;
 };
 
 type Vocabulary = {
@@ -223,7 +232,7 @@ interface OrderType {
 
 type PaymentMethodMode = 'PayPal';
 
-type PaymentMethodSelector = 'order' | 'pay' | 'trial' | null;
+type PaymentMethodSelector = 'order' | 'pay' | 'trial';
 
 interface PlacedOrder {
 	account: string;
@@ -303,10 +312,12 @@ interface Product {
 	customFields?: CustomField[];
 	description: {[key: string]: string};
 	externalReferenceCode: string;
-	id: number;
+	finalPrice?: number;
+	id?: number;
 	images: ProductImages[];
 	modifiedDate: string;
 	name: {[key: string]: string};
+	price?: number;
 	productChannels: Channel[];
 	productId: number;
 	productSpecifications: ProductSpecification[];
@@ -369,12 +380,12 @@ type SKU = {
 };
 
 type ProductSpecification = {
-	id: number;
-	optionCategoryId: number;
-	priority: number;
-	productId: number;
-	specificationId: number;
-	specificationKey: string;
+	id?: number;
+	optionCategoryId?: number;
+	priority?: number;
+	productId?: number;
+	specificationId?: number;
+	specificationKey?: string;
 	value: {[key: string]: string};
 };
 

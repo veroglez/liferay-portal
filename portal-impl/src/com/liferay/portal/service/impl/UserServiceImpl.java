@@ -2440,8 +2440,34 @@ public class UserServiceImpl extends UserServiceBaseImpl {
 			throw new RequiredUserException();
 		}
 
-		UserPermissionUtil.check(
-			getPermissionChecker(), userId, ActionKeys.DELETE);
+		if ((status == WorkflowConstants.STATUS_APPROVED) &&
+			!UserPermissionUtil.contains(
+				getPermissionChecker(), userId, ActionKeys.ACTIVATE) &&
+			!UserPermissionUtil.contains(
+				getPermissionChecker(), userId, ActionKeys.DELETE)) {
+
+			throw new PrincipalException.MustHavePermission(
+				getPermissionChecker(), User.class.getName(), userId,
+				ActionKeys.ACTIVATE, ActionKeys.DELETE);
+		}
+
+		if ((status == WorkflowConstants.STATUS_INACTIVE) &&
+			!UserPermissionUtil.contains(
+				getPermissionChecker(), userId, ActionKeys.DEACTIVATE) &&
+			!UserPermissionUtil.contains(
+				getPermissionChecker(), userId, ActionKeys.DELETE)) {
+
+			throw new PrincipalException.MustHavePermission(
+				getPermissionChecker(), User.class.getName(), userId,
+				ActionKeys.DEACTIVATE, ActionKeys.DELETE);
+		}
+
+		if ((status != WorkflowConstants.STATUS_APPROVED) &&
+			(status != WorkflowConstants.STATUS_INACTIVE)) {
+
+			UserPermissionUtil.check(
+				getPermissionChecker(), userId, ActionKeys.DELETE);
+		}
 
 		return userLocalService.updateStatus(userId, status, serviceContext);
 	}

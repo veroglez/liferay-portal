@@ -567,7 +567,7 @@ export async function getProductSKU({appProductId}: {appProductId: number}) {
 export async function getProductSpecifications({
 	appProductId,
 }: {
-	appProductId: number;
+	appProductId?: number;
 }) {
 	const response = await fetch(
 		`${baseURL}/o/headless-commerce-admin-catalog/v1.0/products/${appProductId}/productSpecifications`,
@@ -1070,4 +1070,14 @@ export async function postAccountByERCUserAccountByERC(
 		`${baseURL}/o/headless-admin-user/v1.0/accounts/by-external-reference-code/${accountExternalReferenceCode}/user-accounts/by-external-reference-code/${userExternalReferenceCode}`,
 		{headers, method: 'POST'}
 	);
+}
+
+export async function postEmailAppInformation(
+	emailInformation: EmailAppInformation
+) {
+	await fetch(`${baseURL}/o/c/getappinformations/`, {
+		body: JSON.stringify(emailInformation),
+		headers,
+		method: 'POST',
+	});
 }
