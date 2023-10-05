@@ -413,6 +413,8 @@ public class FragmentEntryInputTemplateNodeContextHelper {
 			_addTextInfoFieldTypeInputTemplateNodeAttributes(
 				infoField, inputTemplateNode);
 		}
+
+		inputTemplateNode.addAttribute("readOnly", false);
 	}
 
 	private void _addLongTextInfoFieldTypeInputTemplateNodeAttributes(
