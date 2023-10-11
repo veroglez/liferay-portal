@@ -8,3 +8,6 @@ export function collapseSidebar(payload) {
 		type: actionTypes.COLLAPSE_SIDEBAR
 	};
 }
+
+
+
