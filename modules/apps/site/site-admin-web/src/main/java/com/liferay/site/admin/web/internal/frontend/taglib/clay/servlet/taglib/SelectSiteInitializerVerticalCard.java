@@ -73,6 +73,10 @@ public class SelectSiteInitializerVerticalCard implements VerticalCard {
 			).setWindowState(
 				LiferayWindowState.POP_UP
 			).buildString()
+		).put(
+			"role", "button"
+		).put(
+			"tabIndex", "0"
 		).build();
 	}
 
