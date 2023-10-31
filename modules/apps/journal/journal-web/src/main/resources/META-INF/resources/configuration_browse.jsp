@@ -25,7 +25,7 @@ Map<String, String> emailDefinitionTerms = journalConfigurationDisplayContext.ge
 		<clay:col
 			lg="3"
 		>
-			<p class="small text-uppercase">
+			<p class="c-mb-1 sheet-tertiary-title text-2 text-secondary">
 				<liferay-ui:message key="settings" />
 			</p>
 
@@ -33,7 +33,7 @@ Map<String, String> emailDefinitionTerms = journalConfigurationDisplayContext.ge
 				verticalNavItems="<%= journalConfigurationDisplayContext.getSettingVerticalNavItemList() %>"
 			/>
 
-			<p class="small text-uppercase">
+			<p class="c-mb-1 sheet-tertiary-title text-2 text-secondary">
 				<liferay-ui:message key="notifications" />
 			</p>
 
