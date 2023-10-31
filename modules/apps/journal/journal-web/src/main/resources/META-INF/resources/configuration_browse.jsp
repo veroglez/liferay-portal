@@ -64,7 +64,7 @@ Map<String, String> emailDefinitionTerms = journalConfigurationDisplayContext.ge
 							verticalAlign="center"
 						>
 							<clay:content-col>
-								<liferay-ui:message key="email" />
+								<%= journalConfigurationDisplayContext.getSubtitle() %>
 							</clay:content-col>
 						</clay:content-row>
 					</h2>
