@@ -5,6 +5,7 @@
 
 package com.liferay.journal.web.internal.portlet.action;
 
+import com.liferay.item.selector.ItemSelector;
 import com.liferay.journal.configuration.JournalGroupServiceConfiguration;
 import com.liferay.journal.constants.JournalPortletKeys;
 import com.liferay.journal.web.internal.configuration.JournalWebConfiguration;
@@ -46,6 +47,9 @@ public class JournalConfigurationAction
 	@Override
 	public String getJspPath(HttpServletRequest httpServletRequest) {
 		if (FeatureFlagManagerUtil.isEnabled("LPS-197692")) {
+			httpServletRequest.setAttribute(
+				ItemSelector.class.getName(), _itemSelector);
+
 			return "/configuration_browse.jsp";
 		}
 
@@ -150,6 +154,9 @@ public class JournalConfigurationAction
 		_journalWebConfiguration = ConfigurableUtil.createConfigurable(
 			JournalWebConfiguration.class, properties);
 	}
+
+	@Reference
+	private ItemSelector _itemSelector;
 
 	private volatile JournalWebConfiguration _journalWebConfiguration;
 

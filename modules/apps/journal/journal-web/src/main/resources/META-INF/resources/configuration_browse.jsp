@@ -78,6 +78,17 @@ Map<String, String> emailDefinitionTerms = journalConfigurationDisplayContext.ge
 								<div class="sheet-text">
 									<liferay-ui:message key="select-the-structures-you-want-to-highlight-in-web-content-administration-to-quickly-access-and-manage-all-its-contents" />
 								</div>
+
+								<clay:button
+									additionalProps='<%=
+										HashMapBuilder.<String, Object>put(
+											"selectDDMStructureURL", journalDisplayContext.getSelectDDMStructureURL()
+										).build()
+									%>'
+									displayType="secondary"
+									label="select"
+									propsTransformer="js/configuration_browse/SelectDDMStructurePropsTransformer"
+								/>
 							</div>
 						</c:when>
 						<c:when test='<%= Objects.equals(journalConfigurationDisplayContext.getNavigation(), "web-content-added") %>'>
