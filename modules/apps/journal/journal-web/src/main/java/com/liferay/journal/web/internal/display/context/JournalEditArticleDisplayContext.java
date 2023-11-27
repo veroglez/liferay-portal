@@ -790,6 +790,33 @@ public class JournalEditArticleDisplayContext {
 		return _groupId;
 	}
 
+	public List<Map<String, Object>> getLanguages() {
+		List<Map<String, Object>> languages = new ArrayList<>();
+
+		Set<String> languageIds = new LinkedHashSet<>();
+
+		languageIds.add(getDefaultArticleLanguageId());
+
+		for (Locale availableLocale : getAvailableLocales()) {
+			languageIds.add(LocaleUtil.toLanguageId(availableLocale));
+		}
+
+		for (String languageId : languageIds) {
+			languages.add(
+				HashMapBuilder.<String, Object>put(
+					"icon",
+					StringUtil.toLowerCase(
+						StringUtil.replace(languageId, '_', '-'))
+				).put(
+					"id", languageId
+				).put(
+					"label", StringUtil.replace(languageId, '_', '-')
+				).build());
+		}
+
+		return languages;
+	}
+
 	public String getPortletResource() {
 		if (_portletResource != null) {
 			return _portletResource;
