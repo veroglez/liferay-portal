@@ -66,6 +66,10 @@ public class InputLocalizedTag extends IncludeTag {
 		return _helpMessage;
 	}
 
+	public boolean getHideTranslationManager() {
+		return _hideTranslationManager;
+	}
+
 	public String getId() {
 		return _id;
 	}
@@ -186,6 +190,10 @@ public class InputLocalizedTag extends IncludeTag {
 		_helpMessage = helpMessage;
 	}
 
+	public void setHideTranslationManager(boolean hideTranslationManager) {
+		_hideTranslationManager = hideTranslationManager;
+	}
+
 	public void setId(String id) {
 		_id = id;
 	}
@@ -254,6 +262,7 @@ public class InputLocalizedTag extends IncludeTag {
 		_fieldPrefixSeparator = null;
 		_formName = null;
 		_helpMessage = null;
+		_hideTranslationManager = false;
 		_id = null;
 		_ignoreRequestValue = false;
 		_inputAddon = null;
@@ -330,6 +339,9 @@ public class InputLocalizedTag extends IncludeTag {
 			"liferay-ui:input-localized:formName", formName);
 		httpServletRequest.setAttribute(
 			"liferay-ui:input-localized:helpMessage", _helpMessage);
+		httpServletRequest.setAttribute(
+			"liferay-ui:input-localized:hideTranslationManager",
+			String.valueOf(_hideTranslationManager));
 		httpServletRequest.setAttribute("liferay-ui:input-localized:id", id);
 		httpServletRequest.setAttribute(
 			"liferay-ui:input-localized:ignoreRequestValue",
@@ -377,6 +389,7 @@ public class InputLocalizedTag extends IncludeTag {
 	private String _fieldPrefixSeparator;
 	private String _formName;
 	private String _helpMessage;
+	private boolean _hideTranslationManager;
 	private String _id;
 	private boolean _ignoreRequestValue;
 	private String _inputAddon;
