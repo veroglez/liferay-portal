@@ -9,6 +9,10 @@
 
 <%
 Map<String, Map<String, String>> languagesTranslationsAriaLabelsMap = new HashMap<String, Map<String, String>>();
+
+System.out.println("AAA");
+System.out.println(hideTranslationManager);
+
 %>
 
 <c:if test="<%= Validator.isNotNull(inputAddon) %>">
@@ -128,7 +132,7 @@ Map<String, Map<String, String>> languagesTranslationsAriaLabelsMap = new HashMa
 		}
 		%>
 
-		<div class="input-group-item input-group-item-shrink input-localized-content">
+		<div class='input-group-item input-group-item-shrink input-localized-content <%= hideTranslationManager ? "hide" : "" %>' >
 
 			<%
 			String normalizedSelectedLanguageId = StringUtil.replace(selectedLanguageId, '_', '-');

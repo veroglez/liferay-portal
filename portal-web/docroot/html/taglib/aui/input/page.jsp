@@ -63,6 +63,9 @@
 
 <%
 boolean choiceField = checkboxField || radioField;
+
+System.out.println("-----");
+System.out.println(hideTranslationManager);
 %>
 
 <c:if test='<%= !type.equals("hidden") && Validator.isNotNull(labelContent) %>'>
@@ -284,6 +287,7 @@ boolean choiceField = checkboxField || radioField;
 					disabled="<%= disabled %>"
 					formName="<%= formName %>"
 					helpMessage="<%= helpMessage %>"
+					hideTranslationManager="<%= hideTranslationManager %>"
 					id="<%= id %>"
 					ignoreRequestValue="<%= ignoreRequestValue %>"
 					languageId="<%= languageId %>"

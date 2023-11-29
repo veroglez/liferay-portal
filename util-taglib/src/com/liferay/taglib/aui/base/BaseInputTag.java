@@ -111,6 +111,10 @@ public abstract class BaseInputTag extends com.liferay.taglib.BaseValidatorTagSu
 		return _helpTextCssClass;
 	}
 
+	public boolean getHideTranslationManager() {
+		return _hideTranslationManager;
+	}
+
 	public java.lang.String getIconOff() {
 		return _iconOff;
 	}
@@ -335,6 +339,10 @@ public abstract class BaseInputTag extends com.liferay.taglib.BaseValidatorTagSu
 		_helpTextCssClass = helpTextCssClass;
 	}
 
+	public void setHideTranslationManager(boolean hideTranslationManager) {
+		_hideTranslationManager = hideTranslationManager;
+	}
+
 	public void setIconOff(java.lang.String iconOff) {
 		_iconOff = iconOff;
 	}
@@ -503,6 +511,7 @@ public abstract class BaseInputTag extends com.liferay.taglib.BaseValidatorTagSu
 		_labelCssClass = null;
 		_languageId = null;
 		_languagesDropdownDirection = null;
+		_hideTranslationManager = false;
 		_last = false;
 		_localized = false;
 		_localizeLabel = true;
@@ -557,6 +566,7 @@ public abstract class BaseInputTag extends com.liferay.taglib.BaseValidatorTagSu
 		setNamespacedAttribute(request, "formName", _formName);
 		setNamespacedAttribute(request, "helpMessage", _helpMessage);
 		setNamespacedAttribute(request, "helpTextCssClass", _helpTextCssClass);
+		setNamespacedAttribute(request, "hideTranslationManager", _hideTranslationManager);
 		setNamespacedAttribute(request, "iconOff", _iconOff);
 		setNamespacedAttribute(request, "iconOn", _iconOn);
 		setNamespacedAttribute(request, "id", _id);
@@ -619,6 +629,7 @@ public abstract class BaseInputTag extends com.liferay.taglib.BaseValidatorTagSu
 	private java.lang.String _formName = null;
 	private java.lang.String _helpMessage = null;
 	private java.lang.String _helpTextCssClass = "input-group-addon";
+	private boolean _hideTranslationManager = false;
 	private java.lang.String _iconOff = null;
 	private java.lang.String _iconOn = null;
 	private java.lang.String _id = null;
