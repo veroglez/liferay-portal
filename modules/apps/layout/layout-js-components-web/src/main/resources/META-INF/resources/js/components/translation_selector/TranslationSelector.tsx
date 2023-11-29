@@ -9,6 +9,8 @@ import ClayLayout from '@clayui/layout';
 import {useId} from 'frontend-js-components-web';
 import React, {useState} from 'react';
 
+import StatusLabel from './StatusLabel';
+
 const TriggerLabel = React.forwardRef(
 	(
 		{selectedItem, ...otherProps}: {selectedItem: Locale},
@@ -118,6 +120,12 @@ export default function TranslationSelector({
 								{item.label}
 							</ClayLayout.ContentSection>
 						</ClayLayout.ContentCol>
+
+						<StatusLabel
+							defaultLocaleId={defaultLocaleId}
+							item={item}
+							translations={translations}
+						/>
 					</ClayLayout.ContentRow>
 				</Option>
 			)}
