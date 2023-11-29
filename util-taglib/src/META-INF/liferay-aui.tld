@@ -747,6 +747,13 @@
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>
 		<attribute>
+			<description>Hide the translation manager button</description>
+			<name>hideTranslationManager</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<type>boolean</type>
+		</attribute>
+		<attribute>
 			<description>The SVG icon markup to use in toggle-switch.</description>
 			<name>iconOff</name>
 			<required>false</required>

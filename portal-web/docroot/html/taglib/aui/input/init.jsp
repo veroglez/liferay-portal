@@ -32,6 +32,7 @@ boolean first = GetterUtil.getBoolean(String.valueOf(request.getAttribute("aui:i
 java.lang.String formName = GetterUtil.getString((java.lang.String)request.getAttribute("aui:input:formName"));
 java.lang.String helpMessage = GetterUtil.getString((java.lang.String)request.getAttribute("aui:input:helpMessage"));
 java.lang.String helpTextCssClass = GetterUtil.getString((java.lang.String)request.getAttribute("aui:input:helpTextCssClass"), "input-group-addon");
+boolean hideTranslationManager = GetterUtil.getBoolean(String.valueOf(request.getAttribute("aui:input:hideTranslationManager")));
 java.lang.String iconOff = GetterUtil.getString((java.lang.String)request.getAttribute("aui:input:iconOff"));
 java.lang.String iconOn = GetterUtil.getString((java.lang.String)request.getAttribute("aui:input:iconOn"));
 java.lang.String id = GetterUtil.getString((java.lang.String)request.getAttribute("aui:input:id"));
