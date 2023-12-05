@@ -21,6 +21,8 @@ export default function updateEditableValues({
 	pageContents: PageContent[];
 	segmentsExperienceId: string;
 }) {
+	console.log('EDITABLE VALUES');
+
 	return {
 		content,
 		editableValues,

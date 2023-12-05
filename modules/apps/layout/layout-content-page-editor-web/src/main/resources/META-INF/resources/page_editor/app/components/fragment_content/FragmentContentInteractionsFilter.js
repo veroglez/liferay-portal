@@ -210,6 +210,7 @@ function FragmentContentInteractionsFilter({
 		let activeEditable;
 
 		const enableProcessor = (event) => {
+			console.log('enable processor');
 			const editableElement = getEditableElement(event.target);
 
 			const editable = editables.find(

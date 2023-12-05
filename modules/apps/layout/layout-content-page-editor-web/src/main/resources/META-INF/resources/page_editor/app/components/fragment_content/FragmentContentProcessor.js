@@ -64,14 +64,19 @@ export default function FragmentContentProcessor({
 		editable.processor.createEditor(
 			editable.element,
 			(value, config = {}) => {
-				const defaultValue =
-					editableValue.defaultValue?.replace(/\s+/g, ' ').trim() ??
-					'';
+				const parseValue = (value) => {
+					value?.replace(/\s+/g, ' ').trim() ?? '';
+				};
+
+				console.log('AA', value);
+
+				const defaultValue = parseValue(editableValue);
+
 				const previousValue = editableValue[languageId];
 
 				if (
 					previousValue === value ||
-					(!previousValue && value === defaultValue)
+					(!previousValue && parseValue(value) === defaultValue)
 				) {
 					return Promise.resolve();
 				}
