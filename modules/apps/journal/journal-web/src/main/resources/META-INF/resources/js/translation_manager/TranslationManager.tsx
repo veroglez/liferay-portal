@@ -71,6 +71,7 @@ export default function TranslationManager({
 				});
 			}}
 			selectedLanguageId={selectedLanguageId}
+			showManageTranslationButton={true}
 			translations={translations}
 		/>
 	);
