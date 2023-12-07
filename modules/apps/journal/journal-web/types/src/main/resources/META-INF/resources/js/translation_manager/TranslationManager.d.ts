@@ -11,12 +11,14 @@ interface Props {
 	defaultLanguageId: Liferay.Language.Locale;
 	fields: Record<string, Field>;
 	languages: Language[];
+	portletNamespace: string;
 	selectedLanguageId: Liferay.Language.Locale;
 }
 export default function TranslationManager({
 	defaultLanguageId,
 	fields,
 	languages,
+	portletNamespace,
 	selectedLanguageId,
 }: Props): JSX.Element;
 export {};
