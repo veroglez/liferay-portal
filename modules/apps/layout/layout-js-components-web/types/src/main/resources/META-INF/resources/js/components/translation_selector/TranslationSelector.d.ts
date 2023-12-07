@@ -11,8 +11,9 @@ export interface Language {
 	label: Liferay.Language.Locale;
 	translations: number;
 }
-export interface Translations {
-	[key: string]: Record<Liferay.Language.Locale, string>;
+export interface Translation {
+	fieldName: string;
+	languages: Liferay.Language.Locale[];
 }
 interface Props {
 
@@ -39,7 +40,7 @@ interface Props {
 	/**
 	 * Translations provided to the component to be used and modified by it
 	 */
-	translations: Translations;
+	translations: Translation[];
 }
 export default function TranslationSelector({
 	defaultLanguageId,

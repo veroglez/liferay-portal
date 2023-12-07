@@ -9,7 +9,7 @@ import ClayLayout from '@clayui/layout';
 import {sub} from 'frontend-js-web';
 import React from 'react';
 
-import {Language, Translations} from './TranslationSelector';
+import {Language} from './TranslationSelector';
 
 const LABEL_STATUS = {
 	default: {
@@ -33,7 +33,7 @@ const LABEL_STATUS = {
 interface Props {
 	defaultLanguageId: Liferay.Language.Locale;
 	item: Language;
-	translations: Translations;
+	totalTranslations: number;
 }
 
 interface Status {
@@ -44,7 +44,7 @@ interface Status {
 export default function StatusLabel({
 	defaultLanguageId,
 	item,
-	translations,
+	totalTranslations,
 }: Props) {
 	let status: Status = LABEL_STATUS.notTranslated;
 
@@ -52,8 +52,6 @@ export default function StatusLabel({
 		status = LABEL_STATUS.default;
 	}
 	else if (item.translations) {
-		const totalTranslations = Object.keys(translations).length;
-
 		if (item.translations === totalTranslations) {
 			status = LABEL_STATUS.translated;
 		}

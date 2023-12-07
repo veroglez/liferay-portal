@@ -5,17 +5,18 @@
 
 /// <reference types="react" />
 
-import {Language, Translations} from '@liferay/layout-js-components-web';
+import {Language} from '@liferay/layout-js-components-web';
+declare type Field = Record<Liferay.Language.Locale, string>;
 interface Props {
 	defaultLanguageId: Liferay.Language.Locale;
+	fields: Record<string, Field>;
 	languages: Language[];
 	selectedLanguageId: Liferay.Language.Locale;
-	translations: Translations;
 }
 export default function TranslationManager({
 	defaultLanguageId,
+	fields,
 	languages,
 	selectedLanguageId,
-	translations,
 }: Props): JSX.Element;
 export {};
