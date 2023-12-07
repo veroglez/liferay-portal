@@ -8,7 +8,7 @@ import {
 	Translation,
 	TranslationSelector,
 } from '@liferay/layout-js-components-web';
-import React, {useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 
 type Field = Record<Liferay.Language.Locale, string>;
 
@@ -16,6 +16,7 @@ interface Props {
 	defaultLanguageId: Liferay.Language.Locale;
 	fields: Record<string, Field>;
 	languages: Language[];
+	portletNamespace: string;
 	selectedLanguageId: Liferay.Language.Locale;
 }
 
@@ -23,9 +24,40 @@ export default function TranslationManager({
 	defaultLanguageId,
 	fields,
 	languages,
+	portletNamespace,
 	selectedLanguageId,
 }: Props) {
-	const [translations] = useState<Translation[]>(fieldToTranslation(fields));
+	const [translations, setTranslations] = useState<Translation[]>(
+		fieldToTranslation(fields)
+	);
+
+	const getTranslations = useCallback(
+		() =>
+			translations.map(({fieldName}) => {
+				const languages = Array.from(
+					document.querySelectorAll<HTMLInputElement>(
+						`[type="hidden"][id*="${portletNamespace}${fieldName}_"]`
+					)
+				)
+					.filter((input) => input.value)
+					.map(
+						({dataset}) =>
+							dataset.languageid as Liferay.Language.Locale
+					);
+
+				return {
+					fieldName,
+					languages,
+				};
+			}),
+		[portletNamespace, translations]
+	);
+
+	useEffect(() => {
+		Liferay.on('inputLocalized:updateTranslationStatus', () =>
+			setTranslations(getTranslations())
+		);
+	}, [getTranslations]);
 
 	return (
 		<TranslationSelector
