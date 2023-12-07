@@ -5,24 +5,28 @@
 
 import {
 	Language,
+	Translation,
 	TranslationSelector,
-	Translations,
 } from '@liferay/layout-js-components-web';
-import React from 'react';
+import React, {useState} from 'react';
+
+type Field = Record<Liferay.Language.Locale, string>;
 
 interface Props {
 	defaultLanguageId: Liferay.Language.Locale;
+	fields: Record<string, Field>;
 	languages: Language[];
 	selectedLanguageId: Liferay.Language.Locale;
-	translations: Translations;
 }
 
 export default function TranslationManager({
 	defaultLanguageId,
+	fields,
 	languages,
 	selectedLanguageId,
-	translations,
 }: Props) {
+	const [translations] = useState<Translation[]>(fieldToTranslation(fields));
+
 	return (
 		<TranslationSelector
 			defaultLanguageId={defaultLanguageId}
@@ -38,4 +42,21 @@ export default function TranslationManager({
 			translations={translations}
 		/>
 	);
+}
+
+function fieldToTranslation(fields: Record<string, Field>) {
+	const translations = [];
+
+	for (const fieldName in fields) {
+		const languages = fields[fieldName]
+			? (Object.keys(fields[fieldName]) as Liferay.Language.Locale[])
+			: [];
+
+		translations.push({
+			fieldName,
+			languages,
+		});
+	}
+
+	return translations;
 }

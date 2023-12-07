@@ -39,8 +39,9 @@ export interface Language {
 	translations: number;
 }
 
-export interface Translations {
-	[key: string]: Record<Liferay.Language.Locale, string>;
+export interface Translation {
+	fieldName: string;
+	languages: Liferay.Language.Locale[];
 }
 
 interface Props {
@@ -68,7 +69,7 @@ interface Props {
 	/**
 	 * Translations provided to the component to be used and modified by it
 	 */
-	translations: Translations;
+	translations: Translation[];
 }
 
 export default function TranslationSelector({
@@ -87,14 +88,12 @@ export default function TranslationSelector({
 		getSelectedLanguage(selectedLanguageId)!
 	);
 
-	const items = translations
-		? languages.map((language) => ({
-				...language,
-				translations: Object.values(translations).filter(
-					(translation) => translation[language.id]
-				).length,
-		  }))
-		: languages;
+	const items = languages.map((language) => ({
+		...language,
+		translations: translations.filter(({languages}) =>
+			languages.includes(language.id)
+		).length,
+	}));
 
 	return (
 		<Picker
@@ -129,7 +128,7 @@ export default function TranslationSelector({
 						<StatusLabel
 							defaultLanguageId={defaultLanguageId}
 							item={item}
-							translations={translations}
+							totalTranslations={translations.length}
 						/>
 					</ClayLayout.ContentRow>
 				</Option>

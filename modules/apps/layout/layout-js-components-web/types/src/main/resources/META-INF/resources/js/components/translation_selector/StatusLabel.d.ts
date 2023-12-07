@@ -5,15 +5,15 @@
 
 /// <reference types="react" />
 
-import {Language, Translations} from './TranslationSelector';
+import {Language} from './TranslationSelector';
 interface Props {
 	defaultLanguageId: Liferay.Language.Locale;
 	item: Language;
-	translations: Translations;
+	totalTranslations: number;
 }
 export default function StatusLabel({
 	defaultLanguageId,
 	item,
-	translations,
+	totalTranslations,
 }: Props): JSX.Element;
 export {};

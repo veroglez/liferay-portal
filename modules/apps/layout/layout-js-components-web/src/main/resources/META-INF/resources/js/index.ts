@@ -25,7 +25,7 @@ export {default as SearchResultsMessage} from './components/search_results_messa
 export {
 	default as TranslationSelector,
 	Language,
-	Translations,
+	Translation,
 } from './components/translation_selector/TranslationSelector';
 export {
 	StyleErrorsContextProvider,
