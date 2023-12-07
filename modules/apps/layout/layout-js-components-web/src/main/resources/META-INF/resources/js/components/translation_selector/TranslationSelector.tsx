@@ -3,7 +3,9 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
+import ClayButton from '@clayui/button';
 import {Option, Picker} from '@clayui/core';
+import ClayDropDown from '@clayui/drop-down';
 import ClayIcon from '@clayui/icon';
 import ClayLayout from '@clayui/layout';
 import {useId} from 'frontend-js-components-web';
@@ -32,6 +34,38 @@ const TriggerLabel = React.forwardRef(
 		);
 	}
 );
+
+const Item = ({
+	defaultLanguageId,
+	item,
+	totalTranslations,
+}: {
+	defaultLanguageId: Liferay.Language.Locale;
+	item: Language;
+	totalTranslations: number;
+}) => {
+	return (
+		<ClayLayout.ContentRow containerElement="span">
+			<ClayLayout.ContentCol containerElement="span" expand>
+				<ClayLayout.ContentSection>
+					<ClayIcon
+						className="inline-item-before"
+						symbol={item.icon}
+					/>
+
+					<span aria-hidden="true">{item.label}</span>
+				</ClayLayout.ContentSection>
+			</ClayLayout.ContentCol>
+
+			<StatusLabel
+				defaultLanguageId={defaultLanguageId}
+				item={item}
+				totalTranslations={totalTranslations}
+			/>
+		</ClayLayout.ContentRow>
+	);
+};
+
 export interface Language {
 	icon: string;
 	id: Liferay.Language.Locale;
@@ -67,6 +101,11 @@ interface Props {
 	selectedLanguageId: Liferay.Language.Locale;
 
 	/**
+	 * Show the manage tranlation button
+	 */
+	showManageTranslationButton?: boolean;
+
+	/**
 	 * Translations provided to the component to be used and modified by it
 	 */
 	translations: Translation[];
@@ -77,8 +116,10 @@ export default function TranslationSelector({
 	languages,
 	onSelectedLanguageChange,
 	selectedLanguageId,
+	showManageTranslationButton = false,
 	translations,
 }: Props) {
+	const [active, setActive] = useState<boolean>(false);
 	const selectorId = useId();
 
 	const getSelectedLanguage = (id: React.Key) =>
@@ -95,7 +136,51 @@ export default function TranslationSelector({
 		).length,
 	}));
 
-	return (
+	0;
+	const onSelectionChange = (key: React.Key) => {
+		onSelectedLanguageChange(key);
+		setSelectedLanguage(getSelectedLanguage(key));
+	};
+
+	return showManageTranslationButton ? (
+		<ClayDropDown
+			active={active}
+			closeOnClickOutside
+			filterKey="name"
+			onActiveChange={setActive}
+			trigger={
+				<ClayButton
+					className="btn-block form-control-select"
+					displayType="secondary"
+					size="sm"
+				>
+					<span className="inline-item-before">
+						<ClayIcon symbol={selectedLanguage.icon} />
+					</span>
+
+					<span aria-hidden="true">{selectedLanguage.label}</span>
+				</ClayButton>
+			}
+		>
+			<ClayDropDown.ItemList items={items}>
+				{(item: Language) => (
+					<ClayDropDown.Item
+						key={item.label}
+						onClick={() => {
+							setActive(false);
+							onSelectionChange(item.id);
+						}}
+					>
+						<Item
+							defaultLanguageId={defaultLanguageId}
+							item={item}
+							totalTranslations={translations.length}
+						/>
+					</ClayDropDown.Item>
+				)}
+			</ClayDropDown.ItemList>
+		</ClayDropDown>
+	) : (
 		<Picker
 			aria-label={sub(
 				Liferay.Language.get('select-a-language.-current-language-x'),
@@ -104,33 +189,17 @@ export default function TranslationSelector({
 			as={TriggerLabel}
 			id={selectorId}
 			items={items}
-			onSelectionChange={(key: React.Key) => {
-				onSelectedLanguageChange(key);
-				setSelectedLanguage(getSelectedLanguage(key));
-			}}
+			onSelectionChange={onSelectionChange}
 			selectedItem={selectedLanguage}
 			selectedKey={selectedLanguage.id}
 		>
 			{(item) => (
 				<Option key={item.id} textValue={item.label}>
-					<ClayLayout.ContentRow containerElement="span">
-						<ClayLayout.ContentCol containerElement="span" expand>
-							<ClayLayout.ContentSection>
-								<ClayIcon
-									className="inline-item-before"
-									symbol={item.icon}
-								/>
-
-								<span aria-hidden="true">{item.label}</span>
-							</ClayLayout.ContentSection>
-						</ClayLayout.ContentCol>
-
-						<StatusLabel
-							defaultLanguageId={defaultLanguageId}
-							item={item}
-							totalTranslations={translations.length}
-						/>
-					</ClayLayout.ContentRow>
+					<Item
+						defaultLanguageId={defaultLanguageId}
+						item={item}
+						totalTranslations={translations.length}
+					/>
 				</Option>
 			)}
 		</Picker>

@@ -38,6 +38,11 @@ interface Props {
 	selectedLanguageId: Liferay.Language.Locale;
 
 	/**
+	 * Show the manage tranlation button
+	 */
+	showManageTranslationButton?: boolean;
+
+	/**
 	 * Translations provided to the component to be used and modified by it
 	 */
 	translations: Translation[];
@@ -47,6 +52,7 @@ export default function TranslationSelector({
 	languages,
 	onSelectedLanguageChange,
 	selectedLanguageId,
+	showManageTranslationButton,
 	translations,
 }: Props): JSX.Element;
 export {};
