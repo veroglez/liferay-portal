@@ -794,10 +794,21 @@ public class JournalEditArticleDisplayContext {
 			getAvailableLocales(),
 			locale -> {
 				String languageId = LanguageUtil.getLanguageId(locale);
-
+				
 				String label = StringUtil.replace(languageId, '_', '-');
 
+				String name = LanguageUtil.get(
+					_httpServletRequest, "language." + languageId);
+
+				if (name.contains("language.")) {
+					name = LanguageUtil.get(
+						_httpServletRequest,
+						"language." + languageId.substring(0, 2));
+				}
+
 				return HashMapBuilder.<String, Object>put(
+					"displayName", name
+				).put(
 					"id", languageId
 				).put(
 					"label", label

@@ -3,19 +3,16 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
-import {
-	Language,
-	Translation,
-	TranslationSelector,
-} from '@liferay/layout-js-components-web';
-import React, {useCallback, useEffect, useState} from 'react';
+import {Translation} from '@liferay/layout-js-components-web';
+import {Locale, TranslationAdminSelector} from 'frontend-js-components-web';
+import React, {useCallback, useEffect, useMemo, useState} from 'react';
 
 type Field = Record<Liferay.Language.Locale, string>;
 
 interface Props {
 	defaultLanguageId: Liferay.Language.Locale;
 	fields: Record<string, Field>;
-	languages: Language[];
+	locales: Locale[];
 	portletNamespace: string;
 	selectedLanguageId: Liferay.Language.Locale;
 }
@@ -23,17 +20,20 @@ interface Props {
 export default function TranslationManager({
 	defaultLanguageId,
 	fields,
-	languages,
+	locales,
 	portletNamespace,
-	selectedLanguageId,
+	selectedLanguageId: initialSelectedLanguageId,
 }: Props) {
 	const [translations, setTranslations] = useState<Translation[]>(
 		fieldToTranslation(fields)
 	);
+	const [selectedLanguageId, setSelectedLanguageId] = useState<
+		Liferay.Language.Locale
+	>(initialSelectedLanguageId);
 
 	const getTranslations = useCallback(
 		() =>
-			translations.map(({fieldName}) => {
+			Object.keys(fields).map((fieldName) => {
 				const languages = Array.from(
 					document.querySelectorAll<HTMLInputElement>(
 						`[type="hidden"][id*="${portletNamespace}${fieldName}_"]`
@@ -50,8 +50,27 @@ export default function TranslationManager({
 					languages,
 				};
 			}),
-		[portletNamespace, translations]
+		[fields, portletNamespace]
 	);
+
+	const translatedItems = useMemo(
+		() =>
+			locales.reduce((acc, locale) => {
+				const translatedItems = translations.filter(({languages}) =>
+					languages.includes(locale.id)
+				).length;
+
+				console.log(1, translatedItems);
+
+				return {
+					...acc,
+					...(translatedItems && {[locale.id]: translatedItems}),
+				};
+			}, {}),
+		[translations, locales]
+	);
+
+	console.log('AAA', translatedItems);
 
 	useEffect(() => {
 		Liferay.on('inputLocalized:updateTranslationStatus', () =>
@@ -59,20 +78,41 @@ export default function TranslationManager({
 		);
 	}, [getTranslations]);
 
+	useEffect(() => {
+		Liferay.fire('inputLocalized:localeChanged', {
+			item: document.querySelector(
+				`[data-languageid="${selectedLanguageId}"]`
+			),
+		});
+	}, [selectedLanguageId]);
+
 	return (
-		<TranslationSelector
+
+		// <div>hola</div>
+
+		<TranslationAdminSelector
+			activeLanguageIds={locales.map(({id}) => id)}
+			adminMode
+			availableLocales={locales}
 			defaultLanguageId={defaultLanguageId}
-			languages={languages}
-			onSelectedLanguageChange={(languageId) => {
-				Liferay.fire('inputLocalized:localeChanged', {
-					item: document.querySelector(
-						`[data-languageid="${languageId}"]`
-					),
-				});
+			horizontalDisplay
+			onSelectedLanguageIdChange={(id) => {
+
+				// Liferay.fire('inputLocalized:localeChanged', {
+				// 	item: document.querySelector(`[data-languageid="${id}"]`),
+				// });
+
+				setSelectedLanguageId(id);
 			}}
 			selectedLanguageId={selectedLanguageId}
-			showManageTranslationButton={true}
-			translations={translations}
+			translationProgress={
+				Object.keys(translatedItems).length
+					? {
+							totalItems: Object.keys(fields).length,
+							translatedItems,
+					  }
+					: null
+			}
 		/>
 	);
 }

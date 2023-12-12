@@ -70,7 +70,7 @@ JournalEditArticleDisplayContext journalEditArticleDisplayContext = new JournalE
 											).put(
 												"fields", journalEditArticleDisplayContext.getFieldMap()
 											).put(
-												"languages", journalEditArticleDisplayContext.getLanguages()
+												"locales", journalEditArticleDisplayContext.getLocales()
 											).put(
 												"selectedLanguageId", journalEditArticleDisplayContext.getSelectedLanguageId()
 											).build()

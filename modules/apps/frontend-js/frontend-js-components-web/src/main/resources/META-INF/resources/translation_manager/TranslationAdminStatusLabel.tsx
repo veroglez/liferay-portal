@@ -9,6 +9,8 @@ import ClayLayout from '@clayui/layout';
 import {sub} from 'frontend-js-web';
 import React from 'react';
 
+import {TranslationProgress} from './TranslationAdminSelector';
+
 interface Props {
 	defaultLanguageId: Liferay.Language.Locale;
 	labels: {
@@ -19,6 +21,7 @@ interface Props {
 	languageId: Liferay.Language.Locale;
 	languageName: string;
 	localeValue: string | null;
+	translationProgress: TranslationProgress | null;
 }
 
 interface Status {
@@ -32,14 +35,47 @@ export default function TranslationAdminStatusLabel({
 	languageId,
 	languageName,
 	localeValue,
+	translationProgress = null,
 }: Props) {
-	let status: Status = {displayType: 'warning', label: labels.notTranslated};
+	const status = {
+		default: {
+			displayType: 'info',
+			label: labels.default,
+		},
+		notTranslated: {
+			displayType: 'warning',
+			label: labels.notTranslated,
+		},
+		translated: {
+			displayType: 'success',
+			label: labels.translated,
+		},
+	} as const;
+
+	let statusLabel: Status = status.notTranslated;
 
 	if (languageId === defaultLanguageId) {
-		status = {displayType: 'info', label: labels.default};
+		statusLabel = status.default;
 	}
 	else if (localeValue) {
-		status = {displayType: 'success', label: labels.translated};
+		statusLabel = status.translated;
+	}
+	else if (
+		Liferay.FeatureFlags['LPS-114700'] &&
+		translationProgress?.translatedItems[languageId]
+	) {
+		const {totalItems, translatedItems} = translationProgress;
+
+		statusLabel =
+			totalItems === translatedItems[languageId]
+				? status.translated
+				: {
+						displayType: 'secondary',
+						label: sub(Liferay.Language.get('translating-x-x'), [
+							translatedItems[languageId],
+							totalItems,
+						]),
+				  };
 	}
 
 	return (
@@ -48,13 +84,16 @@ export default function TranslationAdminStatusLabel({
 				{sub(
 					Liferay.Language.get('x-language-x'),
 					languageName,
-					status.label
+					statusLabel.label
 				)}
 			</span>
 
 			<ClayLayout.ContentSection>
-				<ClayLabel aria-hidden="true" displayType={status.displayType}>
-					{status.label}
+				<ClayLabel
+					aria-hidden="true"
+					displayType={statusLabel.displayType}
+				>
+					{statusLabel.label}
 				</ClayLabel>
 			</ClayLayout.ContentSection>
 		</ClayLayout.ContentCol>
