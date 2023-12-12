@@ -15,6 +15,7 @@ import TranslationAdminModal from './TranslationAdminModal';
 
 interface IProps extends Translations {
 	adminMode?: boolean;
+	horizontalDisplay?: boolean;
 	onActiveLanguageIdsChange?: (
 		languageIds: Liferay.Language.Locale[]
 	) => void;
@@ -40,6 +41,7 @@ export default function TranslationAdminSelector({
 	},
 	availableLocales = [],
 	defaultLanguageId,
+	horizontalDisplay = false,
 	onActiveLanguageIdsChange = noop,
 	onSelectedLanguageIdChange = noop,
 	selectedLanguageId: initialSelectedLanguageId,
@@ -118,22 +120,36 @@ export default function TranslationAdminSelector({
 				active={selectorDropdownActive}
 				onActiveChange={setSelectorDropdownActive}
 				trigger={
-					<ClayButton
-						displayType="secondary"
-						monospaced
-						small={small}
-						title={Liferay.Language.get(
-							'select-translation-language'
-						)}
-					>
-						<span className="inline-item">
-							<ClayIcon symbol={selectedLocale.symbol} />
-						</span>
+					Liferay.FeatureFlags['LPS-114700'] && horizontalDisplay ? (
+						<ClayButton
+							className="btn-block form-control-select"
+							displayType="secondary"
+							size="sm"
+						>
+							<span className="inline-item-before">
+								<ClayIcon symbol={selectedLocale.symbol} />
+							</span>
 
-						<span className="btn-section">
 							{selectedLocale.label}
-						</span>
-					</ClayButton>
+						</ClayButton>
+					) : (
+						<ClayButton
+							displayType="secondary"
+							monospaced
+							small={small}
+							title={Liferay.Language.get(
+								'select-translation-language'
+							)}
+						>
+							<span className="inline-item">
+								<ClayIcon symbol={selectedLocale.symbol} />
+							</span>
+
+							<span className="btn-section">
+								{selectedLocale.label}
+							</span>
+						</ClayButton>
+					)
 				}
 			>
 				<ClayDropDown.ItemList>
