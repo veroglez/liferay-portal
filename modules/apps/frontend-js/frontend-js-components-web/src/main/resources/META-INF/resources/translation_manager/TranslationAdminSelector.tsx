@@ -7,6 +7,7 @@ import ClayButton from '@clayui/button';
 import ClayDropDown from '@clayui/drop-down';
 import ClayIcon from '@clayui/icon';
 import ClayLayout from '@clayui/layout';
+import {sub} from 'frontend-js-web';
 import React, {useEffect, useMemo, useState} from 'react';
 
 import {Locale, Translations} from './TranslationAdminContent';
@@ -104,6 +105,11 @@ export default function TranslationAdminSelector({
 		setSelectedLanguageId(initialSelectedLanguageId);
 	}, [initialSelectedLanguageId]);
 
+	const ariaLabelButton = sub(
+		Liferay.Language.get('select-a-language.-current-language-x'),
+		selectedLocale.displayName
+	);
+
 	return (
 		<>
 			<TranslationAdminModal
@@ -122,6 +128,7 @@ export default function TranslationAdminSelector({
 				trigger={
 					Liferay.FeatureFlags['LPS-114700'] && horizontalDisplay ? (
 						<ClayButton
+							aria-label={ariaLabelButton}
 							className="btn-block form-control-select"
 							displayType="secondary"
 							size="sm"
@@ -130,22 +137,23 @@ export default function TranslationAdminSelector({
 								<ClayIcon symbol={selectedLocale.symbol} />
 							</span>
 
-							{selectedLocale.label}
+							<span aria-hidden="true">
+								{selectedLocale.label}
+							</span>
 						</ClayButton>
 					) : (
 						<ClayButton
+							aria-label={ariaLabelButton}
 							displayType="secondary"
 							monospaced
 							small={small}
-							title={Liferay.Language.get(
-								'select-translation-language'
-							)}
+							title={Liferay.Language.get('select-language')}
 						>
 							<span className="inline-item">
 								<ClayIcon symbol={selectedLocale.symbol} />
 							</span>
 
-							<span className="btn-section">
+							<span aria-hidden="true" className="btn-section">
 								{selectedLocale.label}
 							</span>
 						</ClayButton>
@@ -173,7 +181,9 @@ export default function TranslationAdminSelector({
 												symbol={symbol}
 											/>
 
-											<span>{label}</span>
+											<span aria-hidden="true">
+												{label}
+											</span>
 										</ClayLayout.ContentSection>
 									</ClayLayout.ContentCol>
 
