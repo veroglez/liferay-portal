@@ -789,19 +789,20 @@ public class JournalEditArticleDisplayContext {
 		return _groupId;
 	}
 
-	public List<Map<String, Object>> getLanguages() {
+	public List<Map<String, Object>> getLocales() {
 		return TransformUtil.transform(
 			getAvailableLocales(),
 			locale -> {
-				String bcp47LanguageId = LanguageUtil.getBCP47LanguageId(
-					locale);
+				String languageId = LanguageUtil.getLanguageId(locale);
+
+				String label = StringUtil.replace(languageId, '_', '-');
 
 				return HashMapBuilder.<String, Object>put(
-					"icon", StringUtil.toLowerCase(bcp47LanguageId)
+					"id", languageId
 				).put(
-					"id", LanguageUtil.getLanguageId(locale)
+					"label", label
 				).put(
-					"label", bcp47LanguageId
+					"symbol", StringUtil.toLowerCase(label)
 				).build();
 			});
 	}
