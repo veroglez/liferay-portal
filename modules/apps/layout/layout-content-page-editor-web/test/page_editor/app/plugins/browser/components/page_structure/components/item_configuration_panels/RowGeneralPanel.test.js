@@ -7,6 +7,7 @@ import '@testing-library/jest-dom/extend-expect';
 import {fireEvent, render, screen} from '@testing-library/react';
 import React from 'react';
 
+import {VIEWPORT_SIZES} from '../../../../../../../../../src/main/resources/META-INF/resources/page_editor/app/config/constants/viewportSizes';
 import {ResizeContextProvider} from '../../../../../../../../../src/main/resources/META-INF/resources/page_editor/app/contexts/ResizeContext';
 import {StoreAPIContextProvider} from '../../../../../../../../../src/main/resources/META-INF/resources/page_editor/app/contexts/StoreContext';
 import updateItemConfig from '../../../../../../../../../src/main/resources/META-INF/resources/page_editor/app/thunks/updateItemConfig';
@@ -119,22 +120,44 @@ describe('RowGeneralPanel', () => {
 		});
 	});
 
-	it('allows changing the modules per row', async () => {
-		renderComponent();
+	test.each([
+		[VIEWPORT_SIZES.desktop, '2'],
+		[VIEWPORT_SIZES.tablet, '2'],
+		[VIEWPORT_SIZES.landscapeMobile, '1'],
+		[VIEWPORT_SIZES.portraitMobile, '1'],
+	])(
+		'allows changing the modules per row for %p viewport',
+		(viewport, modulesPerRow) => {
+			renderComponent({
+				state: {
+					selectedViewportSize: viewport,
+				},
+			});
 
-		const input = screen.getByLabelText('layout');
+			const select = screen.getByLabelText('layout');
 
-		fireEvent.change(input, {
-			target: {value: '2'},
-		});
+			fireEvent.change(select, {
+				target: {value: modulesPerRow},
+			});
 
-		expect(updateItemConfig).toHaveBeenCalledWith({
-			itemConfig: {
-				modulesPerRow: 2,
-			},
-			itemId: '0',
-		});
-	});
+			if (viewport === VIEWPORT_SIZES.desktop) {
+				expect(updateItemConfig).toHaveBeenCalledWith({
+					itemConfig: {
+						modulesPerRow: Number(modulesPerRow),
+					},
+					itemId: '0',
+				});
+			}
+			else {
+				expect(updateItemConfig).toHaveBeenCalledWith({
+					itemConfig: {
+						[viewport]: {modulesPerRow: Number(modulesPerRow)},
+					},
+					itemId: '0',
+				});
+			}
+		}
+	);
 
 	it('allows custom value in modules per row when row is customized', async () => {
 		renderComponent();
@@ -240,4 +263,95 @@ describe('RowGeneralPanel', () => {
 			itemId: '0',
 		});
 	});
+
+	it('allows changing layout for a given viewport', async () => {
+		renderComponent({
+			state: {
+				selectedViewportSize: 'tablet',
+			},
+		});
+		const input = screen.getByLabelText('layout');
+
+		fireEvent.change(input, {
+			target: {value: '1'},
+		});
+
+		expect(updateItemConfig).toHaveBeenCalledWith({
+			itemConfig: {
+				tablet: {modulesPerRow: 1},
+			},
+			itemId: '0',
+		});
+	});
+
+	test.each([
+		[VIEWPORT_SIZES.desktop],
+		[VIEWPORT_SIZES.tablet],
+		[VIEWPORT_SIZES.landscapeMobile],
+		[VIEWPORT_SIZES.portraitMobile],
+	])(
+		'checks that the Number of Modules field is not visible for the %p viewport',
+		(viewport) => {
+			renderComponent({
+				state: {
+					selectedViewportSize: viewport,
+				},
+			});
+
+			const select = screen.queryByLabelText('number-of-modules');
+
+			if (viewport === VIEWPORT_SIZES.desktop) {
+				expect(select).toBeInTheDocument();
+			}
+			else {
+				expect(select).not.toBeInTheDocument();
+			}
+		}
+	);
+
+	it('allows changing layout for a given viewport', async () => {
+		renderComponent({
+			state: {
+				selectedViewportSize: 'tablet',
+			},
+		});
+		const input = screen.getByLabelText('layout');
+
+		fireEvent.change(input, {
+			target: {value: '1'},
+		});
+
+		expect(updateItemConfig).toHaveBeenCalledWith({
+			itemConfig: {
+				tablet: {modulesPerRow: 1},
+			},
+			itemId: '0',
+		});
+	});
+
+	// test.each([
+	// 	[VIEWPORT_SIZES.desktop, 3],
+	// 	[VIEWPORT_SIZES.tablet, 3],
+	// 	[VIEWPORT_SIZES.landscapeMobile, 1],
+	// 	[VIEWPORT_SIZES.portraitMobile, 1],
+	// ])(
+	// 	'checks that the modules per row by default is %p on the %p viewport',
+	// 	(viewport) => {
+	// 		renderComponent({
+	// 			state: {
+	// 				selectedViewportSize: viewport,
+	// 			},
+	// 		});
+
+	// 		const select = screen.getByLabelText('layout').value;
+
+	// 		if (viewport === VIEWPORT_SIZES.desktop) {
+	// 			expect(select).toBe('a');
+	// 		}
+	// 		else {
+	// 			expect(select).toBe('a');
+	// 		}
+	// 	}
+	// );
+
 });
