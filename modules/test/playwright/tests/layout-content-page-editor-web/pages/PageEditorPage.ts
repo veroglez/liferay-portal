@@ -7,7 +7,11 @@
 
 import {Locator, Page} from '@playwright/test';
 
-type Viewport = 'Desktop' | 'Landscape Phone' | 'Portrait Phone' | 'Tablet';
+export type Viewport =
+	| 'Desktop'
+	| 'Landscape Phone'
+	| 'Portrait Phone'
+	| 'Tablet';
 
 export class PageEditorPage {
 	readonly page: Page;

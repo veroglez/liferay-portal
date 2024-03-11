@@ -13,6 +13,7 @@ import {loginTest} from '../../fixtures/loginTest';
 import {liferayConfig} from '../../liferay.config';
 import getRandomString from '../../utils/getRandomString';
 import {pageEditorPagesTest} from './fixtures/pageEditorPagesTest';
+import {Viewport} from './pages/PageEditorPage';
 import getFragmentDefinition from './utils/getFragmentDefinition';
 import getPageDefinition from './utils/getPageDefinition';
 
@@ -31,6 +32,8 @@ type NonDesktopPanels = Array<{
 	name: ConfigurationTab;
 	sections: Array<{name: ConfigurationSection; visible: boolean}>;
 }>;
+
+const VIEWPORTS = ['Desktop', 'Tablet', 'Landscape Phone', 'Portrait Phone'];
 
 const NON_DESKTOP_PANELS: NonDesktopPanels = [
 	{
@@ -58,6 +61,28 @@ const NON_DESKTOP_PANELS: NonDesktopPanels = [
 		],
 	},
 ];
+
+const createPageWithFragmentAndGoToEditMode = async ({
+	apiHelpers,
+	fragment,
+	page,
+	pageEditorPage,
+	site,
+}) => {
+	await page.goto(liferayConfig.environment.baseUrl);
+
+	// Create a page with a  fragment
+
+	const layout = await apiHelpers.headlessDelivery.createSitePage(
+		site.id,
+		getRandomString(),
+		getPageDefinition([fragment])
+	);
+
+	// Go to edit mode of page
+
+	await pageEditorPage.goToEditMode(site, layout);
+};
 
 test('shows correct sections on each configuration panel when viewport is not Desktop', async ({
 	apiHelpers,
@@ -105,6 +130,45 @@ test('shows correct sections on each configuration panel when viewport is not De
 			else {
 				await expect(section).not.toBeVisible();
 			}
+		}
+	}
+});
+
+test('shows only Image Source field when the viewport is Desktop', async ({
+	apiHelpers,
+	page,
+	pageEditorPage,
+	site,
+}) => {
+	const headingId = getRandomString();
+
+	const headingFragment = getFragmentDefinition(
+		headingId,
+		'BASIC_COMPONENT-heading'
+	);
+
+	createPageWithFragmentAndGoToEditMode({
+		apiHelpers,
+		fragment: headingFragment,
+		page,
+		pageEditorPage,
+		site,
+	});
+
+	await pageEditorPage.selectFragment(headingId);
+
+	await pageEditorPage.goToConfigurationTab('Styles');
+
+	for (const viewport of VIEWPORTS) {
+		await pageEditorPage.switchViewport(viewport as Viewport);
+
+		const imageSourceField = page.getByLabel('Image Source', {exact: true});
+
+		if (viewport === 'Desktop') {
+			await expect(imageSourceField).toBeVisible();
+		}
+		else {
+			await expect(imageSourceField).not.toBeVisible();
 		}
 	}
 });
