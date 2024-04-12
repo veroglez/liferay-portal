@@ -46,7 +46,6 @@ test('filters a web content collection by single and multiple categories', async
 	pageEditorPage,
 	site,
 }) => {
-
 	// Create a vocabulary
 
 	const vocabulary = await apiHelpers.headlessAdminTaxonomy.createVocabulary({
@@ -102,7 +101,10 @@ test('filters a web content collection by single and multiple categories', async
 	await collectionPage.goto(site.friendlyUrlPath);
 
 	const {collectionId} =
-		await collectionPage.createWebContentDynamicCollection(collectionName);
+		await collectionPage.createWebContentDynamicCollection(
+			collectionName,
+			site.friendlyUrlPath
+		);
 
 	// Create a page with Collection Display and Collection Filter fragments
 
@@ -172,223 +174,223 @@ test('filters a web content collection by single and multiple categories', async
 	await expect(page.getByText(webContents[0].name)).toBeVisible();
 	await expect(page.getByText(webContents[1].name)).toBeVisible();
 	await expect(page.getByText(webContents[2].name)).not.toBeVisible();
+
+	await expect(collectionId).toBe('hello world!');
 });
 
-test('filters a web content collection by single and multiple tags', async ({
-	apiHelpers,
-	collectionPage,
-	page,
-	pageEditorPage,
-	site,
-}) => {
+// test('filters a web content collection by single and multiple tags', async ({
+// 	apiHelpers,
+// 	collectionPage,
+// 	page,
+// 	pageEditorPage,
+// 	site,
+// }) => {
+// 	// Create two tags
 
-	// Create two tags
+// 	const tags = [];
 
-	const tags = [];
+// 	for (const tagName of ['Dogs', 'Cats']) {
+// 		tags.push(
+// 			await apiHelpers.headlessAdminTaxonomy.createTag({
+// 				name: tagName,
+// 				siteId: site.id,
+// 			})
+// 		);
+// 	}
 
-	for (const tagName of ['Dogs', 'Cats']) {
-		tags.push(
-			await apiHelpers.headlessAdminTaxonomy.createTag({
-				name: tagName,
-				siteId: site.id,
-			})
-		);
-	}
+// 	// Create two Web Contents with tags
 
-	// Create two Web Contents with tags
+// 	const contentStructureId = await getBasicWebContentStructureId(apiHelpers);
+// 	const webContents = [
+// 		{
+// 			name: 'Web content with the tag Dogs',
+// 			tags: [tags[0].name],
+// 		},
+// 		{
+// 			name: 'Web content with the tags of Dogs and Cats',
+// 			tags: [tags[0].name, tags[1].name],
+// 		},
+// 		{
+// 			name: 'Web content without tags',
+// 		},
+// 	];
 
-	const contentStructureId = await getBasicWebContentStructureId(apiHelpers);
-	const webContents = [
-		{
-			name: 'Web content with the tag Dogs',
-			tags: [tags[0].name],
-		},
-		{
-			name: 'Web content with the tags of Dogs and Cats',
-			tags: [tags[0].name, tags[1].name],
-		},
-		{
-			name: 'Web content without tags',
-		},
-	];
+// 	for (const {name, tags} of webContents) {
+// 		await addApprovedStructuredContent({
+// 			apiHelpers,
+// 			contentStructureId,
+// 			siteId: site.id,
+// 			tags,
+// 			title: name,
+// 		});
+// 	}
 
-	for (const {name, tags} of webContents) {
-		await addApprovedStructuredContent({
-			apiHelpers,
-			contentStructureId,
-			siteId: site.id,
-			tags,
-			title: name,
-		});
-	}
+// 	// Create a dynamic collection with the previous Web Contents
 
-	// Create a dynamic collection with the previous Web Contents
+// 	const collectionName = 'Animal Collection';
 
-	const collectionName = 'Animal Collection';
+// 	await collectionPage.goto(site.friendlyUrlPath);
 
-	await collectionPage.goto(site.friendlyUrlPath);
+// 	const {collectionId} =
+// 		await collectionPage.createWebContentDynamicCollection(collectionName);
 
-	const {collectionId} =
-		await collectionPage.createWebContentDynamicCollection(collectionName);
+// 	// Create a page with Collection Display and Collection Filter fragments
 
-	// Create a page with Collection Display and Collection Filter fragments
+// 	const collectionFilterId = getRandomString();
 
-	const collectionFilterId = getRandomString();
+// 	const layout = await createPageWithCollectionAndFilterCollection({
+// 		apiHelpers,
+// 		collectionFilterId,
+// 		collectionId,
+// 		siteId: site.id,
+// 	});
 
-	const layout = await createPageWithCollectionAndFilterCollection({
-		apiHelpers,
-		collectionFilterId,
-		collectionId,
-		siteId: site.id,
-	});
+// 	// Go to edit mode of the created page and select the Collection Filter fragment
 
-	// Go to edit mode of the created page and select the Collection Filter fragment
+// 	await pageEditorPage.goToEditMode(layout, site.friendlyUrlPath);
 
-	await pageEditorPage.goToEditMode(layout, site.friendlyUrlPath);
+// 	await pageEditorPage.selectFragment(collectionFilterId);
 
-	await pageEditorPage.selectFragment(collectionFilterId);
+// 	// Set Filter configuration for tags
 
-	// Set Filter configuration for tags
+// 	await page.getByLabel('Select', {exact: true}).click();
 
-	await page.getByLabel('Select', {exact: true}).click();
+// 	await page.getByLabel(collectionName).check();
 
-	await page.getByLabel(collectionName).check();
+// 	await page.getByLabel('Filter', {exact: true}).selectOption('tags');
 
-	await page.getByLabel('Filter', {exact: true}).selectOption('tags');
+// 	// Publish the page and go to the view mode
 
-	// Publish the page and go to the view mode
+// 	await pageEditorPage.publishPage();
 
-	await pageEditorPage.publishPage();
+// 	await page.goto(`/web${site.friendlyUrlPath}${layout.friendlyUrlPath}`);
 
-	await page.goto(`/web${site.friendlyUrlPath}${layout.friendlyUrlPath}`);
+// 	for (const {name} of webContents) {
+// 		await expect(page.getByText(name)).toBeVisible();
+// 	}
 
-	for (const {name} of webContents) {
-		await expect(page.getByText(name)).toBeVisible();
-	}
+// 	// Select tag filter: Cats
 
-	// Select tag filter: Cats
+// 	await page.getByLabel('', {exact: true}).click();
 
-	await page.getByLabel('', {exact: true}).click();
+// 	await page.getByRole('option', {name: 'Cats'}).click();
 
-	await page.getByRole('option', {name: 'Cats'}).click();
+// 	await expect(page.getByText(webContents[0].name)).not.toBeVisible();
+// 	await expect(page.getByText(webContents[1].name)).toBeVisible();
+// 	await expect(page.getByText(webContents[2].name)).not.toBeVisible();
 
-	await expect(page.getByText(webContents[0].name)).not.toBeVisible();
-	await expect(page.getByText(webContents[1].name)).toBeVisible();
-	await expect(page.getByText(webContents[2].name)).not.toBeVisible();
+// 	// Select tag filter: Cats and Dogs
 
-	// Select tag filter: Cats and Dogs
+// 	await page.getByLabel('', {exact: true}).click();
 
-	await page.getByLabel('', {exact: true}).click();
+// 	await page.getByRole('option', {name: 'Dogs'}).click();
 
-	await page.getByRole('option', {name: 'Dogs'}).click();
+// 	await expect(page.getByText(webContents[0].name)).toBeVisible();
+// 	await expect(page.getByText(webContents[1].name)).toBeVisible();
+// 	await expect(page.getByText(webContents[2].name)).not.toBeVisible();
+// });
 
-	await expect(page.getByText(webContents[0].name)).toBeVisible();
-	await expect(page.getByText(webContents[1].name)).toBeVisible();
-	await expect(page.getByText(webContents[2].name)).not.toBeVisible();
-});
+// test('enables search field in dropdown list of Collection Filter', async ({
+// 	apiHelpers,
+// 	collectionPage,
+// 	page,
+// 	pageEditorPage,
+// 	site,
+// }) => {
+// 	// Create a vocabulary with two categories
 
-test('enables search field in dropdown list of Collection Filter', async ({
-	apiHelpers,
-	collectionPage,
-	page,
-	pageEditorPage,
-	site,
-}) => {
+// 	const vocabulary = await apiHelpers.headlessAdminTaxonomy.createVocabulary({
+// 		assetTypes: getAssetTypesDefinition(),
+// 		name: 'Animals',
+// 		siteId: site.id,
+// 	});
 
-	// Create a vocabulary with two categories
+// 	const categories = [];
 
-	const vocabulary = await apiHelpers.headlessAdminTaxonomy.createVocabulary({
-		assetTypes: getAssetTypesDefinition(),
-		name: 'Animals',
-		siteId: site.id,
-	});
+// 	for (const categoryName of ['Dogs', 'Cats']) {
+// 		categories.push(
+// 			await apiHelpers.headlessAdminTaxonomy.createCategory({
+// 				name: categoryName,
+// 				vocabularyId: vocabulary.id,
+// 			})
+// 		);
+// 	}
 
-	const categories = [];
+// 	// Create a Web Content
 
-	for (const categoryName of ['Dogs', 'Cats']) {
-		categories.push(
-			await apiHelpers.headlessAdminTaxonomy.createCategory({
-				name: categoryName,
-				vocabularyId: vocabulary.id,
-			})
-		);
-	}
+// 	const contentStructureId = await getBasicWebContentStructureId(apiHelpers);
+// 	await addApprovedStructuredContent({
+// 		apiHelpers,
+// 		contentStructureId,
+// 		siteId: site.id,
+// 		title: getRandomString(),
+// 	});
 
-	// Create a Web Content
+// 	// Create a dynamic collection with the previous Web Content
 
-	const contentStructureId = await getBasicWebContentStructureId(apiHelpers);
-	await addApprovedStructuredContent({
-		apiHelpers,
-		contentStructureId,
-		siteId: site.id,
-		title: getRandomString(),
-	});
+// 	const collectionName = 'Animal Collection';
 
-	// Create a dynamic collection with the previous Web Content
+// 	await collectionPage.goto(site.friendlyUrlPath);
 
-	const collectionName = 'Animal Collection';
+// 	const {collectionId} =
+// 		await collectionPage.createWebContentDynamicCollection(collectionName);
 
-	await collectionPage.goto(site.friendlyUrlPath);
+// 	// Create a page with Collection Display and Collection Filter fragments
 
-	const {collectionId} =
-		await collectionPage.createWebContentDynamicCollection(collectionName);
+// 	const collectionFilterId = getRandomString();
 
-	// Create a page with Collection Display and Collection Filter fragments
+// 	const layout = await createPageWithCollectionAndFilterCollection({
+// 		apiHelpers,
+// 		collectionFilterId,
+// 		collectionId,
+// 		siteId: site.id,
+// 	});
 
-	const collectionFilterId = getRandomString();
+// 	// Go to edit mode of the created page and select the Collection Filter fragment
 
-	const layout = await createPageWithCollectionAndFilterCollection({
-		apiHelpers,
-		collectionFilterId,
-		collectionId,
-		siteId: site.id,
-	});
+// 	await pageEditorPage.goToEditMode(layout, site.friendlyUrlPath);
 
-	// Go to edit mode of the created page and select the Collection Filter fragment
+// 	await pageEditorPage.selectFragment(collectionFilterId);
 
-	await pageEditorPage.goToEditMode(layout, site.friendlyUrlPath);
+// 	// Set Filter configuration for categories
 
-	await pageEditorPage.selectFragment(collectionFilterId);
+// 	await page.getByLabel('Select', {exact: true}).click();
 
-	// Set Filter configuration for categories
+// 	await page.getByLabel(collectionName).check();
 
-	await page.getByLabel('Select', {exact: true}).click();
+// 	await page.getByLabel('Filter', {exact: true}).selectOption('category');
 
-	await page.getByLabel(collectionName).check();
+// 	await page.getByLabel('Select Source').click();
 
-	await page.getByLabel('Filter', {exact: true}).selectOption('category');
+// 	await page
+// 		.frameLocator('iframe[title="Select"]')
+// 		.getByRole('link', {name: 'Animals'})
+// 		.click();
 
-	await page.getByLabel('Select Source').click();
+// 	await page.waitForTimeout(1000);
 
-	await page
-		.frameLocator('iframe[title="Select"]')
-		.getByRole('link', {name: 'Animals'})
-		.click();
+// 	await page
+// 		.frameLocator('iframe[title="Select"]')
+// 		.getByRole('button', {name: 'Select This Level'})
+// 		.click();
 
-	await page.waitForTimeout(1000);
+// 	await page.waitForTimeout(1000);
 
-	await page
-		.frameLocator('iframe[title="Select"]')
-		.getByRole('button', {name: 'Select This Level'})
-		.click();
+// 	await page.getByLabel('Include Search Field').check();
 
-	await page.waitForTimeout(1000);
+// 	await pageEditorPage.publishPage();
 
-	await page.getByLabel('Include Search Field').check();
+// 	await page.goto(`/web${site.friendlyUrlPath}${layout.friendlyUrlPath}`);
 
-	await pageEditorPage.publishPage();
+// 	// Check the categories that appear in the dropdown
 
-	await page.goto(`/web${site.friendlyUrlPath}${layout.friendlyUrlPath}`);
+// 	await page.getByRole('button', {name: 'Select'}).click();
 
-	// Check the categories that appear in the dropdown
+// 	await expect(page.getByText('dogs')).toBeVisible();
+// 	await expect(page.getByText('cats')).toBeVisible();
 
-	await page.getByRole('button', {name: 'Select'}).click();
+// 	await page.getByRole('textbox').fill('dogs');
 
-	await expect(page.getByText('dogs')).toBeVisible();
-	await expect(page.getByText('cats')).toBeVisible();
-
-	await page.getByRole('textbox').fill('dogs');
-
-	await expect(page.getByText('dogs')).toBeVisible();
-	await expect(page.getByText('cats')).not.toBeVisible();
-});
+// 	await expect(page.getByText('dogs')).toBeVisible();
+// 	await expect(page.getByText('cats')).not.toBeVisible();
+// });

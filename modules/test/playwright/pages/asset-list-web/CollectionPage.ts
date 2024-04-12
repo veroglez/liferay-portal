@@ -24,7 +24,7 @@ export class CollectionPage {
 	 * Creates a dynamic collection with the given name.
 	 */
 
-	async createWebContentDynamicCollection(name) {
+	async createWebContentDynamicCollection(name, siteUrl) {
 		await this.addNewDynamicCollection(name);
 
 		await this.configureCollectionWithWebContents();
@@ -33,7 +33,15 @@ export class CollectionPage {
 
 		await this.page.waitForTimeout(3000);
 
-		return {collectionId: await this.getCollectionClassPK()};
+		await this.goto(siteUrl);
+
+		return {
+			collectionId: await this.page
+				.locator(
+					'input[type="hidden"][id*="assetListEntriesPrimaryKeys"]'
+				)
+				.inputValue(),
+		};
 	}
 
 	/**
