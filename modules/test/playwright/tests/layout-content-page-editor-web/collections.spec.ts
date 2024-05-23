@@ -15,7 +15,13 @@ import {wemSiteTest} from '../../fixtures/wemSiteTest';
 import getRandomString from '../../utils/getRandomString';
 import getCollectionDefinition from './utils/getCollectionDefinition';
 import getCollectionItemDefinition from './utils/getCollectionItemDefinition';
+import getFragmentDefinition from './utils/getFragmentDefinition';
 import getPageDefinition from './utils/getPageDefinition';
+
+const COLLECTION_ITEMS = [
+	'Animal 01 - Dogs and Cats categories',
+	'Animal 02 - Dogs category',
+];
 
 export const test = mergeTests(
 	apiHelpersTest,
@@ -139,7 +145,99 @@ testWithIsolatedSite(
 		await expect(page.locator('.alert-danger')).toHaveText(
 			'Error:Fragments cannot be placed inside an unmapped collection display fragment.'
 		);
-
-		page.waitForTimeout(3000);
 	}
 );
+
+test('checks Content Flags, Content Ratings and Content Display are compatible with Collection Display', async ({
+	apiHelpers,
+	collectionsPage,
+	page,
+	pageEditorPage,
+	wemSite,
+}) => {
+
+	// Create definition for a collection mapped to Animals collection with Content Flags, Content Ratings and Display Content fragments.
+
+	const collectionName = 'Animals';
+
+	const animalsClassPK = await collectionsPage.getCollectionClassPK(
+		collectionName,
+		wemSite.friendlyUrlPath
+	);
+
+	const animalsCollection = getCollectionItemDefinition(getRandomString(), [
+		getFragmentDefinition(
+			getRandomString(),
+			'com.liferay.fragment.internal.renderer.ContentFlagsFragmentRenderer'
+		),
+		getFragmentDefinition(
+			getRandomString(),
+			'com.liferay.fragment.internal.renderer.ContentRatingsFragmentRenderer'
+		),
+		getFragmentDefinition(
+			getRandomString(),
+			'com.liferay.fragment.internal.renderer.ContentObjectFragmentRenderer'
+		),
+	]);
+
+	const collectionDefinition = getCollectionDefinition({
+		classPK: animalsClassPK,
+		id: getRandomString(),
+		pageElements: [animalsCollection],
+	});
+
+	// Create a content page and go to edit mode
+
+	const layout = await apiHelpers.headlessDelivery.createSitePage({
+		pageDefinition: getPageDefinition([collectionDefinition]),
+		siteId: wemSite.id,
+		title: getRandomString(),
+	});
+
+	// Go to edit mode of the created page and check the fragments
+
+	await pageEditorPage.goto(layout, wemSite.friendlyUrlPath);
+
+	await page.waitForTimeout(1000);
+
+	// Check that the Content Display shows the content in each item
+
+	await expect(page.getByText('Animal 01 content')).toBeVisible();
+	await expect(page.getByText('Animal 02 content')).toBeVisible();
+
+	// Check that the Content Ratings is shown in each item and the Field input has the corresponding name
+
+	await expect(await page.getByLabel('Vote', {exact: true}).count()).toEqual(
+		2
+	);
+
+	for (let i = 0; i < COLLECTION_ITEMS.length; i++) {
+		await page
+			.getByLabel('Vote')
+			.nth(i + 1)
+			.click();
+
+		await expect(page.getByPlaceholder('No Item Selected')).toHaveValue(
+			COLLECTION_ITEMS[i]
+		);
+	}
+
+	// Check that the Content Flags is shown in each item and the Field input has the corresponding name
+
+	await expect(await page.getByText('Report', {exact: true}).count()).toEqual(
+		2
+	);
+
+	for (let i = 0; i < COLLECTION_ITEMS.length; i++) {
+		await page
+			.locator('div', {
+				has: page.locator('text="Report"'),
+			})
+			.nth(i)
+			.click();
+
+		await expect(page.getByPlaceholder('No Item Selected')).toHaveValue(
+			COLLECTION_ITEMS[i]
+		);
+	}
+});
