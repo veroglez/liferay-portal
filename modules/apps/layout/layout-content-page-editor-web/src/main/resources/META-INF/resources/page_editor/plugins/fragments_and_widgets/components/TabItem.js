@@ -17,6 +17,7 @@ import {LIST_ITEM_TYPES} from '../../../app/config/constants/listItemTypes';
 import {useSelectItem} from '../../../app/contexts/ControlsContext';
 import {
 	useDisableKeyboardMovement,
+	useSetItemIsBeingAdded,
 	useSetMovementSource,
 } from '../../../app/contexts/KeyboardMovementContext';
 import {useDispatch} from '../../../app/contexts/StoreContext';
@@ -368,6 +369,7 @@ HighlightButton.propTypes = {
 };
 
 const AddButton = ({isNavigationTarget, item, setItemActive}) => {
+	const setItemIsBeingAdded = useSetItemIsBeingAdded();
 	const setMovementSource = useSetMovementSource();
 	const disableMovement = useDisableKeyboardMovement();
 
@@ -378,10 +380,11 @@ const AddButton = ({isNavigationTarget, item, setItemActive}) => {
 			className="mr-2 my-0 page-editor__fragments-widgets__tab__add-button"
 			displayType="secondary"
 			onBlur={() => {
+				setItemIsBeingAdded(false);
 				setItemActive(false);
 				disableMovement();
 			}}
-			onClick={() =>
+			onClick={() => {
 				setMovementSource({
 					...item.data,
 					fragmentEntryType: item.data.type,
@@ -389,8 +392,9 @@ const AddButton = ({isNavigationTarget, item, setItemActive}) => {
 					isWidget: Boolean(item.data.portletId),
 					name: item.label,
 					type: item.type,
-				})
-			}
+				});
+				setItemIsBeingAdded(true);
+			}}
 			onFocus={() => setItemActive(true)}
 			onKeyDown={(event) => event.stopPropagation()}
 			symbol="plus"

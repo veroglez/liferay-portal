@@ -14,10 +14,12 @@ import {
 	useIsActive,
 	useSelectItem,
 } from '../../contexts/ControlsContext';
+import {useItemIsBeingAdded} from '../../contexts/KeyboardMovementContext';
 import {LayoutKeyboardContext} from '../../contexts/LayoutKeyboardContext';
 
 export function useLayoutKeyboardNavigation(item) {
 	const elementRef = useRef(null);
+	const {current: itemIsBeingAdded} = useRef(useItemIsBeingAdded());
 
 	const activationOrigin = useActivationOrigin();
 	const isActive = useIsActive()(item.itemId);
@@ -41,7 +43,10 @@ export function useLayoutKeyboardNavigation(item) {
 
 	useEffect(() => {
 		if (targetId === item.itemId) {
-			elementRef.current.focus();
+			if (!itemIsBeingAdded) {
+				elementRef.current.focus();
+			}
+
 			hoverItem(item.itemId);
 		}
 	}, [hoverItem, item, targetId]);
