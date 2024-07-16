@@ -10,8 +10,6 @@ import isItemContainerFlex from '../utils/isItemContainerFlex';
 import {useSelectorRef} from './StoreContext';
 
 const INITIAL_STATE = {
-	itemIsBeingAdded: false,
-	setItemIsBeingAdded: () => {},
 	setSource: () => {},
 	setTarget: () => {},
 	setText: () => {},
@@ -26,7 +24,6 @@ const INITIAL_STATE = {
 const KeyboardMovementContext = React.createContext(INITIAL_STATE);
 
 function KeyboardMovementContextProvider({children}) {
-	const [itemIsBeingAdded, setItemIsBeingAdded] = useState(false);
 	const [source, setSource] = useState(null);
 	const [target, setTarget] = useState({
 		itemId: null,
@@ -37,8 +34,6 @@ function KeyboardMovementContextProvider({children}) {
 	return (
 		<KeyboardMovementContext.Provider
 			value={{
-				itemIsBeingAdded,
-				setItemIsBeingAdded,
 				setSource,
 				setTarget,
 				setText,
@@ -50,14 +45,6 @@ function KeyboardMovementContextProvider({children}) {
 			{children}
 		</KeyboardMovementContext.Provider>
 	);
-}
-
-function useSetItemIsBeingAdded() {
-	return useContext(KeyboardMovementContext).setItemIsBeingAdded;
-}
-
-function useItemIsBeingAdded() {
-	return useContext(KeyboardMovementContext).itemIsBeingAdded;
 }
 
 function useDisableKeyboardMovement() {
@@ -115,12 +102,10 @@ function useSetMovementText() {
 export {
 	KeyboardMovementContextProvider,
 	useDisableKeyboardMovement,
-	useItemIsBeingAdded,
 	useMovementSource,
 	useMovementTarget,
 	useMovementTargetPosition,
 	useMovementText,
-	useSetItemIsBeingAdded,
 	useSetMovementSource,
 	useSetMovementTarget,
 	useSetMovementText,
