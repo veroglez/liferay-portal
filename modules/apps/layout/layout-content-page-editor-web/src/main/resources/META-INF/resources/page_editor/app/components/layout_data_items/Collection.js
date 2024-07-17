@@ -59,12 +59,13 @@ export function fromControlsId(controlsItemId) {
 	if (!controlsItemId) {
 		return null;
 	}
+	else {
+		const splits = controlsItemId.split(COLLECTION_ID_DIVIDER);
 
-	const splits = controlsItemId.split(COLLECTION_ID_DIVIDER);
+		const itemId = splits.pop();
 
-	const itemId = splits.pop();
-
-	return itemId || controlsItemId;
+		return itemId || controlsItemId;
+	}
 }
 
 const NotCollectionSelectedMessage = () => (
