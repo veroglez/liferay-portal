@@ -126,7 +126,11 @@ const FragmentContent = ({
 	}, [fragmentEntryLinkError]);
 
 	const isBeingEdited = editables.some((editable) =>
-		isProcessorEnabled(toControlsId(editable.itemId))
+		isProcessorEnabled(
+			Liferay.FeatureFlags['LPD-18221']
+				? editable.itemId
+				: toControlsId(editable.itemId)
+		)
 	);
 
 	/**

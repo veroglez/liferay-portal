@@ -49,15 +49,16 @@ export function getToControlsId(collectionId, index, toControlsId) {
 			return null;
 		}
 
-		return toControlsId(
-			`${getCollectionPrefix(collectionId, index)}${itemId}`
-		);
+		return toControlsId(itemId);
 	};
 }
 
 export function fromControlsId(controlsItemId) {
 	if (!controlsItemId) {
 		return null;
+	}
+	else if (Array.isArray(controlsItemId)) {
+		return controlsItemId;
 	}
 	else {
 		const splits = controlsItemId.split(COLLECTION_ID_DIVIDER);

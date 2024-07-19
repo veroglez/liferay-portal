@@ -239,7 +239,9 @@ function FragmentContentInteractionsFilter({
 
 				if (isActive(editable.itemId)) {
 					setEditableProcessorUniqueId(
-						toControlsId(editable.itemId),
+						Liferay.FeatureFlags['LPD-18221']
+							? editable.itemId
+							: toControlsId(editable.itemId),
 						editableClickPosition
 					);
 				}

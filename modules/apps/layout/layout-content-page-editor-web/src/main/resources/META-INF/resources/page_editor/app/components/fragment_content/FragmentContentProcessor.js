@@ -31,14 +31,17 @@ export default function FragmentContentProcessor({
 	const setEditableProcessorUniqueId = useSetEditableProcessorUniqueId();
 	const toControlsId = useToControlsId();
 
-	const editable = editables.find(
-		(editable) =>
-			editableProcessorUniqueId === toControlsId(editable.itemId)
+	const editable = editables.find((editable) =>
+		Liferay.FeatureFlags['LPD-18221']
+			? editable.itemId
+			: editableProcessorUniqueId === toControlsId(editable.itemId)
 	);
 
-	const editableCollectionItemId = toControlsId(
-		editable ? editable.itemId : ''
-	);
+	const editableCollectionItemId = Liferay.FeatureFlags['LPD-18221']
+		? editable
+			? editable.itemId
+			: ''
+		: toControlsId(editable ? editable.itemId : '');
 
 	const editableValues = useSelectorCallback(
 		(state) =>

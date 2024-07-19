@@ -119,8 +119,16 @@ const ControlsProvider = ({
 const useActivationOrigin = () =>
 	useContext(ActiveStateContext).activationOrigin;
 
-const useActiveItemIds = () =>
-	fromControlsId(useContext(ActiveStateContext).activeItemIds);
+const useActiveItemIds = () => {
+	const activeItemIds = useContext(ActiveStateContext).activeItemIds;
+
+	if (Liferay.FeatureFlags['LPD-18221']) {
+		return activeItemIds;
+	}
+	else {
+		return fromControlsId(activeItemIds);
+	}
+};
 
 const useActiveItemType = () => useContext(ActiveStateContext).activeItemType;
 
@@ -160,10 +168,11 @@ const useIsActive = () => {
 	const toControlsId = useToControlsId();
 
 	return useCallback(
-		(itemId) =>
-			Liferay.FeatureFlags['LPD-18221']
+		(itemId) => {
+			return Liferay.FeatureFlags['LPD-18221']
 				? activeItemIds.includes(itemId)
-				: activeItemIds === toControlsId(itemId),
+				: activeItemIds === toControlsId(itemId);
+		},
 		[activeItemIds, toControlsId]
 	);
 };
@@ -198,7 +207,9 @@ const useSelectItem = () => {
 			}
 		) => {
 			activeDispatch({
-				itemId: toControlsId(itemId),
+				itemId: Liferay.FeatureFlags['LPD-18221']
+					? itemId
+					: toControlsId(itemId),
 				itemType,
 				origin,
 				type: SELECT_ITEM,

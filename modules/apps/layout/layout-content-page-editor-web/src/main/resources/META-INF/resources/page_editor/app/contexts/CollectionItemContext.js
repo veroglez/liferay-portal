@@ -85,7 +85,9 @@ const useGetContent = (
 	const fieldSets = fragmentEntryLink.configuration?.fieldSets;
 	const toControlsId = useToControlsId();
 
-	const collectionContentId = toControlsId(fragmentEntryLinkId);
+	const collectionContentId = Liferay.FeatureFlags['LPD-18221']
+		? fragmentEntryLinkId
+		: toControlsId(fragmentEntryLinkId);
 
 	const addPendingItem = useAddPendingItem();
 

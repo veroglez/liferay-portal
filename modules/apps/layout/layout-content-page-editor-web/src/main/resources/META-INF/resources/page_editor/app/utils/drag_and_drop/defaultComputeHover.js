@@ -219,7 +219,9 @@ function getOrientation(item, monitor, targetRefs, layoutDataRef) {
 		return ORIENTATIONS.vertical;
 	}
 
-	const targetRef = targetRefs.get(item.toControlsId(item.itemId));
+	const targetRef = Liferay.FeatureFlags['LPD-18221']
+		? targetRefs.get(item.itemId)
+		: targetRefs.get(item.toControlsId(item.itemId));
 	const targetRect = targetRef.current.getBoundingClientRect();
 	const hoverMiddle = targetRect.left + targetRect.width / 2;
 	const clientOffsetX = monitor.getClientOffset().x;
@@ -240,7 +242,9 @@ function getOrientation(item, monitor, targetRefs, layoutDataRef) {
 }
 
 function getItemPosition(item, monitor, targetRefs, orientation) {
-	const targetRef = targetRefs.get(item.toControlsId(item.itemId));
+	const targetRef = Liferay.FeatureFlags['LPD-18221']
+		? targetRefs.get(item.itemId)
+		: targetRefs.get(item.toControlsId(item.itemId));
 
 	if (!targetRef || !targetRef.current) {
 		return [null, null, 0];
