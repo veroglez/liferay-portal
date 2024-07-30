@@ -152,7 +152,7 @@ export default function ShortcutManager() {
 		dispatch(
 			deleteItem({
 				itemId: activeItemId,
-				selectItem: () => selectItem(null),
+				selectItem,
 			})
 		);
 	};
