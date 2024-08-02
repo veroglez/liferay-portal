@@ -35,7 +35,7 @@ export default function addFragment({
 				})
 			);
 
-			selectItem(itemId, layoutData);
+			selectItem(itemId);
 		};
 
 		if (type === FRAGMENT_ENTRY_TYPES.composition) {

@@ -31,7 +31,7 @@ export default function addWidget({
 			);
 
 			if (addedItemId) {
-				selectItem(addedItemId, layoutData);
+				selectItem(addedItemId);
 			}
 		});
 	};
