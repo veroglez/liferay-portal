@@ -32,6 +32,7 @@ import {LAYOUT_DATA_ITEM_TYPES} from '../../../../../app/config/constants/layout
 import {LAYOUT_TYPES} from '../../../../../app/config/constants/layoutTypes';
 import {config} from '../../../../../app/config/index';
 import {
+	useActivationOrigin,
 	useActiveItemIds,
 	useHoverItem,
 	useHoveredItemId,
@@ -98,6 +99,7 @@ export default function PageStructureSidebar() {
 	const hoverItem = useHoverItem();
 	const hoveredItemId = useHoveredItemId();
 	const selectItem = useSelectItem();
+	const activationOrigin = useActivationOrigin();
 
 	const mappingFields = useSelector((state) => state.mappingFields);
 	const masterLayoutData = useSelector(
@@ -173,7 +175,9 @@ export default function PageStructureSidebar() {
 			document.activeElement?.querySelector('[data-item-id]');
 
 		if (focusedItem) {
-			hoverItem(focusedItem.dataset.itemId);
+			hoverItem(focusedItem.dataset.itemId, {
+				origin: ITEM_ACTIVATION_ORIGINS.sidebar,
+			});
 		}
 	};
 
@@ -291,6 +295,10 @@ export default function PageStructureSidebar() {
 	);
 
 	useEffect(() => {
+		if (activationOrigin !== ITEM_ACTIVATION_ORIGINS.layout) {
+			return;
+		}
+
 		if (Liferay.FeatureFlags['LPD-18221'] && activeItemIds.length) {
 			const getExpandedKeys = () => {
 				const expandedKeys = [];
@@ -341,7 +349,13 @@ export default function PageStructureSidebar() {
 				]);
 			}
 		}
-	}, [activeItemIds, getAncestorsIds, layoutData, masterLayoutData]);
+	}, [
+		activationOrigin,
+		activeItemIds,
+		getAncestorsIds,
+		layoutData,
+		masterLayoutData,
+	]);
 
 	useEffect(() => {
 		if (dragAndDropHoveredItemId) {
@@ -390,7 +404,9 @@ export default function PageStructureSidebar() {
 				origin: ITEM_ACTIVATION_ORIGINS.sidebar,
 			});
 
-			hoverItem(null);
+			hoverItem(null, {
+				origin: ITEM_ACTIVATION_ORIGINS.sidebar,
+			});
 		}
 	};
 
@@ -459,12 +475,16 @@ export default function PageStructureSidebar() {
 								onMouseLeave={(event) => {
 									if (item.hovered) {
 										event.stopPropagation();
-										hoverItem(null);
+										hoverItem(null, {
+											origin: ITEM_ACTIVATION_ORIGINS.sidebar,
+										});
 									}
 								}}
 								onMouseOver={(event) => {
 									event.stopPropagation();
-									hoverItem(item.id);
+									hoverItem(item.id, {
+										origin: ITEM_ACTIVATION_ORIGINS.sidebar,
+									});
 								}}
 							>
 								<span className="sr-only">{item.name}</span>
