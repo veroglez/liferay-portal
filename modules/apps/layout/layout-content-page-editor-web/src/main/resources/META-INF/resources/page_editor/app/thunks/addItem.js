@@ -5,6 +5,7 @@
 
 import addItemAction from '../actions/addItem';
 import LayoutService from '../services/LayoutService';
+import getFirstControlsId from '../utils/getFirstControlsId';
 import {clearPageContents} from '../utils/usePageContents';
 
 export default function addItem({
@@ -28,7 +29,14 @@ export default function addItem({
 			clearPageContents();
 
 			if (addedItemId) {
-				selectItem(addedItemId);
+				const addedItem = layoutData.items[addedItemId];
+
+				const controlsId = getFirstControlsId({
+					item: addedItem,
+					layoutData,
+				});
+
+				selectItem(controlsId);
 			}
 		});
 	};

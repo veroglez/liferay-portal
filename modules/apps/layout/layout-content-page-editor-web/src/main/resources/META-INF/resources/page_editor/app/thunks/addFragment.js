@@ -6,6 +6,7 @@
 import addFragmentEntryLinks from '../actions/addFragmentEntryLinks';
 import {FRAGMENT_ENTRY_TYPES} from '../config/constants/fragmentEntryTypes';
 import FragmentService from '../services/FragmentService';
+import getFirstControlsId from '../utils/getFirstControlsId';
 
 export default function addFragment({
 	fragmentEntryKey,
@@ -35,7 +36,14 @@ export default function addFragment({
 				})
 			);
 
-			selectItem(itemId);
+			const addedItem = layoutData.items[itemId];
+
+			const controlsId = getFirstControlsId({
+				item: addedItem,
+				layoutData,
+			});
+
+			selectItem(controlsId);
 		};
 
 		if (type === FRAGMENT_ENTRY_TYPES.composition) {
