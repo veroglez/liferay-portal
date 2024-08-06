@@ -134,7 +134,7 @@ export default function ShortcutManager() {
 	const remove = () => {
 		dispatch(
 			deleteItem({
-				itemId: activeItemId,
+				itemIds: activeItemIds,
 				selectItem,
 			})
 		);
