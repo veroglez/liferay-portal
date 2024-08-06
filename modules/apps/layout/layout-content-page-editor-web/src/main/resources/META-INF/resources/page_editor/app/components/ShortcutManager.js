@@ -82,8 +82,10 @@ export default function ShortcutManager() {
 	const {fragmentEntryLinks, layoutData} = state;
 
 	let activeItemId = activeItemIds;
+	let multiSelection = false;
 
 	if (Liferay.FeatureFlags['LPD-18221']) {
+		multiSelection = activeItemIds.length > 1;
 
 		// todo: adapt shortcuts for multiselect
 
@@ -253,6 +255,7 @@ export default function ShortcutManager() {
 				setEditedNodeId(activeItemId);
 			},
 			canBeExecuted: () =>
+				!multiSelection &&
 				canUpdatePageStructure &&
 				!!layoutData.items[activeItemId] &&
 				canBeRenamed(layoutData.items[activeItemId]),
@@ -264,6 +267,7 @@ export default function ShortcutManager() {
 		save: {
 			action: save,
 			canBeExecuted: () =>
+				!multiSelection &&
 				canUpdatePageStructure &&
 				!!layoutData.items[activeItemId] &&
 				canBeSaved(layoutData.items[activeItemId], layoutData),
@@ -273,7 +277,9 @@ export default function ShortcutManager() {
 		selectParent: {
 			action: selectParent,
 			canBeExecuted: (event) =>
-				!isInteractiveElement(event.target) && activeLayoutDataItem,
+				!multiSelection &&
+				!isInteractiveElement(event.target) &&
+				activeLayoutDataItem,
 			isKeyCombination: (event) =>
 				event.shiftKey && event.key === 'Enter',
 		},
