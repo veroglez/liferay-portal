@@ -11,6 +11,7 @@ import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCActionCommand;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
+import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.WebKeys;
 
@@ -45,7 +46,7 @@ public class MarkItemForDeletionMVCActionCommand
 
 		long segmentsExperienceId = ParamUtil.getLong(
 			actionRequest, "segmentsExperienceId");
-		String itemId = ParamUtil.getString(actionRequest, "itemId");
+		String[] itemIds = ParamUtil.getStringValues(actionRequest, "itemIds");
 		String[] portletIds = ParamUtil.getStringValues(
 			actionRequest, "portletIds");
 
@@ -56,7 +57,7 @@ public class MarkItemForDeletionMVCActionCommand
 				themeDisplay.getPlid(),
 				layoutStructure ->
 					layoutStructure.markLayoutStructureItemForDeletion(
-						Collections.singletonList(itemId),
+						Arrays.asList(itemIds),
 						Arrays.asList(portletIds))));
 	}
 
