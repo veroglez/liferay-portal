@@ -31,13 +31,11 @@ import {LAYOUT_DATA_ITEM_TYPES} from '../../../../../app/config/constants/layout
 import {LAYOUT_TYPES} from '../../../../../app/config/constants/layoutTypes';
 import {config} from '../../../../../app/config/index';
 import {
-	useActivationOrigin,
 	useActiveItemIds,
 	useHoverItem,
 	useHoveredItemId,
 	useSelectItem,
 } from '../../../../../app/contexts/ControlsContext';
-import {useMovementTarget} from '../../../../../app/contexts/KeyboardMovementContext';
 import {useEditedNodeId} from '../../../../../app/contexts/ShortcutContext';
 import {
 	useDispatch,
@@ -49,7 +47,6 @@ import selectCanUpdateItemConfiguration from '../../../../../app/selectors/selec
 import selectCanUpdatePageStructure from '../../../../../app/selectors/selectCanUpdatePageStructure';
 import selectLayoutDataItemLabel from '../../../../../app/selectors/selectLayoutDataItemLabel';
 import canActivateEditable from '../../../../../app/utils/canActivateEditable';
-import {deepEqual} from '../../../../../app/utils/checkDeepEqual';
 import {DragAndDropContextProvider} from '../../../../../app/utils/drag_and_drop/useDragAndDrop';
 import isMapped from '../../../../../app/utils/editable_value/isMapped';
 import isMappedToCollection from '../../../../../app/utils/editable_value/isMappedToCollection';
@@ -89,7 +86,7 @@ const LAYOUT_DATA_ITEM_TYPE_ICONS = {
 	[LAYOUT_DATA_ITEM_TYPES.row]: 'table',
 };
 
-export default function PageStructureSidebar() {
+export default function PageStructureSidebar({expandedKeys, setExpandedKeys}) {
 	const activeItemIds = useActiveItemIds();
 	const canUpdateEditables = useSelector(selectCanUpdateEditables);
 	const canUpdateItemConfiguration = useSelector(
@@ -101,7 +98,6 @@ export default function PageStructureSidebar() {
 	const hoverItem = useHoverItem();
 	const hoveredItemId = useHoveredItemId();
 	const selectItem = useSelectItem();
-	const activationOrigin = useActivationOrigin();
 
 	const mappingFields = useSelector((state) => state.mappingFields);
 	const masterLayoutData = useSelector(
@@ -118,8 +114,6 @@ export default function PageStructureSidebar() {
 	const [dragAndDropHoveredItemId, setDragAndDropHoveredItemId] =
 		useState(null);
 
-	const [expandedKeys, setExpandedKeys] = useState([]);
-
 	const isMasterPage = config.layoutType === LAYOUT_TYPES.master;
 
 	const data = masterLayoutData || layoutData;
@@ -127,8 +121,6 @@ export default function PageStructureSidebar() {
 	const onHoverNode = useCallback((itemId) => {
 		setDragAndDropHoveredItemId(itemId);
 	}, []);
-
-	const {itemId: keyboardMovementTargetId} = useMovementTarget();
 
 	const nodes = useMemo(
 		() =>
@@ -258,104 +250,6 @@ export default function PageStructureSidebar() {
 		);
 	};
 
-	const getAncestorsIds = useCallback(
-		(layoutDataItem, data) => {
-			if (!layoutDataItem.parentId) {
-				const itemInMasterLayout =
-					masterLayoutData?.items[layoutDataItem.itemId];
-				if (
-					!itemInMasterLayout &&
-					masterLayoutData?.rootItems?.dropZone
-				) {
-					const dropZoneItem =
-						masterLayoutData.items[
-							masterLayoutData.rootItems.dropZone
-						];
-
-					return [
-						...[layoutDataItem.itemId],
-						...getAncestorsIds(
-							masterLayoutData.items[dropZoneItem.parentId],
-							masterLayoutData
-						),
-					];
-				}
-				else {
-					return [layoutDataItem.itemId];
-				}
-			}
-
-			return [
-				...[layoutDataItem.itemId],
-				...getAncestorsIds(data.items[layoutDataItem.parentId], data),
-			];
-		},
-		[masterLayoutData]
-	);
-
-	useEffect(() => {
-		if (activationOrigin !== ITEM_ACTIVATION_ORIGINS.layout) {
-			return;
-		}
-
-		if (Liferay.FeatureFlags['LPD-18221'] && activeItemIds.length) {
-			const getExpandedKeys = () => {
-				const expandedKeys = [];
-				let layoutDataActiveItem = null;
-
-				activeItemIds.forEach((itemId) => {
-					if (layoutData.items[itemId]) {
-						layoutDataActiveItem = layoutData.items[itemId];
-					}
-
-					if (!layoutDataActiveItem) {
-						return;
-					}
-
-					expandedKeys.push(
-						...getAncestorsIds(layoutDataActiveItem, layoutData)
-					);
-				});
-
-				return expandedKeys;
-			};
-
-			setExpandedKeys((prevState) => {
-				const nextState = [
-					...new Set([...prevState, ...getExpandedKeys()]),
-				];
-
-				if (deepEqual(prevState, nextState)) {
-					return prevState;
-				}
-
-				return nextState;
-			});
-		}
-		else {
-			if (activeItemIds) {
-				const layoutDataActiveItem = layoutData.items[activeItemIds];
-
-				if (!layoutDataActiveItem) {
-					return;
-				}
-
-				setExpandedKeys((previousExpanedKeys) => [
-					...new Set([
-						...previousExpanedKeys,
-						...getAncestorsIds(layoutDataActiveItem, layoutData),
-					]),
-				]);
-			}
-		}
-	}, [
-		activationOrigin,
-		activeItemIds,
-		getAncestorsIds,
-		layoutData,
-		masterLayoutData,
-	]);
-
 	useEffect(() => {
 		if (dragAndDropHoveredItemId) {
 			setExpandedKeys((previousExpanedKeys) => [
@@ -365,25 +259,7 @@ export default function PageStructureSidebar() {
 				]),
 			]);
 		}
-	}, [dragAndDropHoveredItemId]);
-
-	useEffect(() => {
-		if (keyboardMovementTargetId) {
-			const layoutDataTargetItem =
-				layoutData.items[keyboardMovementTargetId];
-
-			if (!layoutDataTargetItem) {
-				return;
-			}
-
-			setExpandedKeys((previousExpanedKeys) => [
-				...new Set([
-					...previousExpanedKeys,
-					...getAncestorsIds(layoutDataTargetItem, layoutData),
-				]),
-			]);
-		}
-	}, [getAncestorsIds, keyboardMovementTargetId, layoutData]);
+	}, [dragAndDropHoveredItemId, setExpandedKeys]);
 
 	const onKeyDown = (event, item) => {
 		const {code} = event.nativeEvent;
