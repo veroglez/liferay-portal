@@ -6,11 +6,14 @@
 import duplicateItemAction from '../actions/duplicateItem';
 import {ITEM_ACTIVATION_ORIGINS} from '../config/constants/itemActivationOrigins';
 import FragmentService from '../services/FragmentService';
+import getParentIds from './getParentIds';
 
 export default function duplicateItem({itemIds, selectItem = () => {}}) {
 	return (dispatch, getState) => {
+		const {layoutData} = getState();
+
 		FragmentService.duplicateItem({
-			itemIds,
+			itemIds: getParentIds(itemIds, layoutData),
 			onNetworkStatus: dispatch,
 			segmentsExperienceId: getState().segmentsExperienceId,
 		}).then(
