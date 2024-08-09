@@ -17,7 +17,10 @@ import hasDropZoneChild from '../../../../../app/components/layout_data_items/ha
 import {FRAGMENT_ENTRY_TYPES} from '../../../../../app/config/constants/fragmentEntryTypes';
 import {ITEM_ACTIVATION_ORIGINS} from '../../../../../app/config/constants/itemActivationOrigins';
 import {LAYOUT_DATA_ITEM_TYPES} from '../../../../../app/config/constants/layoutDataItemTypes';
-import {useSelectItem} from '../../../../../app/contexts/ControlsContext';
+import {
+	useSelectItem,
+	useSelectItemsAtOnce,
+} from '../../../../../app/contexts/ControlsContext';
 import {useSetMovementText} from '../../../../../app/contexts/KeyboardMovementContext';
 import {useSetEditedNodeId} from '../../../../../app/contexts/ShortcutContext';
 import {
@@ -121,6 +124,7 @@ const ActionList = ({item, setActive, setOpenSaveModal}) => {
 	const dispatch = useDispatch();
 	const hasRequiredChild = useHasRequiredChild(item.id);
 	const selectItem = useSelectItem();
+	const selectItemsAtOnce = useSelectItemsAtOnce();
 	const setEditedNodeId = useSetEditedNodeId();
 	const setText = useSetMovementText();
 	const widgets = useSelector((state) => state.widgets);
@@ -202,7 +206,7 @@ const ActionList = ({item, setActive, setOpenSaveModal}) => {
 					dispatch(
 						duplicateItem({
 							itemIds: [item.id],
-							selectItem,
+							selectItems: selectItemsAtOnce,
 						})
 					);
 
