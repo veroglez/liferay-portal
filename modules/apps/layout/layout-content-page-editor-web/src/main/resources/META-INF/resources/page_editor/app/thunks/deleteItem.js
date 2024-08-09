@@ -22,6 +22,7 @@ import getFragmentEntryLinkIdsFromItemId from '../utils/getFragmentEntryLinkIdsF
 import getPortletId from '../utils/getPortletId';
 import {hasFormParent} from '../utils/hasFormParent';
 import {isRequiredFormInput} from '../utils/isRequiredFormInput';
+import selectFirstControlsItem from '../utils/selectFirstControlsItem';
 import {clearPageContents} from '../utils/usePageContents';
 import getParentIds from './getParentIds';
 
@@ -73,10 +74,14 @@ export default function deleteItem({itemIds, selectItem = () => {}}) {
 					.querySelector('button[data-panel-id="browser"]')
 					.focus();
 			}
-
-			selectItem(nextItemId, {
-				origin: ITEM_ACTIVATION_ORIGINS.itemActions,
-			});
+			else {
+				selectFirstControlsItem({
+					itemId: nextItemId,
+					layoutData,
+					origin: ITEM_ACTIVATION_ORIGINS.itemActions,
+					selectItem,
+				});
+			}
 
 			const fragmentEntryLinkIds = itemIds.flatMap((itemId) =>
 				getFragmentEntryLinkIdsFromItemId({
