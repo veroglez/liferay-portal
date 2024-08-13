@@ -60,7 +60,7 @@ export default function deleteItem({itemIds, selectItem = () => {}}) {
 			layoutData,
 			onNetworkStatus: dispatch,
 			segmentsExperienceId,
-		}).then(({portletIds = [], layoutData: nextLayoutData}) => {
+		}).then(async ({portletIds = [], layoutData: nextLayoutData}) => {
 			const nextItemId = getPreviousItemId(
 				itemIds[0],
 				layoutData,
@@ -99,7 +99,28 @@ export default function deleteItem({itemIds, selectItem = () => {}}) {
 
 			clearPageContents();
 
-			maybeShowAlert(layoutData, itemIds, fragmentEntryLinks);
+			// Show warning if deleting some required form input
+
+			for (const itemId of itemIds) {
+				if (
+					await isRequiredFormField(
+						layoutData,
+						itemId,
+						fragmentEntryLinks
+					)
+				) {
+					const {message} = getFormErrorDescription({
+						type: FORM_ERROR_TYPES.deletedFragment,
+					});
+
+					openToast({
+						message,
+						type: 'warning',
+					});
+
+					break;
+				}
+			}
 		});
 	};
 }
@@ -158,8 +179,7 @@ function findPortletIds(itemId, layoutData, fragmentEntryLinks) {
 	return deletedWidgets;
 }
 
-function maybeShowAlert(layoutData, itemIds, fragmentEntryLinks) {
-	const [itemId] = itemIds;
+async function isRequiredFormField(layoutData, itemId, fragmentEntryLinks) {
 	const item = layoutData?.items?.[itemId];
 
 	if (
@@ -167,7 +187,7 @@ function maybeShowAlert(layoutData, itemIds, fragmentEntryLinks) {
 		item.type !== LAYOUT_DATA_ITEM_TYPES.fragment ||
 		!hasFormParent(item, layoutData)
 	) {
-		return null;
+		return false;
 	}
 
 	const {classNameId, classTypeId} = selectFormConfiguration(
@@ -190,19 +210,12 @@ function maybeShowAlert(layoutData, itemIds, fragmentEntryLinks) {
 				classTypeId,
 			});
 
-	promise.then((formFields) => {
-		if (
-			item.type === LAYOUT_DATA_ITEM_TYPES.fragment &&
-			isRequiredFormInput(item, fragmentEntryLinks, formFields)
-		) {
-			const {message} = getFormErrorDescription({
-				type: FORM_ERROR_TYPES.deletedFragment,
-			});
+	const formFields = await promise;
 
-			openToast({
-				message,
-				type: 'warning',
-			});
-		}
-	});
+	if (
+		item.type === LAYOUT_DATA_ITEM_TYPES.fragment &&
+		isRequiredFormInput(item, fragmentEntryLinks, formFields)
+	) {
+		return true;
+	}
 }
