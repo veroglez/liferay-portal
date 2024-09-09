@@ -166,9 +166,9 @@ function TopperContent({
 					position,
 				})
 			: moveItem({
-					itemId: item.itemId,
-					parentItemId,
-					position,
+					itemIds: activeItemIds,
+					parentItemIds: [parentItemId],
+					positions: [position],
 				});
 
 		dispatch(thunk);
