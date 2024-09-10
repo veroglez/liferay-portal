@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
-import {LayoutData} from '../../types/layout_data/LayoutData';
+import {LayoutDataItem} from '../../types/layout_data/LayoutData';
 
 /**
  * Filters all selected items.
@@ -14,10 +14,8 @@ import {LayoutData} from '../../types/layout_data/LayoutData';
 
 export default function filterSelectedItems(
 	itemIds: string[],
-	layoutData: LayoutData
+	layoutDataItems: Record<string, LayoutDataItem>
 ): string[] {
-	const {items: layoutDataItems} = layoutData;
-
 	const hasParentSelected = (itemId: string): boolean => {
 		const parentId = layoutDataItems[itemId].parentId;
 
