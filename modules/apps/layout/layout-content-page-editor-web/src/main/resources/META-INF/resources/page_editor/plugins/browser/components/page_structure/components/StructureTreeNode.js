@@ -586,15 +586,17 @@ const MoveButton = ({
 			displayType="unstyled"
 			onBlur={(event) => event.stopPropagation()}
 			onClick={() =>
-				setMovementSource({
-					fieldTypes,
-					fragmentEntryType,
-					icon: node.icon,
-					isWidget,
-					itemId: node.id,
-					name: node.name,
-					type: node.type,
-				})
+				setMovementSource([
+					{
+						fieldTypes,
+						fragmentEntryType,
+						icon: node.icon,
+						isWidget,
+						itemId: node.id,
+						name: node.name,
+						type: node.type,
+					},
+				])
 			}
 			onFocus={(event) => {
 				buttonRef.current
