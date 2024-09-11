@@ -1,0 +1,20 @@
+// LPD-30906
+// The class .keyboard-only hides a dropdown-item. It is only visible for
+// keyboard navigation, when the focus is visible inside the dropdown-menu.
+
+.dropdown-menu .dropdown-item.keyboard-only {
+	opacity: 0;
+	height: 0;
+	width: 0;
+	position: absolute;
+	pointer-events: none;
+	top: 0;
+}
+
+.dropdown-menu:has(:focus-visible) .dropdown-item.keyboard-only {
+	opacity: 1;
+	position: relative;
+	height: 100%;
+	width: 100%;
+	pointer-events: unset;
+}

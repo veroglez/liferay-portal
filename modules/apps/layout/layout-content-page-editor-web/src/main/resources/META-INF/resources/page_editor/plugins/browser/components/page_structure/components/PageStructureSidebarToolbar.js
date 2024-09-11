@@ -24,6 +24,8 @@ import canBeRemoved from '../../../../../app/utils/canBeRemoved';
 import isInputFragment from '../../../../../app/utils/isInputFragment';
 import updateItemStyle from '../../../../../app/utils/updateItemStyle';
 
+import './PageStructureSidebarToolbar.scss';
+
 export default function PageStructureSidebarToolbar({activeItemIds}) {
 	const dispatch = useDispatch();
 	const fragmentEntryLinks = useSelector((state) => state.fragmentEntryLinks);
@@ -113,6 +115,14 @@ export default function PageStructureSidebarToolbar({activeItemIds}) {
 					);
 				}
 			},
+			symbolLeft: 'trash',
+		},
+		{
+			className: 'keyboard-only',
+			label: sub(
+				Liferay.Language.get('move-x-items'),
+				activeItemIds.length
+			),
 			symbolLeft: 'trash',
 		},
 	];
