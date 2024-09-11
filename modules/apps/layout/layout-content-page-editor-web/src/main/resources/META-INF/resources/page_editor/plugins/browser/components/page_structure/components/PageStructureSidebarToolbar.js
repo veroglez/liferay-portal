@@ -110,20 +110,6 @@ export default function PageStructureSidebarToolbar({activeItemIds}) {
 			symbolLeft: 'copy',
 		},
 		{
-			label: Liferay.Language.get('delete'),
-			onClick: () => {
-				if (itemsCanBeDeleted()) {
-					dispatch(
-						deleteItem({
-							itemIds: activeItemIds,
-							selectItems,
-						})
-					);
-				}
-			},
-			symbolLeft: 'trash',
-		},
-		{
 			className: 'keyboard-only',
 			label: sub(
 				Liferay.Language.get('move-x-items'),
@@ -143,6 +129,23 @@ export default function PageStructureSidebarToolbar({activeItemIds}) {
 				setMovementSource(sources);
 			},
 			symbolLeft: 'move',
+		},
+		{
+			type: 'divider',
+		},
+		{
+			label: Liferay.Language.get('delete'),
+			onClick: () => {
+				if (itemsCanBeDeleted()) {
+					dispatch(
+						deleteItem({
+							itemIds: activeItemIds,
+							selectItems,
+						})
+					);
+				}
+			},
+			symbolLeft: 'trash',
 		},
 	];
 
