@@ -13,15 +13,18 @@ import hasDropZoneChild from '../../../../../app/components/layout_data_items/ha
 import {LAYOUT_DATA_ITEM_TYPES} from '../../../../../app/config/constants/layoutDataItemTypes';
 import {VIEWPORT_SIZES} from '../../../../../app/config/constants/viewportSizes';
 import {useSelectMultipleItems} from '../../../../../app/contexts/ControlsContext';
+import {useSetMovementSource} from '../../../../../app/contexts/KeyboardMovementContext';
 import {
 	useDispatch,
 	useSelector,
+	useSelectorRef,
 } from '../../../../../app/contexts/StoreContext';
 import deleteItem from '../../../../../app/thunks/deleteItem';
 import duplicateItem from '../../../../../app/thunks/duplicateItem';
 import canBeDuplicated from '../../../../../app/utils/canBeDuplicated';
 import canBeRemoved from '../../../../../app/utils/canBeRemoved';
 import isInputFragment from '../../../../../app/utils/isInputFragment';
+import isItemWidget from '../../../../../app/utils/isItemWidget';
 import updateItemStyle from '../../../../../app/utils/updateItemStyle';
 
 import './PageStructureSidebarToolbar.scss';
@@ -29,12 +32,15 @@ import './PageStructureSidebarToolbar.scss';
 export default function PageStructureSidebarToolbar({activeItemIds}) {
 	const dispatch = useDispatch();
 	const fragmentEntryLinks = useSelector((state) => state.fragmentEntryLinks);
-	const layoutData = useSelector((state) => state.layoutData);
+	const layoutDataRef = useSelectorRef((state) => state.layoutData);
 	const selectedViewportSize = useSelector(
 		(state) => state.selectedViewportSize
 	);
 	const selectItems = useSelectMultipleItems();
+	const setMovementSource = useSetMovementSource();
 	const widgets = useSelector((state) => state.widgets);
+
+	const layoutData = layoutDataRef.current;
 
 	const itemsCanBeDeleted = () =>
 		activeItemIds.every((activeItemId) =>
@@ -123,7 +129,20 @@ export default function PageStructureSidebarToolbar({activeItemIds}) {
 				Liferay.Language.get('move-x-items'),
 				activeItemIds.length
 			),
-			symbolLeft: 'trash',
+			onClick: () => {
+				const sources = activeItemIds.map((itemId) => {
+					const item = layoutData.items[itemId];
+
+					return {
+						isWidget: isItemWidget(item, fragmentEntryLinks),
+						itemId,
+						type: item.type,
+					};
+				});
+
+				setMovementSource(sources);
+			},
+			symbolLeft: 'move',
 		},
 	];
 
