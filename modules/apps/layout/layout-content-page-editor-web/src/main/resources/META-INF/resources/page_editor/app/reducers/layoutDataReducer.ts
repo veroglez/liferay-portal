@@ -11,7 +11,7 @@ import addStepper from '../actions/addStepper';
 import deleteItem from '../actions/deleteItem';
 import deleteRule from '../actions/deleteRule';
 import duplicateItem from '../actions/duplicateItem';
-import moveItem from '../actions/moveItem';
+import moveItems from '../actions/moveItems';
 import moveStepper from '../actions/moveStepper';
 import {
 	ADD_FRAGMENT_ENTRY_LINKS,
@@ -60,7 +60,7 @@ export default function layoutDataReducer(
 		| ReturnType<typeof deleteItem>
 		| ReturnType<typeof deleteRule>
 		| ReturnType<typeof duplicateItem>
-		| ReturnType<typeof moveItem>
+		| ReturnType<typeof moveItems>
 		| ReturnType<typeof moveStepper>
 		| ReturnType<typeof updateCollectionDisplayCollection>
 		| ReturnType<typeof updateColSize>
