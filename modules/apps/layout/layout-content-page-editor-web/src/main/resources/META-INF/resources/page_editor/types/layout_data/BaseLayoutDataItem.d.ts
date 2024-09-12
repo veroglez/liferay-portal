@@ -46,7 +46,7 @@ export interface BaseLayoutDataItem<
 	Config,
 > {
 	children: string[];
-	config: Config & {name?: string};
+	config: Config & {fragmentEntryLinkId?: string; name?: string};
 	itemId: string;
 	parentId: string;
 	type: ItemType;
