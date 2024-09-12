@@ -463,6 +463,10 @@ function computeDrop({
 			message = Liferay.Language.get('an-unexpected-error-occurred');
 		}
 
+		if (dropActiveItems.length > 1) {
+			message = `${Liferay.Language.get('no-element-has-moved')} ${message}`;
+		}
+
 		if (message) {
 			openToast({
 				message,
