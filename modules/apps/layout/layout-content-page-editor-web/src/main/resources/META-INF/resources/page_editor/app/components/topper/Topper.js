@@ -156,34 +156,34 @@ function TopperContent({
 	);
 
 	const {handlerRef: itemHandlerRef, isDraggingSource: itemIsDraggingSource} =
-		useDragItem(
-			dragItem,
-			onDragEnd,
-			() => {
+		useDragItem({
+			activeItems: dragActiveItems,
+			onBeign: () => {
 				if (!isActive) {
 					selectItem(item.itemId, {
 						origin: ITEM_ACTIVATION_ORIGINS.layout,
 					});
 				}
 			},
-			dragActiveItems
-		);
+			onDragEnd,
+			sourceItem: dragItem,
+		});
 
 	const {
 		handlerRef: topperHandlerRef,
 		isDraggingSource: topperIsDraggingSource,
-	} = useDragItem(
-		dragItem,
-		onDragEnd,
-		() => {
+	} = useDragItem({
+		activeItems: dragActiveItems,
+		onBegin: () => {
 			if (!isActive) {
 				selectItem(item.itemId, {
 					origin: ITEM_ACTIVATION_ORIGINS.layout,
 				});
 			}
 		},
-		dragActiveItems
-	);
+		onDragEnd,
+		sourceItem: dragItem,
+	});
 
 	const keyboardMovementSource = useMovementSource();
 

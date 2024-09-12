@@ -218,9 +218,9 @@ function StructureTreeNodeContent({
 		activeItemIds
 	);
 
-	const {handlerRef, isDraggingSource: itemIsDraggingSource} = useDragItem(
-		dragItem,
-		(parentItemId, position) => {
+	const {handlerRef, isDraggingSource: itemIsDraggingSource} = useDragItem({
+		activeItems: dragActiveItems,
+		onDragEnd: (parentItemId, position) => {
 			const thunk = fieldTypes?.includes('stepper')
 				? moveStepper({
 						itemId: node.id,
@@ -235,9 +235,9 @@ function StructureTreeNodeContent({
 
 			dispatch(thunk);
 		},
-		() => {},
-		dragActiveItems
-	);
+
+		sourceItem: dragItem,
+	});
 
 	const {
 		itemId: keyboardMovementTargetId,

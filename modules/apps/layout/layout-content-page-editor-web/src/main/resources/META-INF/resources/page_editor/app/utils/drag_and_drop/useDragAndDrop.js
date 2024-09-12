@@ -135,12 +135,12 @@ export function NotDraggableArea({children}) {
 	);
 }
 
-export function useDragItem(
+export function useDragItem({
 	sourceItem,
 	onDragEnd,
 	onBegin = () => {},
-	activeItems
-) {
+	activeItems,
+}) {
 	const {canDrag, dispatch, fragmentEntryLinksRef, layoutDataRef, state} =
 		useContext(DragAndDropContext);
 	const sourceRef = useRef(null);
@@ -211,11 +211,11 @@ export function useDragSymbol(
 		[fieldTypes, fragmentEntryType, icon, isWidget, label, type]
 	);
 
-	const {handlerRef, isDraggingSource, sourceRef} = useDragItem(
-		sourceItem,
+	const {handlerRef, isDraggingSource, sourceRef} = useDragItem({
+		onBegin: () => selectItem(null),
 		onDragEnd,
-		() => selectItem(null)
-	);
+		sourceItem,
+	});
 
 	const symbolRef = (element) => {
 		sourceRef.current = element;
