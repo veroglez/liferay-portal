@@ -43,15 +43,14 @@ import selectLayoutDataItemLabel from '../../selectors/selectLayoutDataItemLabel
 import moveItems from '../../thunks/moveItems';
 import moveStepper from '../../thunks/moveStepper';
 import switchSidebarPanel from '../../thunks/switchSidebarPanel';
-import {deepEqual} from '../../utils/checkDeepEqual';
 import {TARGET_POSITIONS} from '../../utils/drag_and_drop/constants/targetPositions';
 import {
 	useDragItem,
 	useDropTarget,
 	useIsDroppable,
 } from '../../utils/drag_and_drop/useDragAndDrop';
-import isItemWidget from '../../utils/isItemWidget';
 import useDropContainerId from '../../utils/useDropContainerId';
+import useNormalizeDragItems from '../../utils/useNormalizeDragItems';
 import TopperItemActions from './TopperItemActions';
 import {TopperLabel} from './TopperLabel';
 
@@ -135,29 +134,6 @@ function TopperContent({
 		[item]
 	);
 
-	const isWidget = useSelectorCallback(
-		(state) => isItemWidget(item, state.fragmentEntryLinks),
-		[item]
-	);
-
-	const {fieldTypes, fragmentEntryType} = useSelectorCallback(
-		(state) => {
-			if (!item.type === LAYOUT_DATA_ITEM_TYPES.fragment) {
-				return null;
-			}
-
-			const fragmentEntryLink =
-				state.fragmentEntryLinks[item.config?.fragmentEntryLinkId];
-
-			return {
-				fieldTypes: fragmentEntryLink?.fieldTypes ?? [],
-				fragmentEntryType: fragmentEntryLink?.fragmentEntryType ?? null,
-			};
-		},
-		[item],
-		deepEqual
-	);
-
 	const onDragEnd = (parentItemId, position) => {
 		const thunk = fieldTypes?.includes('stepper')
 			? moveStepper({
@@ -174,9 +150,14 @@ function TopperContent({
 		dispatch(thunk);
 	};
 
+	const [dragItem, dragActiveItems] = useNormalizeDragItems(
+		item,
+		activeItemIds
+	);
+
 	const {handlerRef: itemHandlerRef, isDraggingSource: itemIsDraggingSource} =
 		useDragItem(
-			{...item, fieldTypes, fragmentEntryType, isWidget, name},
+			dragItem,
 			onDragEnd,
 			() => {
 				if (!isActive) {
@@ -184,14 +165,15 @@ function TopperContent({
 						origin: ITEM_ACTIVATION_ORIGINS.layout,
 					});
 				}
-			}
+			},
+			dragActiveItems
 		);
 
 	const {
 		handlerRef: topperHandlerRef,
 		isDraggingSource: topperIsDraggingSource,
 	} = useDragItem(
-		{...item, fieldTypes, fragmentEntryType, name},
+		dragItem,
 		onDragEnd,
 		() => {
 			if (!isActive) {
@@ -199,7 +181,8 @@ function TopperContent({
 					origin: ITEM_ACTIVATION_ORIGINS.layout,
 				});
 			}
-		}
+		},
+		dragActiveItems
 	);
 
 	const keyboardMovementSource = useMovementSource();
