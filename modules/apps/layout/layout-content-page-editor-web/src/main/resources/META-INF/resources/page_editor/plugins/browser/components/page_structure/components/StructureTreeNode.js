@@ -717,6 +717,7 @@ function computeHover({
 				fragmentEntryLinksRef
 			),
 			elevate: null,
+			targetItem,
 			targetPositionWithMiddle,
 			targetPositionWithoutMiddle,
 			type: DRAG_DROP_TARGET_TYPE.INSIDE,
@@ -738,6 +739,7 @@ function computeHover({
 				fragmentEntryLinksRef
 			),
 			elevate: true,
+			targetItem,
 			targetPositionWithMiddle,
 			targetPositionWithoutMiddle,
 			type: DRAG_DROP_TARGET_TYPE.ELEVATE,

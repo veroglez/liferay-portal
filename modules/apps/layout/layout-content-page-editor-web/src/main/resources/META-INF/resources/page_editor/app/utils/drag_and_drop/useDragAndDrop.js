@@ -80,6 +80,14 @@ export const initialDragDrop = {
 		elevate: false,
 
 		/**
+		 * Original target where the item is being dragged. This
+		 * target is used as a parent to check if a dropItem
+		 * can be nested inside.
+		 */
+
+		targetItem: null,
+
+		/**
 		 * Vertical position relative to dropTargetItem
 		 * (bottom, middle, top)
 		 */
@@ -375,8 +383,13 @@ function computeDrop({
 	onDragEnd,
 	state,
 }) {
-	const {dropItem, dropTargetItem, droppable, targetPositionWithoutMiddle} =
-		state;
+	const {
+		dropItem,
+		dropTargetItem,
+		droppable,
+		targetItem,
+		targetPositionWithoutMiddle,
+	} = state;
 
 	if (!dropItem) {
 		return;
@@ -387,7 +400,7 @@ function computeDrop({
 	const isDroppableActiveItems = dropActiveItems.every((item) =>
 		checkAllowedChild(
 			item,
-			dropTargetItem,
+			targetItem,
 			layoutDataRef,
 			fragmentEntryLinksRef
 		)

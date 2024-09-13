@@ -116,6 +116,7 @@ export default function defaultComputeHover({
 				fragmentEntryLinksRef
 			),
 			elevate: null,
+			targetItem,
 			targetPositionWithMiddle,
 			targetPositionWithoutMiddle,
 			type: DRAG_DROP_TARGET_TYPE.INSIDE,
@@ -145,6 +146,7 @@ export default function defaultComputeHover({
 				fragmentEntryLinksRef
 			),
 			elevate: true,
+			targetItem,
 			targetPositionWithMiddle,
 			targetPositionWithoutMiddle,
 			type: DRAG_DROP_TARGET_TYPE.ELEVATE,
