@@ -10,6 +10,7 @@ import React from 'react';
 
 import {LAYOUT_DATA_ITEM_TYPES} from '../../../../../../../../src/main/resources/META-INF/resources/page_editor/app/config/constants/layoutDataItemTypes';
 import {VIEWPORT_SIZES} from '../../../../../../../../src/main/resources/META-INF/resources/page_editor/app/config/constants/viewportSizes';
+import {useSetMovementSource} from '../../../../../../../../src/main/resources/META-INF/resources/page_editor/app/contexts/KeyboardMovementContext';
 import deleteItem from '../../../../../../../../src/main/resources/META-INF/resources/page_editor/app/thunks/deleteItem';
 import duplicateItem from '../../../../../../../../src/main/resources/META-INF/resources/page_editor/app/thunks/duplicateItem';
 import updateItemStyle from '../../../../../../../../src/main/resources/META-INF/resources/page_editor/app/utils/updateItemStyle';
@@ -29,6 +30,17 @@ jest.mock(
 jest.mock(
 	'../../../../../../../../src/main/resources/META-INF/resources/page_editor/app/thunks/duplicateItem',
 	() => jest.fn()
+);
+
+jest.mock(
+	'../../../../../../../../src/main/resources/META-INF/resources/page_editor/app/contexts/KeyboardMovementContext',
+	() => {
+		const setMovementSource = jest.fn();
+
+		return {
+			useSetMovementSource: () => setMovementSource,
+		};
+	}
 );
 
 jest.mock('frontend-js-web', () => ({
@@ -100,6 +112,10 @@ describe('PageStructureSidebarToolbar', () => {
 		Liferay.FeatureFlags['LPD-18221'] = true;
 	});
 
+	beforeEach(() => {
+		jest.clearAllMocks();
+	});
+
 	afterAll(() => {
 		Liferay.FeatureFlags['LPD-18221'] = false;
 	});
@@ -154,6 +170,19 @@ describe('PageStructureSidebarToolbar', () => {
 				styleValue: 'none',
 			})
 		);
+	});
+
+	it('calls useSetMovementSource when Move x Items action is pressed', () => {
+		renderComponent({
+			activeItemIds: ['fragment01', 'fragment02'],
+		});
+
+		userEvent.click(screen.getByText('move-2-items'));
+
+		expect(useSetMovementSource()).toBeCalledWith([
+			{isWidget: false, itemId: 'fragment01', type: 'fragment'},
+			{isWidget: false, itemId: 'fragment02', type: 'fragment'},
+		]);
 	});
 
 	it('does not show the button when it is a viewport other than desktop', () => {
