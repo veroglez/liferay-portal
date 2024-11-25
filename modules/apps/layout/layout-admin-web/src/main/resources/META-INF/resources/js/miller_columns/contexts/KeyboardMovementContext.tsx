@@ -401,6 +401,8 @@ function setMovementText({
 					)
 				: ''
 		}`
+			.trim()
+			.replace(/\s+/g, ' ')
 	);
 }
 
