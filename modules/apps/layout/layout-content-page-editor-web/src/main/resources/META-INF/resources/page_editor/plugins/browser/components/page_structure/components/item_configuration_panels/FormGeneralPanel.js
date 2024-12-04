@@ -21,12 +21,16 @@ import {
 	useItemLocalConfig,
 	useUpdateItemLocalConfig,
 } from '../../../../../../app/contexts/LocalConfigContext';
-import {useSelector} from '../../../../../../app/contexts/StoreContext';
+import {
+	useSelector,
+	useSelectorRef,
+} from '../../../../../../app/contexts/StoreContext';
 import selectLanguageId from '../../../../../../app/selectors/selectLanguageId';
 import {formIsMapped} from '../../../../../../app/utils/formIsMapped';
 import {formIsRestricted} from '../../../../../../app/utils/formIsRestricted';
 import {formIsUnavailable} from '../../../../../../app/utils/formIsUnavailable';
 import {getEditableLocalizedValue} from '../../../../../../app/utils/getEditableLocalizedValue';
+import {hasLocalizableFields} from '../../../../../../app/utils/hasLocalizableFields';
 import {setIn} from '../../../../../../app/utils/setIn';
 import {useSaveFormConfig} from '../../../../../../app/utils/useSaveFormConfig';
 import CurrentLanguageFlag from '../../../../../../common/components/CurrentLanguageFlag';
@@ -38,6 +42,9 @@ import FormMappingOptions from './FormMappingOptions';
 import FormMultistepOptions from './FormMultistepOptions';
 
 export function FormGeneralPanel({item}) {
+	const fragmentEntryLinksRef = useSelectorRef(
+		(state) => state.fragmentEntryLinks
+	);
 	const isMounted = useIsMounted();
 	const updateItemLocalConfig = useUpdateItemLocalConfig();
 
@@ -100,7 +107,8 @@ export function FormGeneralPanel({item}) {
 						</ClayPanel>
 					</div>
 
-					{Liferay.FeatureFlags['LPD-37927'] ? (
+					{Liferay.FeatureFlags['LPD-37927'] &&
+					hasLocalizableFields(fragmentEntryLinksRef.current) ? (
 						<LocalizationOptions
 							item={item}
 							onValueSelect={saveFormConfig}
