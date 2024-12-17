@@ -155,6 +155,36 @@
 			"name": "richText",
 			"required": false,
 			"type": "Clob"
+		},
+		{
+			"DBType": "String",
+			"businessType": "Picklist",
+			"externalReferenceCode": "picklist-erc",
+			"indexed": true,
+			"indexedAsKeyword": false,
+			"label": {
+				"en_US": "Picklist"
+			},
+			"listTypeDefinitionExternalReferenceCode": "lemon-dimensions-picklist-erc",
+			"localized": false,
+			"name": "picklist",
+			"required": false,
+			"type": "String"
+		},
+		{
+			"DBType": "String",
+			"businessType": "MultiselectPicklist",
+			"externalReferenceCode": "multiselect-picklist-erc",
+			"indexed": true,
+			"indexedAsKeyword": false,
+			"label": {
+				"en_US": "MultiSelect Picklist"
+			},
+			"listTypeDefinitionExternalReferenceCode": "lemon-dimensions-picklist-erc",
+			"localized": false,
+			"name": "multiSelectPicklist",
+			"required": false,
+			"type": "String"
 		}
 	],
 	"panelCategoryKey": "site_administration.content",
