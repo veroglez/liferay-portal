@@ -122,4 +122,14 @@ export class ObjectAdminApiHelper {
 			})
 		).body;
 	}
+
+	async putObjectField(
+		objectDefinitionId: number,
+		objectField: ObjectField
+	): Promise<ObjectField> {
+		return this.apiHelpers.put(
+			`${this.apiHelpers.baseUrl}${this.basePath}/object-fields/${objectDefinitionId}`,
+			{data: objectField}
+		);
+	}
 }
