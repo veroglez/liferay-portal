@@ -5321,3 +5321,63 @@ test.describe('View mode form errors', () => {
 		}
 	);
 });
+
+test(
+	'Check read-only fields',
+	{tag: ['@LPD-44528']},
+	async ({apiHelpers, page, pageEditorPage, pageManagementSite}) => {
+
+		// Update 'All Fields' fields setting readOnly to true
+
+		const objectDefinition =
+			await apiHelpers.objectEntry.getObjectEntryByExternalReferenceCode(
+				'object-admin/v1.0/object-definitions',
+				'all-fields-object-erc'
+			);
+
+		for (const objectField of objectDefinition.objectFields) {
+			await apiHelpers.objectAdmin.putObjectField(objectField.id, {
+				...objectField,
+				readOnly: 'true',
+			});
+		}
+
+		// Create a page with a form mapped to 'All Fields' object
+
+		const formId = getRandomString();
+
+		const formDefinition = getFormContainerDefinition({
+			id: formId,
+		});
+
+		const layout = await apiHelpers.headlessDelivery.createSitePage({
+			pageDefinition: getPageDefinition([formDefinition]),
+			siteId: pageManagementSite.id,
+			title: getRandomString(),
+		});
+
+		await pageEditorPage.goto(layout, pageManagementSite.friendlyUrlPath);
+
+		await pageEditorPage.mapFormFragment(formId, 'All Fields');
+
+		// Check that all fields have the corresponding attribute and label
+
+		const labelsWithReadOnly = await page
+			.locator('label')
+			.filter({
+				hasText: /(Read Only)/,
+			})
+			.allInnerTexts();
+
+		for (const labelWithReadOnly of labelsWithReadOnly) {
+			const input = page.getByLabel(labelWithReadOnly, {exact: true});
+
+			if ((await input.getAttribute('aria-readonly')) !== null) {
+				await expect(input).toHaveAttribute('aria-readonly', 'true');
+			}
+			else {
+				await expect(input).toHaveAttribute('readonly', '');
+			}
+		}
+	}
+);
