@@ -6,6 +6,7 @@
 import {
 	ObjectDefinitionApi,
 	ObjectField,
+	ObjectFieldApi,
 	ObjectValidationRule,
 	ObjectValidationRuleApi,
 } from '@liferay/object-admin-rest-client-js';
@@ -5327,20 +5328,57 @@ test(
 	{tag: ['@LPD-44528']},
 	async ({apiHelpers, page, pageEditorPage, pageManagementSite}) => {
 
-		// Update 'All Fields' fields setting readOnly to true
+		// Create a new object definition
 
-		const objectDefinition =
-			await apiHelpers.objectEntry.getObjectEntryByExternalReferenceCode(
-				'object-admin/v1.0/object-definitions',
-				'all-fields-object-erc'
-			);
+		const objectDefinitionAPIClient =
+			await apiHelpers.buildRestClient(ObjectDefinitionApi);
+
+		const {body: objectDefinition} =
+			await objectDefinitionAPIClient.postObjectDefinition({
+				active: true,
+				externalReferenceCode: 'studentERC',
+				label: {
+					en_US: 'Student',
+				},
+				name: 'Student',
+				objectFields: [
+					{
+						DBType: ObjectField.DBTypeEnum.String,
+						businessType: ObjectField.BusinessTypeEnum.Text,
+						externalReferenceCode: 'nameERC',
+						indexed: true,
+						indexedAsKeyword: true,
+						label: {
+							en_US: 'Name',
+						},
+						name: 'name',
+						required: true,
+					},
+				],
+				pluralLabel: {
+					en_US: 'Students',
+				},
+				portlet: true,
+				scope: 'company',
+				status: {
+					code: 0,
+				},
+			});
+
+		const objectFieldApiClient =
+			await apiHelpers.buildRestClient(ObjectFieldApi);
 
 		for (const objectField of objectDefinition.objectFields) {
-			await apiHelpers.objectAdmin.putObjectField(objectField.id, {
+			await objectFieldApiClient.putObjectField(objectField.id, {
 				...objectField,
-				readOnly: 'true',
+				readOnly: ObjectField.ReadOnlyEnum.True,
 			});
 		}
+
+		apiHelpers.data.push({
+			id: objectDefinition.id,
+			type: 'objectDefinition',
+		});
 
 		// Create a page with a form mapped to 'All Fields' object
 
@@ -5358,7 +5396,7 @@ test(
 
 		await pageEditorPage.goto(layout, pageManagementSite.friendlyUrlPath);
 
-		await pageEditorPage.mapFormFragment(formId, 'All Fields');
+		await pageEditorPage.mapFormFragment(formId, 'Student');
 
 		// Check that all fields have the corresponding attribute and label
 
