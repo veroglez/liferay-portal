@@ -44,6 +44,7 @@ const test = mergeTests(
 	displayPageTemplatesPagesTest,
 	documentLibraryPagesTest,
 	featureFlagsTest({
+		'LPD-32050': {enabled: true},
 		'LPD-37927': {enabled: true},
 		'LPD-46393': {enabled: true},
 		'LPS-178052': {enabled: true},
@@ -1952,6 +1953,19 @@ test.describe('Form Localization', () => {
 							name: 'scientificName',
 							required: false,
 						},
+						{
+							DBType: ObjectField.DBTypeEnum.Boolean,
+							businessType: ObjectField.BusinessTypeEnum.Boolean,
+							externalReferenceCode: 'evergreen',
+							indexed: true,
+							indexedAsKeyword: false,
+							label: {
+								en_US: 'Evergreen',
+							},
+							localized: false,
+							name: 'evergreen',
+							required: false,
+						},
 					],
 					pluralLabel: {
 						en_US: 'Plants',
@@ -2014,25 +2028,45 @@ test.describe('Form Localization', () => {
 			});
 
 			await expect(
+				page.getByLabel('Evergreen field cannot be localized')
+			).toBeVisible();
+
+			await expect(
 				page.getByLabel('Country field cannot be localized')
 			).toBeVisible();
+
 			await expect(
 				page.getByLabel('Description field cannot be localized')
 			).toBeVisible();
+
 			await expect(
 				page.getByLabel('Name field cannot be localized')
 			).toBeVisible();
 
 			await expect(
+				page.getByRole('checkbox', {
+					name: 'Evergreen',
+				})
+			).toBeDisabled();
+
+			await expect(
 				page.getByLabel('Country', {exact: true})
 			).toBeDisabled();
+
 			expect(
 				await page
 					.frameLocator('iframe[title="editor"]')
 					.locator('body')
 					.evaluate((element) => element.ariaReadOnly)
 			).toBe('true');
+
 			await expect(page.getByLabel('Name', {exact: true})).toBeDisabled();
+
+			const evergreenReadOnlyLabel = page
+				.getByText('Evergreen')
+				.getByText('(Read Only)');
+
+			await expect(evergreenReadOnlyLabel).not.toBeVisible();
 
 			// Go to edit mode and change unlocalized field configuration
 
@@ -2077,17 +2111,21 @@ test.describe('Form Localization', () => {
 
 			await expect(
 				page.getByLabel('field is not localizable message')
-			).toHaveCount(3);
+			).toHaveCount(4);
+
+			await expect(evergreenReadOnlyLabel).toBeVisible();
 
 			await expect(
 				page.getByLabel('Country', {exact: true})
 			).toHaveAttribute('readonly');
+
 			expect(
 				await page
 					.frameLocator('iframe[title="editor"]')
 					.locator('body')
 					.evaluate((element) => element.ariaReadOnly)
 			).toBe('true');
+
 			await expect(
 				page.getByLabel('Name', {exact: true})
 			).toHaveAttribute('readonly');
