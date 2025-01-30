@@ -96,6 +96,9 @@ function main() {
 							defaultLanguageId:
 								themeDisplay.getDefaultLanguageId(),
 							inputElement: textarea,
+							readOnlyInputLabel: document.getElementById(
+								`${fragmentNamespace}-textarea-read-only`
+							),
 							unlocalizedFieldsState:
 								input.attributes.unlocalizedFieldsState,
 							unlocalizedMessageContainer:
