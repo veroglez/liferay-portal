@@ -2226,22 +2226,31 @@ test.describe('Form Localization', () => {
 			// Assert that translation is displayed correctly
 
 			await expect(
+				page.getByRole('checkbox', {name: 'Boolean'})
+			).not.toBeChecked();
+
+			await expect(
 				page.getByRole('textbox', {exact: true, name: 'Long Text'})
 			).toHaveValue('long text english');
+
 			await expect(
 				page
 					.frameLocator('iframe[title="editor"]')
 					.getByText('rich text english')
 			).toBeVisible();
+
 			await expect(
 				page.getByRole('textbox', {exact: true, name: 'Text'})
 			).toHaveValue('text english');
 
 			// Fill new values for the translation
 
+			await page.getByRole('checkbox', {name: 'Boolean'}).check();
+
 			await page.getByLabel('Long Text').fill('long text english 1');
 
 			await page.getByLabel('Text', {exact: true}).fill('text english 1');
+
 			await page.evaluate(() => {
 				Object.values((window as any).CKEDITOR.instances).forEach(
 					(editor: any) => editor.setData('rich text english 1')
@@ -2261,21 +2270,31 @@ test.describe('Form Localization', () => {
 			});
 
 			await expect(
+				page.getByRole('checkbox', {name: 'Boolean'})
+			).toBeChecked();
+
+			await expect(
 				page.getByRole('textbox', {exact: true, name: 'Long Text'})
 			).toHaveValue('long text spanish');
+
 			await expect(
 				page
 					.frameLocator('iframe[title="editor"]')
 					.getByText('rich text spanish')
 			).toBeVisible();
+
 			await expect(
 				page.getByRole('textbox', {exact: true, name: 'Text'})
 			).toHaveValue('text spanish');
 
 			// Fill new values
 
+			await page.getByRole('checkbox', {name: 'Boolean'}).uncheck();
+
 			await page.getByLabel('Long Text').fill('long text spanish 1');
+
 			await page.getByLabel('Text', {exact: true}).fill('text spanish 1');
+
 			await page.evaluate(() => {
 				Object.values((window as any).CKEDITOR.instances).forEach(
 					(editor: any) => editor.setData('rich text spanish 1')
@@ -2312,12 +2331,18 @@ test.describe('Form Localization', () => {
 
 			await page.getByRole('textbox', {name: 'Long Text'}).waitFor();
 
+			await expect(
+				page.getByRole('checkbox', {name: 'Boolean'})
+			).toBeChecked();
+
 			await expect(page.getByText('long text english 1')).toBeVisible();
+
 			await expect(
 				page
 					.frameLocator('iframe[title="editor"]')
 					.getByText('rich text english 1')
 			).toBeVisible();
+
 			await expect(page.locator('input.ddm-field-text')).toHaveValue(
 				'text english 1'
 			);
@@ -2330,12 +2355,18 @@ test.describe('Form Localization', () => {
 				trigger: page.getByTestId('triggerButton').first(),
 			});
 
+			await expect(
+				page.getByRole('checkbox', {name: 'Boolean'})
+			).not.toBeChecked();
+
 			await expect(page.getByText('long text spanish 1')).toBeVisible();
+
 			await expect(
 				page
 					.frameLocator('iframe[title="editor"]')
 					.getByText('rich text spanish 1')
 			).toBeVisible();
+
 			await expect(page.locator('input.ddm-field-text')).toHaveValue(
 				'text spanish 1'
 			);

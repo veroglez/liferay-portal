@@ -14,7 +14,7 @@
 			"label": {
 				"en_US": "Boolean"
 			},
-			"localized": false,
+			"localized": true,
 			"name": "boolean",
 			"required": false,
 			"type": "Boolean"
