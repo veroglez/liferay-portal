@@ -71,16 +71,18 @@ function onSelectFile(event) {
 	});
 }
 
+const onSelectFromUserComputer = () => {
+	previousFiles = fileInput.files[0] || null;
+
+	fileInput.click();
+};
+
 function getSelectFileEvent() {
 	if (input.attributes.selectFromDocumentLibrary) {
 		return onSelectFile;
 	}
 	else {
-		return () => {
-			previousFiles = fileInput.files[0] || null;
-
-			fileInput.click();
-		};
+		return onSelectFromUserComputer;
 	}
 }
 
@@ -196,6 +198,7 @@ else {
 							onFileChange: ({files}) => {
 								if (files?.length) {
 									fileName.innerText = files[0].name;
+
 									showRemoveButton();
 								}
 								else {
@@ -209,11 +212,6 @@ else {
 							onChange(event.target.files);
 						});
 
-						const onSelectFromUserComputer = () => {
-							previousFiles = fileInput.files[0] || null;
-
-							fileInput.click();
-						};
 						selectButton.addEventListener(
 							'click',
 							onSelectFromUserComputer
