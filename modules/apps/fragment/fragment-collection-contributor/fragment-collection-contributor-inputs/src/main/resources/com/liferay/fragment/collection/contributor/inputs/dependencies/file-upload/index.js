@@ -88,6 +88,8 @@ if (layoutMode === 'edit') {
 	selectButton.classList.add('disabled');
 }
 else {
+	const selectFileEvent = getSelectFileEvent();
+
 	fileInput.addEventListener('change', onInputChange);
 
 	if (fileName.innerText !== '') {
@@ -132,12 +134,13 @@ else {
 								if (translatedFileName) {
 									fileNameText = translatedFileName;
 								}
-								
+
 								fileName.innerText = fileNameText;
 
 								if (fileNameText !== '') {
 									showRemoveButton();
-								} else {
+								}
+								else {
 									onRemoveFile();
 								}
 
@@ -220,14 +223,19 @@ else {
 				else {
 					const unlocalizedFieldsState =
 						input.attributes.unlocalizedFieldsState;
+
 					registerUnlocalizedInput({
 						defaultLanguageId,
 						inputElement,
 						onLocaleChange: (languageId) => {
 							if (defaultLanguageId !== languageId) {
 								if (unlocalizedFieldsState === 'read-only') {
-									selectButton.style.display = 'none';
-									fileName.tabIndex = 0;
+									selectButton.classList.add('d-none');
+
+									fileName.setAttribute('readonly', 'true');
+									fileName.setAttribute('tabindex', '0');
+									fileName.classList.add('form-control');
+
 									if (!fileName.innerText) {
 										fileName.innerText =
 											Liferay.Language.get(
@@ -236,15 +244,21 @@ else {
 									}
 								}
 								else {
-									selectButton.disabled = true;
+									selectButton.setAttribute('disabled', true);
+
 									fileName.classList.add('text-secondary');
 								}
-								removeButton.style.display = 'none';
+
+								removeButton.classList.add('d-none');
 							}
 							else {
 								if (unlocalizedFieldsState === 'read-only') {
-									selectButton.style.display = '';
-									fileName.tabIndex = -1;
+									selectButton.classList.remove('d-none');
+
+									fileName.removeAttribute('readonly');
+									fileName.removeAttribute('tabindex');
+									fileName.classList.remove('form-control');
+
 									if (
 										fileName.innerText ===
 										Liferay.Language.get('not-selected')
@@ -253,10 +267,14 @@ else {
 									}
 								}
 								else {
-									selectButton.disabled = false;
+									selectButton.removeAttribute('disabled');
+
 									fileName.classList.remove('text-secondary');
 								}
-								removeButton.style.display = '';
+
+								if (fileName.innerText) {
+									removeButton.classList.remove('d-none');
+								}
 							}
 						},
 						readOnlyInputLabel: document.getElementById(
@@ -268,14 +286,12 @@ else {
 						),
 					});
 
-					const selectFileEvent = getSelectFileEvent();
 					selectButton.addEventListener('click', selectFileEvent);
 				}
 			}
 		);
 	}
 	else {
-		const selectFileEvent = getSelectFileEvent();
 		selectButton.addEventListener('click', selectFileEvent);
 	}
 }
