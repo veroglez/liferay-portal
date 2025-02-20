@@ -3341,6 +3341,33 @@ test.describe('Form Localization', () => {
 							name: 'selectOrigin',
 							required: false,
 						},
+						{
+							DBType: ObjectField.DBTypeEnum.Long,
+							businessType:
+								ObjectField.BusinessTypeEnum.Attachment,
+							defaultValue: 'null',
+							externalReferenceCode: 'filesFromLibraryERC',
+							label: {
+								en_US: 'Files from Document Library',
+							},
+							localized: false,
+							name: 'filesFromLibrary',
+							objectFieldSettings: [
+								{
+									name: 'acceptedFileExtensions',
+									value: 'jpeg, jpg, pdf, png',
+								} as any,
+								{
+									name: 'maximumFileSize',
+									value: 100,
+								} as any,
+								{
+									name: 'fileSource',
+									value: 'documentsAndMedia',
+								} as any,
+							],
+							required: false,
+						},
 					],
 					pluralLabel: {
 						en_US: 'Plants',
@@ -3421,6 +3448,12 @@ test.describe('Form Localization', () => {
 				page.getByLabel('Select Origin field cannot be localized')
 			).toBeVisible();
 
+			await expect(
+				page.getByLabel(
+					'Files from Document Library field cannot be localized'
+				)
+			).toBeVisible();
+
 			// Check that unlocalized fields are disabled
 
 			await expect(
@@ -3454,6 +3487,8 @@ test.describe('Form Localization', () => {
 				page.getByPlaceholder('Choose an option')
 			).toBeDisabled();
 
+			await expect(page.getByText('Select File')).toBeDisabled();
+
 			// Check that the read only labels are not visibles
 
 			const checkboxReadOnlyLabel = page
@@ -3472,10 +3507,15 @@ test.describe('Form Localization', () => {
 				.getByText('Select Origin')
 				.getByText('(Read Only)');
 
+			const uploadFileReadOnlyLabel = page
+				.getByText('Files from Document Library')
+				.getByText('(Read Only)');
+
 			await expect(checkboxReadOnlyLabel).not.toBeVisible();
 			await expect(inputTextReadOnlyLabel).not.toBeVisible();
 			await expect(textareaReadOnlyLabel).not.toBeVisible();
 			await expect(selectReadOnlyLabel).not.toBeVisible();
+			await expect(uploadFileReadOnlyLabel).not.toBeVisible();
 
 			// Go to edit mode and change unlocalized field configuration to read only
 
@@ -3519,12 +3559,13 @@ test.describe('Form Localization', () => {
 
 			await expect(
 				page.getByLabel('field is not localizable message')
-			).toHaveCount(5);
+			).toHaveCount(6);
 
 			await expect(checkboxReadOnlyLabel).toBeVisible();
 			await expect(inputTextReadOnlyLabel).toBeVisible();
 			await expect(textareaReadOnlyLabel).toBeVisible();
 			await expect(selectReadOnlyLabel).toBeVisible();
+			await expect(uploadFileReadOnlyLabel).toBeVisible();
 
 			await expect(page.getByLabel('Country')).toHaveAttribute(
 				'readonly'
@@ -3544,6 +3585,10 @@ test.describe('Form Localization', () => {
 			);
 
 			await expect(page.getByLabel('Select Origin')).toHaveAttribute(
+				'readonly'
+			);
+
+			await expect(page.getByText('Not Selected')).toHaveAttribute(
 				'readonly'
 			);
 		}
