@@ -33,11 +33,18 @@ export function LocalizationSelect({
 
 	useEffect(() => {
 		const updateTranslationStatus = ({languageId}) => {
-			const translatedInputs = Array.from(
-				document.querySelectorAll(
-					`[type="hidden"][name$="_${languageId}"]`
-				)
-			).filter((input) => input.getAttribute('value') !== null).length;
+			const translatedInputs = [
+				...Array.from(
+					document.querySelectorAll(
+						`[type="file"][name$="_${languageId}"]`
+					)
+				),
+				...Array.from(
+					document.querySelectorAll(
+						`[type="hidden"][name$="_${languageId}"]`
+					)
+				).filter((input) => input.getAttribute('value') !== null),
+			].length;
 
 			const label = locales.find(
 				(locale) => locale.id === languageId
