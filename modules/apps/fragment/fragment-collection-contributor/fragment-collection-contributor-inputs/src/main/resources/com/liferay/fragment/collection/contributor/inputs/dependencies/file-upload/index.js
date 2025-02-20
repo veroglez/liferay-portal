@@ -201,7 +201,7 @@ else {
 
 						const {onChange} = registerLocalizedFileInput({
 							defaultLanguageId,
-							initialValues: input.valueI18n,
+							initialValues,
 							inputElement,
 							inputName: input.name,
 							localizationInputsContainer:
