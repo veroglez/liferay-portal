@@ -94,8 +94,6 @@ if (layoutMode === 'edit') {
 	selectButton.classList.add('disabled');
 }
 else {
-	const selectFileEvent = getSelectFileEvent();
-
 	fileInput.addEventListener('change', onInputChange);
 
 	if (fileName.innerText !== '') {
@@ -240,12 +238,15 @@ else {
 						),
 					});
 
-					selectButton.addEventListener('click', selectFileEvent);
+					selectButton.addEventListener(
+						'click',
+						getSelectFileEvent()
+					);
 				}
 			}
 		);
 	}
 	else {
-		selectButton.addEventListener('click', selectFileEvent);
+		selectButton.addEventListener('click', getSelectFileEvent());
 	}
 }
