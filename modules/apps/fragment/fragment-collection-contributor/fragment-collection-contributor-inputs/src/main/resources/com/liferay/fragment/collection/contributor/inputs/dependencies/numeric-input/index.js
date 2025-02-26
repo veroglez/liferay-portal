@@ -39,6 +39,7 @@ else {
 
 	if (Liferay.FeatureFlags['LPD-37927']) {
 		const defaultLanguageId = themeDisplay.getDefaultLanguageId();
+		const textDirection = Liferay.Language.direction[defaultLanguageId];
 
 		import('@liferay/fragment-impl').then(
 			({registerLocalizedInput, registerUnlocalizedInput}) => {
@@ -50,8 +51,7 @@ else {
 						inputName: input.name,
 						localizationInputsContainer: numericInput.parentNode,
 						namespace: fragmentNamespace,
-						textDirection:
-							Liferay.Language.direction[defaultLanguageId],
+						textDirection,
 					});
 
 					numericInput.addEventListener('change', (event) => {
@@ -62,6 +62,7 @@ else {
 					registerUnlocalizedInput({
 						defaultLanguageId,
 						inputElement: numericInput,
+						textDirection,
 						unlocalizedFieldsState:
 							input.attributes.unlocalizedFieldsState,
 						unlocalizedMessageContainer: document.getElementById(

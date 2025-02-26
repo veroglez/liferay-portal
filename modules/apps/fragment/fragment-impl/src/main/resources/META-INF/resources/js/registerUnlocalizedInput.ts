@@ -4,10 +4,11 @@
  */
 
 type Args = {
-	defaultLanguageId: string;
+	defaultLanguageId: Liferay.Language.Locale;
 	inputElement?: HTMLInputElement;
 	onLocaleChange?: (languageId: string) => void;
 	readOnlyInputLabel?: HTMLSpanElement;
+	textDirection: 'ltr' | 'rtl';
 	unlocalizedFieldsState: 'disabled' | 'read-only';
 	unlocalizedMessageContainer: HTMLElement;
 };
@@ -17,41 +18,56 @@ export function registerUnlocalizedInput({
 	inputElement,
 	onLocaleChange,
 	readOnlyInputLabel,
+	textDirection,
 	unlocalizedFieldsState,
 	unlocalizedMessageContainer,
 }: Args) {
-	Liferay.on('localizationSelect:localeChanged', ({languageId}) => {
-		onLocaleChange?.(languageId);
+	if (textDirection) {
+		inputElement?.setAttribute('dir', textDirection);
+	}
 
-		if (languageId === defaultLanguageId) {
-			if (unlocalizedFieldsState === 'disabled') {
-				inputElement?.removeAttribute('disabled');
-			}
-			else {
-				inputElement?.removeAttribute('readonly');
-				readOnlyInputLabel?.classList.add('d-none');
-			}
+	Liferay.on(
+		'localizationSelect:localeChanged',
+		({languageId}: {languageId: Liferay.Language.Locale}) => {
+			onLocaleChange?.(languageId);
 
-			unlocalizedMessageContainer?.classList.add('d-none');
-		}
-		else {
-			if (unlocalizedFieldsState === 'disabled') {
-				inputElement?.setAttribute('disabled', '');
-
-				inputElement?.closest('form')?.addEventListener(
-					'submit',
-					() => {
-						inputElement?.removeAttribute('disabled');
-					},
-					true
+			if (textDirection) {
+				inputElement?.setAttribute(
+					'dir',
+					Liferay.Language.direction[languageId]!
 				);
 			}
-			else {
-				inputElement?.setAttribute('readonly', '');
-				readOnlyInputLabel?.classList.remove('d-none');
-			}
 
-			unlocalizedMessageContainer.classList.remove('d-none');
+			if (languageId === defaultLanguageId) {
+				if (unlocalizedFieldsState === 'disabled') {
+					inputElement?.removeAttribute('disabled');
+				}
+				else {
+					inputElement?.removeAttribute('readonly');
+					readOnlyInputLabel?.classList.add('d-none');
+				}
+
+				unlocalizedMessageContainer?.classList.add('d-none');
+			}
+			else {
+				if (unlocalizedFieldsState === 'disabled') {
+					inputElement?.setAttribute('disabled', '');
+
+					inputElement?.closest('form')?.addEventListener(
+						'submit',
+						() => {
+							inputElement?.removeAttribute('disabled');
+						},
+						true
+					);
+				}
+				else {
+					inputElement?.setAttribute('readonly', '');
+					readOnlyInputLabel?.classList.remove('d-none');
+				}
+
+				unlocalizedMessageContainer.classList.remove('d-none');
+			}
 		}
-	});
+	);
 }

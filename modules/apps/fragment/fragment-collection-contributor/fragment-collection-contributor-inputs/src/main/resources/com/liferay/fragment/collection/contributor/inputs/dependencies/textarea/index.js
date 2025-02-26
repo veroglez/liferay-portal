@@ -75,6 +75,7 @@ function main() {
 
 		if (Liferay.FeatureFlags['LPD-37927']) {
 			const defaultLanguageId = themeDisplay.getDefaultLanguageId();
+			const textDirection = Liferay.Language.direction[defaultLanguageId];
 
 			import('@liferay/fragment-impl').then(
 				({registerLocalizedInput, registerUnlocalizedInput}) => {
@@ -86,8 +87,7 @@ function main() {
 							inputName: input.name,
 							localizationInputsContainer: textarea.parentNode,
 							namespace: fragmentNamespace,
-							textDirection:
-								Liferay.Language.direction[defaultLanguageId],
+							textDirection,
 						});
 
 						textarea.addEventListener('change', (event) => {
@@ -101,6 +101,7 @@ function main() {
 							readOnlyInputLabel: document.getElementById(
 								`${fragmentNamespace}-textarea-readonly`
 							),
+							textDirection,
 							unlocalizedFieldsState:
 								input.attributes.unlocalizedFieldsState,
 							unlocalizedMessageContainer:

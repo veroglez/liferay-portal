@@ -81,6 +81,7 @@ else {
 
 	if (Liferay.FeatureFlags['LPD-37927']) {
 		const defaultLanguageId = themeDisplay.getDefaultLanguageId();
+		const textDirection = Liferay.Language.direction[defaultLanguageId];
 
 		import('@liferay/fragment-impl').then(
 			({registerLocalizedInput, registerUnlocalizedInput}) => {
@@ -102,8 +103,7 @@ else {
 						localizationInputsContainer: uiInputElement.parentNode,
 						namespace: fragmentNamespace,
 						optionValues,
-						textDirection:
-							Liferay.Language.direction[defaultLanguageId],
+						textDirection,
 					});
 
 					optionListElement.addEventListener('click', (event) => {
@@ -143,6 +143,7 @@ else {
 						readOnlyInputLabel: document.getElementById(
 							`${fragmentNamespace}-select-from-list-read-only`
 						),
+						textDirection,
 						unlocalizedFieldsState:
 							input.attributes.unlocalizedFieldsState,
 						unlocalizedMessageContainer: document.getElementById(
