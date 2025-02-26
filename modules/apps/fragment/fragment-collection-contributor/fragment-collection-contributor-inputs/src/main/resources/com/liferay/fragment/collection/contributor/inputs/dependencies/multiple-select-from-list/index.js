@@ -41,10 +41,7 @@ else if (layoutMode === 'edit') {
 else {
 	if (Liferay.FeatureFlags['LPD-37927']) {
 		import('@liferay/fragment-impl').then(
-			({
-				registerLocalizedMultiSelect,
-				registerUnlocalizedMultiSelect,
-			}) => {
+			({registerLocalizedMultiSelect, registerUnlocalizedInput}) => {
 				const defaultLanguageId = themeDisplay.getDefaultLanguageId();
 
 				if (input.localizable) {
@@ -63,9 +60,9 @@ else {
 					const unlocalizedFieldsState =
 						input.attributes.unlocalizedFieldsState;
 
-					registerUnlocalizedMultiSelect({
+					registerUnlocalizedInput({
 						defaultLanguageId,
-						inputElements: allInputs,
+						inputElement: allInputs,
 
 						onLocaleChange: (languageId) => {
 							if (

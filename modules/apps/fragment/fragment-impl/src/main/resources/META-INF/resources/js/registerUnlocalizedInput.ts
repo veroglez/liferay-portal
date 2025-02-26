@@ -5,7 +5,7 @@
 
 type Args = {
 	defaultLanguageId: Liferay.Language.Locale;
-	inputElement?: HTMLInputElement;
+	inputElement?: HTMLInputElement | HTMLInputElement[];
 	onLocaleChange?: (languageId: string) => void;
 	readOnlyInputLabel?: HTMLSpanElement;
 	textDirection: 'ltr' | 'rtl';
@@ -22,7 +22,10 @@ export function registerUnlocalizedInput({
 	unlocalizedFieldsState,
 	unlocalizedMessageContainer,
 }: Args) {
-	if (textDirection) {
+	const isMultiselectField = Array.isArray(inputElement);
+	const inputElements = isMultiselectField ? inputElement : [inputElement];
+
+	if (!isMultiselectField && textDirection) {
 		inputElement?.setAttribute('dir', textDirection);
 	}
 
@@ -31,7 +34,7 @@ export function registerUnlocalizedInput({
 		({languageId}: {languageId: Liferay.Language.Locale}) => {
 			onLocaleChange?.(languageId);
 
-			if (textDirection) {
+			if (!isMultiselectField && textDirection) {
 				inputElement?.setAttribute(
 					'dir',
 					Liferay.Language.direction[languageId]!
@@ -40,10 +43,15 @@ export function registerUnlocalizedInput({
 
 			if (languageId === defaultLanguageId) {
 				if (unlocalizedFieldsState === 'disabled') {
-					inputElement?.removeAttribute('disabled');
+					inputElements.forEach((input) => {
+						input?.removeAttribute('disabled');
+					});
 				}
 				else {
-					inputElement?.removeAttribute('readonly');
+					if (!isMultiselectField) {
+						inputElement?.removeAttribute('readonly');
+					}
+
 					readOnlyInputLabel?.classList.add('d-none');
 				}
 
@@ -51,18 +59,25 @@ export function registerUnlocalizedInput({
 			}
 			else {
 				if (unlocalizedFieldsState === 'disabled') {
-					inputElement?.setAttribute('disabled', '');
+					inputElements.forEach((input) => {
+						input?.setAttribute('disabled', '');
+					});
 
-					inputElement?.closest('form')?.addEventListener(
-						'submit',
-						() => {
-							inputElement?.removeAttribute('disabled');
-						},
-						true
-					);
+					if (!isMultiselectField) {
+						inputElement?.closest('form')?.addEventListener(
+							'submit',
+							() => {
+								inputElement?.removeAttribute('disabled');
+							},
+							true
+						);
+					}
 				}
 				else {
-					inputElement?.setAttribute('readonly', '');
+					if (!isMultiselectField) {
+						inputElement?.setAttribute('readonly', '');
+					}
+
 					readOnlyInputLabel?.classList.remove('d-none');
 				}
 
