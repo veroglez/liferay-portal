@@ -4,7 +4,7 @@
  */
 
 type Args = {
-	defaultLanguageId: string;
+	defaultLanguageId: Liferay.Language.Locale;
 	initialValues: Record<string, any>;
 	inputElement?: HTMLInputElement;
 	inputName: string;
@@ -18,6 +18,7 @@ type Args = {
 		value: string;
 	}) => void;
 	optionValues: Record<string, string>;
+	textDirection?: 'ltr' | 'rtl';
 };
 
 export function registerLocalizedInput({
@@ -29,6 +30,7 @@ export function registerLocalizedInput({
 	namespace,
 	onLocaleChange,
 	optionValues,
+	textDirection,
 }: Args) {
 	if (initialValues) {
 		Object.entries(initialValues).forEach(([languageId, value]) => {
@@ -49,55 +51,73 @@ export function registerLocalizedInput({
 
 	let currentLanguageId = defaultLanguageId;
 
-	Liferay.on('localizationSelect:localeChanged', ({languageId}) => {
-		currentLanguageId = languageId;
+	if (textDirection) {
+		inputElement?.setAttribute('dir', textDirection);
+	}
 
-		const translationInput = getOrCreateTranslationInput(
-			inputName,
-			languageId,
-			localizationInputsContainer,
-			namespace
-		);
+	Liferay.on(
+		'localizationSelect:localeChanged',
+		({languageId}: {languageId: Liferay.Language.Locale}) => {
+			currentLanguageId = languageId;
 
-		if (translationInput.getAttribute('value') !== null) {
-			onLocaleChange?.({languageId, value: translationInput.value});
-
-			if (!inputElement) {
-				return;
+			if (textDirection) {
+				inputElement?.setAttribute(
+					'dir',
+					Liferay.Language.direction[languageId]!
+				);
 			}
 
-			if (inputElement.type === 'checkbox') {
-				inputElement.checked = translationInput.value === 'true';
-			}
-			else if (inputElement.getAttribute('role') === 'combobox') {
-				inputElement.value = translationInput.dataset.label || '';
-			}
-			else {
-				inputElement.value = translationInput.value;
-			}
-		}
-		else {
-			const defaultLanguageInput = getOrCreateTranslationInput(
+			const translationInput = getOrCreateTranslationInput(
 				inputName,
-				defaultLanguageId,
+				languageId,
 				localizationInputsContainer,
 				namespace
 			);
 
-			onLocaleChange?.({languageId, value: defaultLanguageInput.value});
+			if (translationInput.getAttribute('value') !== null) {
+				onLocaleChange?.({languageId, value: translationInput.value});
 
-			if (!inputElement) {
-				return;
-			}
+				if (!inputElement) {
+					return;
+				}
 
-			if (inputElement.getAttribute('role') === 'combobox') {
-				inputElement.value = defaultLanguageInput.dataset.label || '';
+				if (inputElement.type === 'checkbox') {
+					inputElement.checked = translationInput.value === 'true';
+				}
+				else if (inputElement.getAttribute('role') === 'combobox') {
+					inputElement.value = translationInput.dataset.label || '';
+				}
+				else {
+					inputElement.value = translationInput.value;
+				}
 			}
 			else {
-				inputElement.value = defaultLanguageInput.value;
+				const defaultLanguageInput = getOrCreateTranslationInput(
+					inputName,
+					defaultLanguageId,
+					localizationInputsContainer,
+					namespace
+				);
+
+				onLocaleChange?.({
+					languageId,
+					value: defaultLanguageInput.value,
+				});
+
+				if (!inputElement) {
+					return;
+				}
+
+				if (inputElement.getAttribute('role') === 'combobox') {
+					inputElement.value =
+						defaultLanguageInput.dataset.label || '';
+				}
+				else {
+					inputElement.value = defaultLanguageInput.value;
+				}
 			}
 		}
-	});
+	);
 
 	return {
 		onChange: (value: string, label?: string) => {
