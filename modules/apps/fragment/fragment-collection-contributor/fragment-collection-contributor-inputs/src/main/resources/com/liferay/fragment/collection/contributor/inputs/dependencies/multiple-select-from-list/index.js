@@ -41,14 +41,14 @@ else if (layoutMode === 'edit') {
 else {
 	if (Liferay.FeatureFlags['LPD-37927']) {
 		import('@liferay/fragment-impl').then(
-			({registerLocalizedMultiSelect, registerUnlocalizedInput}) => {
+			({registerLocalizedInput, registerUnlocalizedInput}) => {
 				const defaultLanguageId = themeDisplay.getDefaultLanguageId();
 
 				if (input.localizable) {
-					const {onChange} = registerLocalizedMultiSelect({
+					const {onChange} = registerLocalizedInput({
 						defaultLanguageId,
 						initialValues: input.valueI18n,
-						inputElements: allInputs,
+						inputElement: allInputs,
 						namespace: fragmentNamespace,
 					});
 

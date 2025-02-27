@@ -3,12 +3,13 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
+import {setInitialValuesMultiselectInput} from './fileUploadAndMultiselectHandlers';
 import getOrCreateTranslationInput from './getOrCreateTranslationInput';
 
 type Args = {
 	defaultLanguageId: Liferay.Language.Locale;
 	initialValues: Record<string, any>;
-	inputElement?: HTMLInputElement;
+	inputElement?: HTMLInputElement | HTMLInputElement[];
 	inputName: string;
 	localizationInputsContainer: HTMLElement;
 	namespace: string;
@@ -34,27 +35,38 @@ export function registerLocalizedInput({
 	optionValues,
 	textDirection,
 }: Args) {
-	if (initialValues) {
-		Object.entries(initialValues).forEach(([languageId, value]) => {
-			const input = getOrCreateTranslationInput(
-				inputElement?.id || inputName,
-				inputName,
-				languageId,
-				localizationInputsContainer,
-				namespace
-			);
-
-			input.value = value;
-
-			if (optionValues) {
-				input.dataset.label = optionValues[value];
-			}
-		});
-	}
+	const isMultiselectField = Array.isArray(inputElement);
 
 	let currentLanguageId = defaultLanguageId;
 
-	if (textDirection) {
+	if (initialValues) {
+		if (isMultiselectField) {
+			setInitialValuesMultiselectInput(
+				initialValues,
+				inputElement,
+				namespace
+			);
+		}
+		else {
+			Object.entries(initialValues).forEach(([languageId, value]) => {
+				const input = getOrCreateTranslationInput(
+					inputElement?.id || inputName,
+					inputName,
+					languageId,
+					localizationInputsContainer,
+					namespace
+				);
+
+				input.value = value;
+
+				if (optionValues) {
+					input.dataset.label = optionValues[value];
+				}
+			});
+		}
+	}
+
+	if (!isMultiselectField && textDirection) {
 		inputElement?.setAttribute('dir', textDirection);
 	}
 
@@ -62,6 +74,10 @@ export function registerLocalizedInput({
 		'localizationSelect:localeChanged',
 		({languageId}: {languageId: Liferay.Language.Locale}) => {
 			currentLanguageId = languageId;
+
+			if (isMultiselectField) {
+				return;
+			}
 
 			if (textDirection) {
 				inputElement?.setAttribute(
@@ -126,6 +142,10 @@ export function registerLocalizedInput({
 
 	return {
 		onChange: (value: string, label?: string) => {
+			if (isMultiselectField) {
+				return;
+			}
+
 			const translationInput = getOrCreateTranslationInput(
 				inputElement?.id || inputName,
 				inputName,
