@@ -3,7 +3,10 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
-import {setInitialValuesMultiselectInput} from './fileUploadAndMultiselectHandlers';
+import {
+	onLocaleChangeMultiselectInput,
+	setInitialValuesMultiselectInput,
+} from './fileUploadAndMultiselectHandlers';
 import getOrCreateTranslationInput from './getOrCreateTranslationInput';
 
 type Args = {
@@ -76,66 +79,79 @@ export function registerLocalizedInput({
 			currentLanguageId = languageId;
 
 			if (isMultiselectField) {
-				return;
-			}
-
-			if (textDirection) {
-				inputElement?.setAttribute(
-					'dir',
-					Liferay.Language.direction[languageId]!
-				);
-			}
-
-			const translationInput = getOrCreateTranslationInput(
-				inputElement?.id || inputName,
-				inputName,
-				languageId,
-				localizationInputsContainer,
-				namespace
-			);
-
-			if (translationInput.getAttribute('value') !== null) {
-				onLocaleChange?.({languageId, value: translationInput.value});
-
-				if (!inputElement) {
-					return;
-				}
-
-				if (inputElement.type === 'checkbox') {
-					inputElement.checked = translationInput.value === 'true';
-				}
-				else if (inputElement.getAttribute('role') === 'combobox') {
-					inputElement.value = translationInput.dataset.label || '';
-				}
-				else {
-					inputElement.value = translationInput.value;
-				}
+				onLocaleChangeMultiselectInput({
+					defaultLanguageId,
+					inputElements: inputElement,
+					languageId,
+					namespace,
+				});
 			}
 			else {
-				const defaultLanguageInput = getOrCreateTranslationInput(
+				const translationInput = getOrCreateTranslationInput(
 					inputElement?.id || inputName,
 					inputName,
-					defaultLanguageId,
+					languageId,
 					localizationInputsContainer,
 					namespace
 				);
 
-				onLocaleChange?.({
-					languageId,
-					value: defaultLanguageInput.value,
-				});
+				if (translationInput.getAttribute('value') !== null) {
+					onLocaleChange?.({
+						languageId,
+						value: translationInput.value,
+					});
 
-				if (!inputElement) {
-					return;
-				}
+					if (!inputElement) {
+						return;
+					}
 
-				if (inputElement.getAttribute('role') === 'combobox') {
-					inputElement.value =
-						defaultLanguageInput.dataset.label || '';
+					if (inputElement.type === 'checkbox') {
+						inputElement.checked =
+							translationInput.value === 'true';
+					}
+					else if (
+						inputElement.getAttribute('role') === 'combobox'
+					) {
+						inputElement.value =
+							translationInput.dataset.label || '';
+					}
+					else {
+						inputElement.value = translationInput.value;
+					}
 				}
 				else {
-					inputElement.value = defaultLanguageInput.value;
+					const defaultLanguageInput = getOrCreateTranslationInput(
+						inputElement?.id || inputName,
+						inputName,
+						defaultLanguageId,
+						localizationInputsContainer,
+						namespace
+					);
+
+					onLocaleChange?.({
+						languageId,
+						value: defaultLanguageInput.value,
+					});
+
+					if (!inputElement) {
+						return;
+					}
+
+					if (inputElement.getAttribute('role') === 'combobox') {
+						inputElement.value =
+							defaultLanguageInput.dataset.label || '';
+					}
+					else {
+						inputElement.value = defaultLanguageInput.value;
+					}
 				}
+			}
+
+			if (!isMultiselectField && textDirection) {
+				inputElement?.setAttribute(
+					'dir',
+					Liferay.Language.direction[languageId]!
+				);
 			}
 		}
 	);
