@@ -62,7 +62,7 @@ function onSelectFile(event, onChange) {
 			const {fileEntryId, title} = JSON.parse(selectedItem.value);
 
 			if (onChange) {
-				onChange(fileEntryId, title);
+				onChange({fileName: title, value: fileEntryId});
 			}
 
 			fileInput.value = fileEntryId;
@@ -102,7 +102,7 @@ else {
 		const inputElement = fileInput;
 
 		import('@liferay/fragment-impl').then(
-			({registerLocalizedFileInput, registerUnlocalizedInput}) => {
+			({registerLocalizedInput, registerUnlocalizedInput}) => {
 				if (input.localizable) {
 					const initialValues = Object.fromEntries(
 						Object.keys(input.valueI18n).map((key) => [
@@ -117,33 +117,30 @@ else {
 					const isFromDocumentLibrary =
 						input.attributes.selectFromDocumentLibrary;
 
-					const {onChange, onRemoveFile} = registerLocalizedFileInput(
-						{
-							defaultLanguageId,
-							initialValues,
-							inputName: input.name,
-							isFromDocumentLibrary,
-							localizationInputsContainer:
-								inputElement.parentNode,
-							namespace: fragmentNamespace,
-							onLocaleChange: (input) => {
-								if (!input) {
-									fileName.innerText = '';
-								}
-								else {
-									fileName.innerText =
-										input.dataset.fileName || '';
-								}
+					const {onChange, onRemoveFile} = registerLocalizedInput({
+						defaultLanguageId,
+						initialValues,
+						inputName: input.name,
+						isFromDocumentLibrary,
+						localizationInputsContainer: inputElement.parentNode,
+						namespace: fragmentNamespace,
+						onLocaleChange: (input) => {
+							if (!input) {
+								fileName.innerText = '';
+							}
+							else {
+								fileName.innerText =
+									input.dataset.fileName || '';
+							}
 
-								if (fileName.innerText) {
-									removeButton.classList.remove('d-none');
-								}
-								else {
-									removeButton.classList.add('d-none');
-								}
-							},
-						}
-					);
+							if (fileName.innerText) {
+								removeButton.classList.remove('d-none');
+							}
+							else {
+								removeButton.classList.add('d-none');
+							}
+						},
+					});
 
 					if (isFromDocumentLibrary) {
 						selectButton.addEventListener('click', (event) =>
@@ -152,7 +149,7 @@ else {
 					}
 					else {
 						inputElement.addEventListener('change', (event) => {
-							onChange(event.target.files);
+							onChange({value: event.target.files});
 						});
 
 						selectButton.addEventListener(

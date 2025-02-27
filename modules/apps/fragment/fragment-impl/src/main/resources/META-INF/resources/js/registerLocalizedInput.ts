@@ -4,6 +4,7 @@
  */
 
 import {
+	onChangeFileUploadInput,
 	onChangeMultiselectInput,
 	onLocaleChangeFileUploadInput,
 	onLocaleChangeMultiselectInput,
@@ -174,13 +175,32 @@ export function registerLocalizedInput({
 	);
 
 	return {
-		onChange: (value: string, label?: string) => {
+		onChange: ({
+			fileName,
+			label,
+			value,
+		}: {
+			fileName?: string;
+			label?: string;
+			value?: FileList | string;
+		} = {}) => {
 			if (isMultiselectField) {
 				onChangeMultiselectInput(
 					inputElement,
 					currentLanguageId,
 					namespace
 				);
+			}
+			else if (isFileUploadInput) {
+				onChangeFileUploadInput({
+					fileName,
+					inputName,
+					isFromDocumentLibrary,
+					languageId: currentLanguageId,
+					localizationInputsContainer,
+					namespace,
+					value: value!,
+				});
 			}
 			else {
 				const translationInput = getOrCreateTranslationInput(
@@ -191,7 +211,7 @@ export function registerLocalizedInput({
 					namespace
 				);
 
-				translationInput.value = value;
+				translationInput.value = value as string;
 
 				if (label) {
 					translationInput.dataset.label = label;

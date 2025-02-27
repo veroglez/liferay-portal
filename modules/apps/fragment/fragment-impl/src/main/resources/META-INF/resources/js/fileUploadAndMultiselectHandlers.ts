@@ -15,6 +15,56 @@ function getTranslationInput(
 	return document.getElementById(inputId) as HTMLInputElement;
 }
 
+export function onChangeFileUploadInput({
+	fileName,
+	inputName,
+	isFromDocumentLibrary,
+	languageId,
+	localizationInputsContainer,
+	namespace,
+	value,
+}: {
+	fileName?: string;
+	inputName: string;
+	isFromDocumentLibrary: boolean;
+	languageId: Liferay.Language.Locale;
+	localizationInputsContainer: HTMLElement;
+	namespace: string;
+	value: FileList | string;
+}) {
+	const type = isFromDocumentLibrary === false ? 'file' : 'hidden';
+
+	const translationInput = getOrCreateTranslationInput(
+		`${inputName}-file-upload`,
+		inputName,
+		languageId,
+		localizationInputsContainer,
+		namespace,
+		type
+	);
+
+	if (isFromDocumentLibrary) {
+		translationInput.value = value as string;
+		translationInput.dataset.fileName = fileName;
+	}
+	else {
+		const files = value as FileList;
+
+		if (files?.length) {
+			const dataTransfer = new DataTransfer();
+
+			if (files?.length) {
+				[...files].forEach((file) => {
+					dataTransfer.items.add(file);
+				});
+			}
+
+			translationInput.files = dataTransfer.files;
+			translationInput.dataset.fileName = dataTransfer.files[0].name;
+		}
+	}
+}
+
 export function onChangeMultiselectInput(
 	inputElements: HTMLInputElement[],
 	languageId: Liferay.Language.Locale,

@@ -52,8 +52,8 @@ else {
 						namespace: fragmentNamespace,
 					});
 
-					fieldSet.addEventListener('change', (event) => {
-						onChange(event);
+					fieldSet.addEventListener('change', () => {
+						onChange();
 					});
 				}
 				else {

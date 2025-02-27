@@ -27,7 +27,7 @@ if (inputElement) {
 						});
 
 						inputElement.addEventListener('change', (event) => {
-							onChange(event.target.checked);
+							onChange({value: event.target.checked});
 						});
 					}
 					else {

@@ -50,7 +50,7 @@ if (layoutMode !== 'edit') {
 						editor.on('change', () => {
 							const value = editor.getData();
 
-							onChange(value);
+							onChange({value});
 						});
 					});
 				}
