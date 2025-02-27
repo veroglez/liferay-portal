@@ -5,6 +5,24 @@
 
 import getOrCreateTranslationInput from './getOrCreateTranslationInput';
 
+export function onChangeMultiselectInput(
+	inputElements: HTMLInputElement[],
+	languageId: Liferay.Language.Locale,
+	namespace: string
+) {
+	inputElements.forEach((inputElement) => {
+		const translationInput = getOrCreateTranslationInput(
+			inputElement.id,
+			inputElement.name,
+			languageId,
+			inputElement.parentNode as HTMLElement,
+			namespace
+		);
+
+		translationInput.value = inputElement.checked ? inputElement.value : '';
+	});
+}
+
 export function onLocaleChangeMultiselectInput({
 	defaultLanguageId,
 	inputElements,

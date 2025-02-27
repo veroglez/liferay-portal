@@ -4,6 +4,7 @@
  */
 
 import {
+	onChangeMultiselectInput,
 	onLocaleChangeMultiselectInput,
 	setInitialValuesMultiselectInput,
 } from './fileUploadAndMultiselectHandlers';
@@ -159,21 +160,26 @@ export function registerLocalizedInput({
 	return {
 		onChange: (value: string, label?: string) => {
 			if (isMultiselectField) {
-				return;
+				onChangeMultiselectInput(
+					inputElement,
+					currentLanguageId,
+					namespace
+				);
 			}
+			else {
+				const translationInput = getOrCreateTranslationInput(
+					inputElement?.id || inputName,
+					inputName,
+					currentLanguageId,
+					localizationInputsContainer,
+					namespace
+				);
 
-			const translationInput = getOrCreateTranslationInput(
-				inputElement?.id || inputName,
-				inputName,
-				currentLanguageId,
-				localizationInputsContainer,
-				namespace
-			);
+				translationInput.value = value;
 
-			translationInput.value = value;
-
-			if (label) {
-				translationInput.dataset.label = label;
+				if (label) {
+					translationInput.dataset.label = label;
+				}
 			}
 
 			Liferay.fire('localizationSelect:updateTranslationStatus', {
