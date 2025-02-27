@@ -8,6 +8,7 @@ import {
 	onChangeMultiselectInput,
 	onLocaleChangeFileUploadInput,
 	onLocaleChangeMultiselectInput,
+	onRemoveFileFromFileUploadInput,
 	setInitialValuesMultiselectInput,
 } from './fileUploadAndMultiselectHandlers';
 import getOrCreateTranslationInput from './getOrCreateTranslationInput';
@@ -41,7 +42,8 @@ export function registerLocalizedInput({
 	textDirection,
 }: Args) {
 	const isMultiselectField = Array.isArray(inputElement);
-	const isFileUploadInput = isFromDocumentLibrary !== null;
+	const isFileUploadInput =
+		!Array.isArray(inputElement) && isFromDocumentLibrary !== null;
 
 	let currentLanguageId = defaultLanguageId;
 
@@ -221,6 +223,16 @@ export function registerLocalizedInput({
 			Liferay.fire('localizationSelect:updateTranslationStatus', {
 				languageId: currentLanguageId,
 			});
+		},
+		onRemoveFile: () => {
+			if (isFileUploadInput) {
+				onRemoveFileFromFileUploadInput({
+					inputName,
+					languageId: currentLanguageId,
+					localizationInputsContainer,
+					namespace,
+				});
+			}
 		},
 	};
 }

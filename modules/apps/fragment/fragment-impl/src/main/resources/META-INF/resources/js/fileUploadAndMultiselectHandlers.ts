@@ -160,6 +160,29 @@ export function onLocaleChangeMultiselectInput({
 	});
 }
 
+export function onRemoveFileFromFileUploadInput({
+	inputName,
+	languageId,
+	localizationInputsContainer,
+	namespace,
+}: {
+	inputName: string;
+	languageId: Liferay.Language.Locale;
+	localizationInputsContainer: HTMLElement;
+	namespace: string;
+}) {
+	const translationInput = getOrCreateTranslationInput(
+		`${inputName}-file-upload`,
+		inputName,
+		languageId,
+		localizationInputsContainer,
+		namespace
+	);
+
+	translationInput.value = '';
+	translationInput.dataset.fileName = '';
+}
+
 export function setInitialValuesMultiselectInput(
 	initialValues: Record<string, any>,
 	inputElements: HTMLInputElement[],
