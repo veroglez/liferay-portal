@@ -5,6 +5,7 @@
 
 import {
 	onChangeMultiselectInput,
+	onLocaleChangeFileUploadInput,
 	onLocaleChangeMultiselectInput,
 	setInitialValuesMultiselectInput,
 } from './fileUploadAndMultiselectHandlers';
@@ -18,13 +19,10 @@ type Args = {
 	isFromDocumentLibrary: boolean | null;
 	localizationInputsContainer: HTMLElement;
 	namespace: string;
-	onLocaleChange?: ({
-		languageId,
-		value,
-	}: {
-		languageId: string;
-		value: string;
-	}) => void;
+	onLocaleChange?: (
+		params: {languageId: string; value: string} | HTMLInputElement
+	) => void;
+
 	optionValues: Record<string, string>;
 	textDirection?: 'ltr' | 'rtl';
 };
@@ -94,6 +92,15 @@ export function registerLocalizedInput({
 					inputElements: inputElement,
 					languageId,
 					namespace,
+				});
+			}
+			else if (isFileUploadInput) {
+				onLocaleChangeFileUploadInput({
+					defaultLanguageId,
+					inputName,
+					languageId: currentLanguageId,
+					namespace,
+					onLocaleChange: onLocaleChange!,
 				});
 			}
 			else {

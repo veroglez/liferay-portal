@@ -5,6 +5,16 @@
 
 import getOrCreateTranslationInput from './getOrCreateTranslationInput';
 
+function getTranslationInput(
+	namespace: string,
+	languageId: string,
+	inputName: string
+) {
+	const inputId = `${namespace}${inputName}-file-upload_${languageId}`;
+
+	return document.getElementById(inputId) as HTMLInputElement;
+}
+
 export function onChangeMultiselectInput(
 	inputElements: HTMLInputElement[],
 	languageId: Liferay.Language.Locale,
@@ -21,6 +31,38 @@ export function onChangeMultiselectInput(
 
 		translationInput.value = inputElement.checked ? inputElement.value : '';
 	});
+}
+export function onLocaleChangeFileUploadInput({
+	defaultLanguageId,
+	inputName,
+	languageId,
+	namespace,
+	onLocaleChange,
+}: {
+	defaultLanguageId: Liferay.Language.Locale;
+	inputName: string;
+	languageId: Liferay.Language.Locale;
+	namespace: string;
+	onLocaleChange: (input: HTMLInputElement) => void;
+}) {
+	const translationInput = getTranslationInput(
+		namespace,
+		languageId,
+		inputName
+	);
+
+	if (translationInput) {
+		onLocaleChange(translationInput);
+	}
+	else {
+		const defaultTranslationInput = getTranslationInput(
+			namespace,
+			defaultLanguageId,
+			inputName
+		);
+
+		onLocaleChange(defaultTranslationInput);
+	}
 }
 
 export function onLocaleChangeMultiselectInput({
