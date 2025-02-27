@@ -15,6 +15,7 @@ type Args = {
 	initialValues: Record<string, any>;
 	inputElement?: HTMLInputElement | HTMLInputElement[];
 	inputName: string;
+	isFromDocumentLibrary: boolean | null;
 	localizationInputsContainer: HTMLElement;
 	namespace: string;
 	onLocaleChange?: ({
@@ -33,6 +34,7 @@ export function registerLocalizedInput({
 	initialValues,
 	inputElement,
 	inputName,
+	isFromDocumentLibrary = null,
 	localizationInputsContainer,
 	namespace,
 	onLocaleChange,
@@ -40,6 +42,7 @@ export function registerLocalizedInput({
 	textDirection,
 }: Args) {
 	const isMultiselectField = Array.isArray(inputElement);
+	const isFileUploadInput = isFromDocumentLibrary !== null;
 
 	let currentLanguageId = defaultLanguageId;
 
@@ -61,10 +64,16 @@ export function registerLocalizedInput({
 					namespace
 				);
 
-				input.value = value;
+				if (isFileUploadInput) {
+					input.value = value.fileEntryId;
+					input.dataset.fileName = value.name;
+				}
+				else {
+					input.value = value;
 
-				if (optionValues) {
-					input.dataset.label = optionValues[value];
+					if (optionValues) {
+						input.dataset.label = optionValues[value];
+					}
 				}
 			});
 		}
