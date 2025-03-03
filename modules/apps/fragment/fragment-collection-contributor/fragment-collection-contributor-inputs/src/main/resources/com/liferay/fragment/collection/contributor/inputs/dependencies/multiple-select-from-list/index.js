@@ -63,29 +63,42 @@ else {
 					registerUnlocalizedInput({
 						defaultLanguageId,
 						inputElement: allInputs,
-
 						onLocaleChange: (languageId) => {
-							if (
-								defaultLanguageId !== languageId &&
-								unlocalizedFieldsState === 'read-only'
-							) {
-								allInputs.forEach((input) => {
-									input.addEventListener(
-										'click',
-										preventClick
-									);
-								});
-							}
-							else {
-								allInputs.forEach((input) => {
-									input.removeEventListener(
-										'click',
-										preventClick
-									);
-								});
-							}
-						},
+							const editingDefaultLanguage =
+								defaultLanguageId === languageId;
+							const isReadOnlyFieldState =
+								unlocalizedFieldsState === 'read-only';
 
+							allInputs.forEach((inputElement) => {
+								if (editingDefaultLanguage) {
+									inputElement?.removeAttribute(
+										isReadOnlyFieldState
+											? 'readonly'
+											: 'disabled'
+									);
+								}
+								else {
+									inputElement?.setAttribute(
+										isReadOnlyFieldState
+											? 'readonly'
+											: 'disabled',
+										''
+									);
+								}
+
+								inputElement.addEventListener(
+									'click',
+									(event) => {
+										if (
+											!editingDefaultLanguage &&
+											isReadOnlyFieldState
+										) {
+											event.preventDefault();
+										}
+									}
+								);
+							});
+						},
 						readOnlyInputLabel: document.getElementById(
 							`${fragmentNamespace}-multiselect-list-read-only`
 						),

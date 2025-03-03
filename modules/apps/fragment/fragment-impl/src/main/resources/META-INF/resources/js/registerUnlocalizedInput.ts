@@ -4,84 +4,81 @@
  */
 
 type Args = {
+	changeTextDirection?: boolean;
 	defaultLanguageId: Liferay.Language.Locale;
-	inputElement?: HTMLInputElement | HTMLInputElement[];
+	inputElement?: HTMLInputElement;
 	onLocaleChange?: (languageId: string) => void;
 	readOnlyInputLabel?: HTMLSpanElement;
-	textDirection: 'ltr' | 'rtl';
 	unlocalizedFieldsState: 'disabled' | 'read-only';
 	unlocalizedMessageContainer: HTMLElement;
 };
 
 export function registerUnlocalizedInput({
+	changeTextDirection = true,
 	defaultLanguageId,
 	inputElement,
 	onLocaleChange,
 	readOnlyInputLabel,
-	textDirection,
 	unlocalizedFieldsState,
 	unlocalizedMessageContainer,
 }: Args) {
-	const isMultiselectField = Array.isArray(inputElement);
-	const inputElements = isMultiselectField ? inputElement : [inputElement];
-
-	if (!isMultiselectField && textDirection) {
-		inputElement?.setAttribute('dir', textDirection);
-	}
-
 	Liferay.on(
 		'localizationSelect:localeChanged',
 		({languageId}: {languageId: Liferay.Language.Locale}) => {
 			onLocaleChange?.(languageId);
 
-			if (!isMultiselectField && textDirection) {
+			const editingDefaultLanguage = languageId === defaultLanguageId;
+
+			// Show unlocalized icon for non-default language
+
+			unlocalizedMessageContainer?.classList.toggle(
+				'd-none',
+				!editingDefaultLanguage
+			);
+
+			if (changeTextDirection) {
 				inputElement?.setAttribute(
 					'dir',
 					Liferay.Language.direction[languageId]!
 				);
 			}
 
-			if (languageId === defaultLanguageId) {
-				if (unlocalizedFieldsState === 'disabled') {
-					inputElements.forEach((input) => {
-						input?.removeAttribute('disabled');
-					});
-				}
-				else {
-					if (!isMultiselectField) {
-						inputElement?.removeAttribute('readonly');
-					}
+			// Change state of the input to disabled/readonly for non default language
 
-					readOnlyInputLabel?.classList.add('d-none');
-				}
+			const isReadOnlyFieldState = unlocalizedFieldsState === 'read-only';
 
-				unlocalizedMessageContainer?.classList.add('d-none');
+			if (editingDefaultLanguage) {
+				inputElement?.removeAttribute(
+					isReadOnlyFieldState ? 'readonly' : 'disabled'
+				);
 			}
 			else {
-				if (unlocalizedFieldsState === 'disabled') {
-					inputElements.forEach((input) => {
-						input?.setAttribute('disabled', '');
-					});
+				inputElement?.setAttribute(
+					isReadOnlyFieldState ? 'readonly' : 'disabled',
+					''
+				);
+			}
 
-					if (!isMultiselectField) {
-						inputElement?.closest('form')?.addEventListener(
-							'submit',
-							() => {
-								inputElement?.removeAttribute('disabled');
-							},
-							true
-						);
-					}
-				}
-				else {
-					if (!isMultiselectField) {
-						inputElement?.setAttribute('readonly', '');
-					}
+			if (isReadOnlyFieldState) {
 
-					readOnlyInputLabel?.classList.remove('d-none');
-				}
+				// Show "(Read Only)" label in input label
 
-				unlocalizedMessageContainer.classList.remove('d-none');
+				readOnlyInputLabel?.classList.toggle(
+					'd-none',
+					!editingDefaultLanguage
+				);
+			}
+			else {
+
+				// Remove disable attribute before submit to include the value in the form
+
+				inputElement?.closest('form')?.addEventListener(
+					'submit',
+					() => {
+						inputElement?.removeAttribute('disabled');
+					},
+					true
+				);
 			}
 		}
 	);
