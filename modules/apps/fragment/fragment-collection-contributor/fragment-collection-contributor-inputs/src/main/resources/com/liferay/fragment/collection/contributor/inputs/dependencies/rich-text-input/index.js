@@ -56,6 +56,7 @@ if (layoutMode !== 'edit') {
 				}
 				else {
 					registerUnlocalizedInput({
+						changeTextDirection: false,
 						defaultLanguageId,
 						onLocaleChange: (languageId) => {
 							editorPromise.then((editor) => {

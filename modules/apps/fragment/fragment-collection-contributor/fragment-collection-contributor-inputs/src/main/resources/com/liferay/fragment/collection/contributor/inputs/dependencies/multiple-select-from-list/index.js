@@ -61,6 +61,7 @@ else {
 						input.attributes.unlocalizedFieldsState;
 
 					registerUnlocalizedInput({
+						changeTextDirection: false,
 						defaultLanguageId,
 						inputElement: allInputs,
 						onLocaleChange: (languageId) => {

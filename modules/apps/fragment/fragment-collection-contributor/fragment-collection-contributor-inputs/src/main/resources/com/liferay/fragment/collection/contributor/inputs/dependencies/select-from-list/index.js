@@ -112,7 +112,6 @@ else {
 				}
 				else {
 					registerUnlocalizedInput({
-						defaultLanguageId,
 						inputElement: uiInputElement,
 						onLocaleChange: (languageId) => {
 							if (defaultLanguageId === languageId) {
@@ -143,7 +142,6 @@ else {
 						readOnlyInputLabel: document.getElementById(
 							`${fragmentNamespace}-select-from-list-read-only`
 						),
-						textDirection,
 						unlocalizedFieldsState:
 							input.attributes.unlocalizedFieldsState,
 						unlocalizedMessageContainer: document.getElementById(

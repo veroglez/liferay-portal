@@ -103,7 +103,6 @@ function main() {
 							readOnlyInputLabel: document.getElementById(
 								`${fragmentNamespace}-text-input-readonly`
 							),
-							textDirection,
 							unlocalizedFieldsState:
 								input.attributes.unlocalizedFieldsState,
 							unlocalizedMessageContainer:

@@ -101,7 +101,6 @@ function main() {
 							readOnlyInputLabel: document.getElementById(
 								`${fragmentNamespace}-textarea-readonly`
 							),
-							textDirection,
 							unlocalizedFieldsState:
 								input.attributes.unlocalizedFieldsState,
 							unlocalizedMessageContainer:

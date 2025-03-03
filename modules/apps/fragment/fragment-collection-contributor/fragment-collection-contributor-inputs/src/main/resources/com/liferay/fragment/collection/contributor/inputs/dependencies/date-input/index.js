@@ -36,7 +36,6 @@ if (inputElement) {
 					registerUnlocalizedInput({
 						defaultLanguageId,
 						inputElement,
-						textDirection,
 						unlocalizedFieldsState:
 							input.attributes.unlocalizedFieldsState,
 						unlocalizedMessageContainer: document.getElementById(
