@@ -6,7 +6,10 @@
 import ClayButton from '@clayui/button';
 import ClayEmptyState from '@clayui/empty-state';
 import ClayLoadingIndicator from '@clayui/loading-indicator';
-import {MarketplaceModal} from '@liferay/layout-js-components-web';
+import {
+	MarketplaceModal,
+	SearchResultsMessage,
+} from '@liferay/layout-js-components-web';
 import {
 	APIResponse,
 	MarketplaceRest,
@@ -128,6 +131,10 @@ function SearchResultsPanel({searchValue}: {searchValue: string}) {
 
 	return (
 		<>
+			{results && !loading && (
+				<SearchResultsMessage numberOfResults={results.items.length} />
+			)}
+
 			<p className="pb-2 pl-3 pt-3 text-3 text-secondary">
 				{Liferay.Language.get('showing-results-from-marketplace')}
 			</p>
