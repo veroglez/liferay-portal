@@ -41,6 +41,8 @@ export default function MarketplaceSearchResults({
 	const [page, setPage] = useState(1);
 	const [results, setResults] = useState<APIResponse<Product>>();
 
+	const listRef = useRef<HTMLUListElement | null>(null);
+
 	const searchValueRef = useRef(searchValue);
 
 	const marketplaceRest = useMemo(() => {
@@ -84,6 +86,7 @@ export default function MarketplaceSearchResults({
 
 					return nextResults;
 				});
+
 				setLoading(false);
 			})
 			.catch((error: Error) =>
@@ -91,6 +94,14 @@ export default function MarketplaceSearchResults({
 			)
 			.finally(() => setLoading(false));
 	}, [marketplaceConfiguration.authorized, marketplaceRest, page]);
+
+	useEffect(() => {
+		if (results?.items.length) {
+			const firstListItem = listRef?.current?.firstChild as HTMLLIElement;
+
+			firstListItem?.focus();
+		}
+	}, [results, listRef]);
 
 	return (
 		<>
@@ -106,6 +117,7 @@ export default function MarketplaceSearchResults({
 				<ul
 					aria-label={Liferay.Language.get('marketplace-fragments')}
 					className="list-unstyled px-3"
+					ref={listRef}
 					role="menubar"
 				>
 					{results.items.map((item: Product) => (

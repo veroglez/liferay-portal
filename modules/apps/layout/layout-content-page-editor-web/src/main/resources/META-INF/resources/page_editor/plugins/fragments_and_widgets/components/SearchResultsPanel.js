@@ -91,10 +91,7 @@ export default function SearchResultsPanel({
 							/>
 						) : (
 							<ClayButton
-								aria-label={Liferay.Language.get(
-									'see-marketplace-results'
-								)}
-								className="p-3"
+								className="m-3"
 								displayType="link"
 								onClick={() => {
 									setShowResults(true);
