@@ -19,4 +19,9 @@ export default function isFieldInvalid(field: Field) {
 			return true;
 		}
 	}
+	else if (field.type === 'single-select') {
+		if ('listTypeDefinitionId' in field && !field.listTypeDefinitionId) {
+			return true;
+		}
+	}
 }
