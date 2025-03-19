@@ -20,6 +20,7 @@ import selectStructureName from '../selectors/selectStructureName';
 import selectStructureStatus from '../selectors/selectStructureStatus';
 import StructureService from '../services/StructureService';
 import focusInvalidInput from '../utils/focusInvalidInput';
+import isFieldInvalid from '../utils/isFieldInvalid';
 import AsyncButton from './AsyncButton';
 
 export default function ManagementBar() {
@@ -121,6 +122,8 @@ function SaveButton() {
 	const onSave = async () => {
 		const valid = validate();
 
+		console.log(fields);
+
 		if (!valid) {
 			return;
 		}
@@ -211,10 +214,19 @@ function PublishButton() {
 
 function useValidate() {
 	const dispatch = useStateDispatch();
+	const fields = useSelector(selectStructureFields);
 	const invalids = useSelector(selectInvalids);
 	const selection = useSelector(selectSelection);
 
 	return useCallback(() => {
+		for (const field of fields) {
+			if (isFieldInvalid(field)) {
+				invalids.add(field.uuid);
+
+				return false;
+			}
+		}
+
 		if (!invalids.size) {
 			return true;
 		}
@@ -234,5 +246,5 @@ function useValidate() {
 		}
 
 		return false;
-	}, [dispatch, invalids, selection]);
+	}, [dispatch, invalids, selection, fields]);
 }

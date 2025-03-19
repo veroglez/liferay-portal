@@ -290,15 +290,30 @@ test(
 
 		await expect(page.getByText('This field is required')).toBeVisible();
 
-		// Add a Text field and select it
+		// // Add a Text field and select it
 
-		await structureBuilderPage.addField('Text');
+		// await structureBuilderPage.addField('Text');
 
-		await structureBuilderPage.selectField({label: 'Text'});
+		// await structureBuilderPage.selectField({label: 'Text'});
+
+		// // Put empty name
+
+		// await structureBuilderPage.changeFieldSettings({name: ''});
+
+		// Add a Single Select field and select it
+
+		await structureBuilderPage.addField('Single Select');
+
+		await structureBuilderPage.selectField({label: 'Single Select'});
 
 		// Put empty name
 
 		await structureBuilderPage.changeFieldSettings({name: ''});
+
+		// Leave the Picklist field empty
+
+		await page.getByLabel('Picklist').focus();
+		await page.getByLabel('Picklist').blur();
 
 		// Try to save and check it redirects to structure view
 
@@ -314,7 +329,9 @@ test(
 		// Now try to save and check it redirects to field view
 
 		await clickAndExpectToBeVisible({
-			target: page.locator('.breadcrumb-link', {hasText: 'Text'}),
+			target: page.locator('.breadcrumb-link', {
+				hasText: 'Single Select',
+			}),
 			trigger: structureBuilderPage.saveButton,
 		});
 
