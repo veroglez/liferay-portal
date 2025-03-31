@@ -13,3 +13,4 @@ export {default as ViewVocabularies} from './main/categorization/vocabularies/Vi
 export {default as SpacesSticker} from './main/components/SpaceSticker';
 export {default as SpacesNavigation} from './main/spaces_navigation/SpacesNavigation';
 export {default as StructureBuilder} from './structure_builder/components/StructureBuilder';
+export {default as PicklistBuilder} from './structure_builder/components/picklist_builder/PicklistBuilder';
