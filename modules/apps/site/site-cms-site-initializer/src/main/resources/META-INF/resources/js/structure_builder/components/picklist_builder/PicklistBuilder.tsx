@@ -10,6 +10,7 @@ import {InputLocalized, ManagementToolbar} from 'frontend-js-components-web';
 import React, {useState} from 'react';
 
 import {Config, initializeConfig} from '../../config';
+import PicklistService from '../../services/PicklistService';
 import getRandomId from '../../utils/getRandomId';
 import AsyncButton from '../AsyncButton';
 import ManagementBar from '../BaseManagementBar';
@@ -24,6 +25,19 @@ export default function PicklistBuilder({config}: {config: Config}) {
 	});
 	const [erc, setErc] = useState<string>(getRandomId());
 
+	const onSave = async () => {
+		try {
+			await PicklistService.createPicklist({erc, name});
+
+			console.log('se ha guardado');
+		}
+		catch (error) {
+			const {message} = error as Error;
+
+			console.log('no se ha guardado', message);
+		}
+	};
+
 	return (
 		<div className="d-flex flex-column">
 			<ManagementBar title={Liferay.Language.get('new-picklist')}>
@@ -31,7 +45,7 @@ export default function PicklistBuilder({config}: {config: Config}) {
 					<AsyncButton
 						displayType="primary"
 						label={Liferay.Language.get('save')}
-						onClick={() => new Promise(() => null)}
+						onClick={onSave}
 					/>
 				</ManagementToolbar.Item>
 			</ManagementBar>

@@ -4,7 +4,24 @@
  */
 
 import {Picklist} from '../types/Picklist';
+import getRandomId from '../utils/getRandomId';
 import ApiHelper from './ApiHelper';
+
+async function createPicklist({
+	erc = getRandomId(),
+	name,
+}: {
+	erc?: string;
+	name: Liferay.Language.LocalizedValue<string>;
+}) {
+	return await ApiHelper.post(
+		`/o/headless-admin-list-type/v1.0/list-type-definitions`,
+		{
+			externalReferenceCode: erc,
+			name_i18n: name,
+		}
+	);
+}
 
 async function getPicklists(): Promise<Picklist[]> {
 	const {items} = await ApiHelper.get(
@@ -15,5 +32,6 @@ async function getPicklists(): Promise<Picklist[]> {
 }
 
 export default {
+	createPicklist,
 	getPicklists,
 };
