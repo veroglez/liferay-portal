@@ -29,6 +29,7 @@ export default function StructureBuilderManagementBar() {
 
 	return (
 		<ManagementBar
+			backButtonHref="structures"
 			title={
 				status === 'published'
 					? label
