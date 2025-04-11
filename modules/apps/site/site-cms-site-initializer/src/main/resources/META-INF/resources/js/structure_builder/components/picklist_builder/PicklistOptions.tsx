@@ -55,6 +55,9 @@ export default function PicklistOptions() {
 			</div>
 
 			<FrontendDataSet
+				bulkActions={[
+					{icon: 'trash', label: Liferay.Language.get('delete')},
+				]}
 				creationMenu={{
 					primaryItems: [
 						{
@@ -93,6 +96,13 @@ export default function PicklistOptions() {
 						type: 'item',
 					},
 				]}
+				onBulkActionItemClick={({
+					selectedData,
+				}: {
+					selectedData: {keyValues: string[]};
+				}) => {
+					removeOptions(selectedData.keyValues);
+				}}
 				style="fluid"
 				views={[
 					{
