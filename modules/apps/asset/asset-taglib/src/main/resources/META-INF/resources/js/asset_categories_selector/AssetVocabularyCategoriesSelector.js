@@ -203,7 +203,7 @@ function AssetVocabulariesCategoriesSelector({
 					/>
 				)}
 
-				{label && (
+				{/* {label && (
 					<label
 						className={showVocabularyLabel ? '' : 'sr-only'}
 						htmlFor={inputName + '_MultiSelect'}
@@ -220,7 +220,7 @@ function AssetVocabulariesCategoriesSelector({
 							</span>
 						)}
 					</label>
-				)}
+				)} */}
 
 				<ClayInput.Group>
 					<ClayInput.GroupItem>

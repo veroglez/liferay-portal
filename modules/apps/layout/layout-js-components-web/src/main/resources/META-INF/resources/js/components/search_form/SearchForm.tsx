@@ -29,10 +29,6 @@ export default function SearchForm({
 
 	return (
 		<ClayForm.Group className={className} role="search">
-			<label className="sr-only" htmlFor={id}>
-				{label || Liferay.Language.get('search-form')}
-			</label>
-
 			<ClayInput.Group small>
 				<ClayInput.GroupItem>
 					<ClayInput
@@ -45,7 +41,6 @@ export default function SearchForm({
 							setSearchValue(value);
 							debounce(() => onChange(value), 100)();
 						}}
-						placeholder={`${Liferay.Language.get('search')}...`}
 						sizing="sm"
 						spellCheck={false}
 						value={searchValue}

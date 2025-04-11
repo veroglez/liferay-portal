@@ -161,6 +161,14 @@ describe('ContentsSidebar', () => {
 		const {container} = renderPageContent();
 
 		await checkAccessibility({context: container});
+
+		// await checkAccessibility({
+		// 	context: {
+		// 		exclude: ['.input-group-inset-after'],
+		// 		include: container,
+		// 	},
+		// });
+
 	});
 
 	it('shows inline text within the content list when the editable type is text', () => {

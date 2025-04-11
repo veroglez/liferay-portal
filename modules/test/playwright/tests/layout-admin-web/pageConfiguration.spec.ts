@@ -61,6 +61,9 @@ test.describe('General configuration', () => {
 		await checkAccessibility({
 			page,
 			selectors: ['.input-container[aria-label="General"]'],
+
+			// selectorsToExclude: ['.field-content'],
+
 		});
 	});
 
