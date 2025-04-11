@@ -7,11 +7,14 @@ import {FrontendDataSet} from '@liferay/frontend-data-set-web';
 import {sub} from 'frontend-js-web';
 import React, {useState} from 'react';
 
+import {Options, useOptions} from '../../contexts/PicklistBuilderContext';
 import getRandomId from '../../utils/getRandomId';
 import AddOptionModal from './AddOptionModal';
 
 export default function PicklistOptions() {
 	const [modalVisible, setModalVisible] = useState<Boolean>(false);
+
+	const options = useOptions();
 
 	return (
 		<>
@@ -60,6 +63,7 @@ export default function PicklistOptions() {
 					),
 				}}
 				id="optionList"
+				items={normalizeOptionsToItems(options)}
 				style="fluid"
 				views={[
 					{
@@ -93,4 +97,12 @@ function getRandomkey() {
 	const digits = Math.floor(Math.random() * 9 * Math.pow(10, 5));
 
 	return `${Liferay.Language.get('option')}${digits}`;
+}
+
+function normalizeOptionsToItems(options: Options) {
+	return [...options].map(([erc, value]) => ({
+		erc,
+		id: erc,
+		...value,
+	}));
 }
