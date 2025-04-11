@@ -7,14 +7,21 @@ import {FrontendDataSet} from '@liferay/frontend-data-set-web';
 import {sub} from 'frontend-js-web';
 import React, {useState} from 'react';
 
-import {Options, useOptions} from '../../contexts/PicklistBuilderContext';
+import {
+	Option,
+	Options,
+	useOptions,
+	useRemoveOptions,
+} from '../../contexts/PicklistBuilderContext';
 import getRandomId from '../../utils/getRandomId';
 import AddOptionModal from './AddOptionModal';
 
 export default function PicklistOptions() {
 	const [modalVisible, setModalVisible] = useState<Boolean>(false);
+	const [selectedOption, setSelectedOption] = useState<Option | null>(null);
 
 	const options = useOptions();
+	const removeOptions = useRemoveOptions();
 
 	return (
 		<>
@@ -22,11 +29,15 @@ export default function PicklistOptions() {
 				<AddOptionModal
 					onCloseModal={() => {
 						setModalVisible(false);
+
+						if (selectedOption) {
+							setSelectedOption(null);
+						}
 					}}
 					option={{
-						erc: getRandomId(),
-						key: getRandomkey(),
-						name: {
+						erc: selectedOption?.erc || getRandomId(),
+						key: selectedOption?.key || getRandomkey(),
+						name: selectedOption?.name || {
 							[Liferay.ThemeDisplay.getDefaultLanguageId()]:
 								Liferay.Language.get('option'),
 						},
@@ -64,6 +75,24 @@ export default function PicklistOptions() {
 				}}
 				id="optionList"
 				items={normalizeOptionsToItems(options)}
+				itemsActions={[
+					{
+						icon: 'pencil',
+						label: Liferay.Language.get('edit'),
+						onClick: ({itemData}: {itemData: Option}) => {
+							setSelectedOption(itemData);
+							setModalVisible(true);
+						},
+						type: 'item',
+					},
+					{
+						icon: 'trash',
+						label: Liferay.Language.get('delete'),
+						onClick: ({itemData}: {itemData: Option}) =>
+							removeOptions([itemData.erc]),
+						type: 'item',
+					},
+				]}
 				style="fluid"
 				views={[
 					{
