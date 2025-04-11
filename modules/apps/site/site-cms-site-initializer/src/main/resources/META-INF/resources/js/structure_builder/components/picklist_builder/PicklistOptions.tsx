@@ -77,7 +77,7 @@ export default function PicklistOptions() {
 					),
 				}}
 				id="optionList"
-				items={normalizeOptionsToItems(options)}
+				items={toItems(options)}
 				itemsActions={[
 					{
 						icon: 'pencil',
@@ -138,7 +138,7 @@ function getRandomkey() {
 	return `${Liferay.Language.get('option')}${digits}`;
 }
 
-function normalizeOptionsToItems(options: Options) {
+function toItems(options: Options) {
 	return [...options].map(([erc, value]) => ({
 		erc,
 		id: erc,
