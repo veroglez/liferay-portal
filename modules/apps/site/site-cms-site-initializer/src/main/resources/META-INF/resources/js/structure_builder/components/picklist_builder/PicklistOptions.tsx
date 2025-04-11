@@ -5,12 +5,32 @@
 
 import {FrontendDataSet} from '@liferay/frontend-data-set-web';
 import {sub} from 'frontend-js-web';
-import React from 'react';
+import React, {useState} from 'react';
+
+import getRandomId from '../../utils/getRandomId';
+import AddOptionModal from './AddOptionModal';
 
 export default function PicklistOptions() {
+	const [modalVisible, setModalVisible] = useState<Boolean>(false);
+
 	return (
 		<>
-			¡
+			{modalVisible && (
+				<AddOptionModal
+					onCloseModal={() => {
+						setModalVisible(false);
+					}}
+					option={{
+						erc: getRandomId(),
+						key: getRandomkey(),
+						name: {
+							[Liferay.ThemeDisplay.getDefaultLanguageId()]:
+								Liferay.Language.get('option'),
+						},
+					}}
+				/>
+			)}
+
 			<div className="panel-unstyled">
 				<h3 className="panel-header panel-title text-secondary">
 					{sub(
@@ -19,11 +39,13 @@ export default function PicklistOptions() {
 					)}
 				</h3>
 			</div>
+
 			<FrontendDataSet
 				creationMenu={{
 					primaryItems: [
 						{
 							label: Liferay.Language.get('add-new'),
+							onClick: () => setModalVisible(true),
 						},
 					],
 				}}
@@ -65,4 +87,10 @@ export default function PicklistOptions() {
 			/>
 		</>
 	);
+}
+
+function getRandomkey() {
+	const digits = Math.floor(Math.random() * 9 * Math.pow(10, 5));
+
+	return `${Liferay.Language.get('option')}${digits}`;
 }
