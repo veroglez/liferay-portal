@@ -36,7 +36,7 @@ export default function PicklistOptions() {
 					}}
 					option={{
 						erc: selectedOption?.erc || getRandomId(),
-						key: selectedOption?.key || getRandomkey(),
+						key: selectedOption?.key || getRandomKey(),
 						name: selectedOption?.name || {
 							[Liferay.ThemeDisplay.getDefaultLanguageId()]:
 								Liferay.Language.get('option'),
@@ -132,7 +132,7 @@ export default function PicklistOptions() {
 	);
 }
 
-function getRandomkey() {
+function getRandomKey() {
 	const digits = Math.floor(Math.random() * 9 * Math.pow(10, 5));
 
 	return `${Liferay.Language.get('option')}${digits}`;
