@@ -18,7 +18,7 @@ import normalizeI18n from '../utils/normalizeI18n';
 
 const noop = () => null;
 
-const DEFAULT_PICKLIST_NAME = Liferay.Language.get('untitled-structure');
+const DEFAULT_PICKLIST_NAME = Liferay.Language.get('untitled-picklist');
 
 const INITIAL_STATE = {
 	erc: getRandomId(),
