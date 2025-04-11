@@ -9,25 +9,21 @@ import {ManagementToolbar} from 'frontend-js-components-web';
 import React from 'react';
 
 type Props = {
-	backButtonHref?: string;
+	backURL?: string;
 	children: React.ReactNode;
 	title: string;
 };
 
-export default function ManagementBar({
-	backButtonHref,
-	children,
-	title,
-}: Props) {
+export default function ManagementBar({backURL, children, title}: Props) {
 	return (
 		<ManagementToolbar.Container className="border">
 			<ManagementToolbar.ItemList className="c-gap-3" expand>
-				{backButtonHref ? (
+				{backURL ? (
 					<ManagementToolbar.Item>
 						<ClayLink
 							aria-label={Liferay.Language.get('back')}
 							className="btn btn-monospaced btn-outline-borderless btn-outline-secondary btn-sm"
-							href={backButtonHref}
+							href={backURL}
 						>
 							<ClayIcon symbol="angle-left" />
 						</ClayLink>
