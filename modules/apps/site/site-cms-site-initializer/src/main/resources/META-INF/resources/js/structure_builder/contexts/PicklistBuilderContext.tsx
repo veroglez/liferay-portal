@@ -139,17 +139,17 @@ const useRemoveOptions = () => {
 };
 
 export {
-	buildState,
 	INITIAL_STATE,
 	StateContext,
 	StateContextProvider,
+	buildState,
 	useAddOption,
 	useErc,
-	useSetErc,
 	useId,
-	useOptions,
-	useSetId,
 	useName,
-	useSetName,
+	useOptions,
 	useRemoveOptions,
+	useSetErc,
+	useSetId,
+	useSetName,
 };
