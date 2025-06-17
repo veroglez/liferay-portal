@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
+import {Editor} from 'ckeditor5';
 import {
 	EEditorConfigPreset,
 	LiferayEditorConfig,
@@ -35,14 +36,14 @@ export default function getCKEditorConfig({
 	editorName: string;
 	initialData: string;
 	itemSelectorEventName?: string;
-}) {
+}): LiferayEditorConfig & {name: string} {
 	let config = initialConfig;
 
 	const blockToolbarItems = Array.isArray(config.blockToolbar)
 		? config.blockToolbar
 		: config.blockToolbar?.items;
 
-	const extraPlugins = [] as any[];
+	const extraPlugins: Array<(editor: Editor) => void> = [];
 
 	if (blockToolbarItems) {
 		extraPlugins.push(BlockButtonCustomization);
