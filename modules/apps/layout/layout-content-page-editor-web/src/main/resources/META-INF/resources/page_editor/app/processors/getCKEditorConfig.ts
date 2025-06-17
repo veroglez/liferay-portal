@@ -34,7 +34,7 @@ export default function getCKEditorConfig({
 	editorConfig: EditorConfig;
 	editorName: string;
 	initialData: string;
-	itemSelectorEventName: string;
+	itemSelectorEventName?: string;
 }) {
 	let config = initialConfig;
 
@@ -42,7 +42,7 @@ export default function getCKEditorConfig({
 		? config.blockToolbar
 		: config.blockToolbar?.items;
 
-	const extraPlugins = [];
+	const extraPlugins = [] as any[];
 
 	if (blockToolbarItems) {
 		extraPlugins.push(BlockButtonCustomization);
