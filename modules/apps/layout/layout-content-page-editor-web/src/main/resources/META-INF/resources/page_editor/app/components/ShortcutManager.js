@@ -264,18 +264,25 @@ export default function ShortcutManager() {
 						selectItems,
 					})
 				),
-			canBeExecuted: (event) =>
-				canUpdatePageStructure &&
-				!!activeItemIds.length &&
-				activeItemIds.every(
-					(activeItemId) =>
-						!!layoutData.items[activeItemId] &&
-						canBeRemoved(
-							layoutData.items[activeItemId],
-							layoutData
-						) &&
-						!isInteractiveElement(event.target)
-				),
+			canBeExecuted: (event) => {
+				if (document.activeElement.classList.contains('ck')) {
+					return false;
+				}
+
+				return (
+					canUpdatePageStructure &&
+					!!activeItemIds.length &&
+					activeItemIds.every(
+						(activeItemId) =>
+							!!layoutData.items[activeItemId] &&
+							canBeRemoved(
+								layoutData.items[activeItemId],
+								layoutData
+							) &&
+							!isInteractiveElement(event.target)
+					)
+				);
+			},
 			isKeyCombination: (event) => event.code === BACKSPACE_KEY_CODE,
 		},
 		rename: {
