@@ -265,21 +265,17 @@ export default function ShortcutManager() {
 					})
 				),
 			canBeExecuted: (event) => {
-				if (document.activeElement.classList.contains('ck')) {
-					return false;
-				}
-
 				return (
 					canUpdatePageStructure &&
 					!!activeItemIds.length &&
+					!isInteractiveElement(event.target) &&
 					activeItemIds.every(
 						(activeItemId) =>
 							!!layoutData.items[activeItemId] &&
 							canBeRemoved(
 								layoutData.items[activeItemId],
 								layoutData
-							) &&
-							!isInteractiveElement(event.target)
+							)
 					)
 				);
 			},
@@ -426,6 +422,7 @@ function isInteractiveElement(element) {
 		['INPUT', 'OPTION', 'SELECT', 'TEXTAREA'].includes(element.tagName) ||
 		!!element.closest('.alloy-editor-container') ||
 		!!element.closest('.cke_editable') ||
+		!!element.closest('.ck-editor__editable') ||
 		!!element.closest('.dropdown-menu') ||
 		!!element.closest('.page-editor__page-structure__item-configuration') ||
 		!!element.closest('.page-editor__allowed-fragment__tree')
