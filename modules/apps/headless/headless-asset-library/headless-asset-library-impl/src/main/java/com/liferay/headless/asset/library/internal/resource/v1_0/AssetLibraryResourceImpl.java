@@ -14,6 +14,7 @@ import com.liferay.depot.service.DepotEntryPinLocalService;
 import com.liferay.depot.service.DepotEntryPinService;
 import com.liferay.depot.service.DepotEntryService;
 import com.liferay.headless.asset.library.dto.v1_0.AssetLibrary;
+import com.liferay.headless.asset.library.dto.v1_0.MimeTypeLimit;
 import com.liferay.headless.asset.library.dto.v1_0.Settings;
 import com.liferay.headless.asset.library.resource.v1_0.AssetLibraryResource;
 import com.liferay.petra.function.UnsafeSupplier;
@@ -497,6 +498,18 @@ public class AssetLibraryResourceImpl extends BaseAssetLibraryResourceImpl {
 			return null;
 		}
 
+		Map<String, String> mimeTypeLimitsMap = new HashMap<>();
+
+		MimeTypeLimit[] mimeTypeLimits = settings.getMimeTypeLimits();
+
+		if (mimeTypeLimits != null) {
+			for (MimeTypeLimit mimeTypeLimit : mimeTypeLimits) {
+				mimeTypeLimitsMap.put(
+					"mimeTypeLimit-" + mimeTypeLimit.getMimeType(),
+					String.valueOf(mimeTypeLimit.getMaximumSize()));
+			}
+		}
+
 		return UnicodePropertiesBuilder.create(
 			true
 		).put(
@@ -511,6 +524,8 @@ public class AssetLibraryResourceImpl extends BaseAssetLibraryResourceImpl {
 		).put(
 			"useCustomLanguages",
 			GetterUtil.getString(settings.getUseCustomLanguages(), "false")
+		).putAll(
+			mimeTypeLimitsMap
 		).build();
 	}
 
