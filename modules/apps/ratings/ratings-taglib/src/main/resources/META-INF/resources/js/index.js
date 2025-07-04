@@ -41,7 +41,7 @@ const Ratings = ({
 
 	const sendVoteRequest = useCallback(
 		(score) => {
-			if (Liferay.Session.sessionState === 'expired') {
+			if (Liferay.Session?.sessionState === 'expired') {
 				errorToast(
 					`${Liferay.Language.get('you-must-be-signed-in-to-rate')}`
 				);
@@ -64,6 +64,18 @@ const Ratings = ({
 				p_l_id: themeDisplay.getPlid(),
 				score,
 			});
+
+			console.log(
+				1,
+				{
+					className,
+					classPK,
+					contentTitle: contentTitle || '',
+					ratingType: type,
+					score,
+				},
+				url
+			);
 
 			return fetch(url, {
 				body,

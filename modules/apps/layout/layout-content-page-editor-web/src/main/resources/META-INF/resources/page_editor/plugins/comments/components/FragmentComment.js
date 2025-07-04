@@ -11,6 +11,7 @@ import classNames from 'classnames';
 import {openToast, useSessionState} from 'frontend-js-components-web';
 import {sub} from 'frontend-js-web';
 import PropTypes from 'prop-types';
+import {Ratings} from 'ratings-taglib';
 import React, {useEffect, useState} from 'react';
 
 import {HIGHLIGHTED_COMMENT_ID_KEY} from '../../../app/config/constants/highlightedCommentIdKey';
@@ -38,6 +39,8 @@ export default function FragmentComment({
 		modifiedDateDescription,
 		resolved,
 	} = comment;
+
+	console.log('comment', comment);
 
 	const [changingResolved, setChangingResolved] = useState(false);
 	const [dropDownActive, setDropDownActive] = useState(false);
@@ -245,11 +248,23 @@ export default function FragmentComment({
 				)}
 
 			{!parentCommentId && (
-				<ReplyCommentForm
-					disabled={editing || resolved}
-					fragmentEntryLinkId={fragmentEntryLinkId}
-					parentCommentId={commentId}
-				/>
+				<>
+					<ReplyCommentForm
+						disabled={editing || resolved}
+						fragmentEntryLinkId={fragmentEntryLinkId}
+						parentCommentId={commentId}
+					/>
+					<Ratings
+						className={comment.className}
+						classPK={comment.classPK}
+						contentTitle="hola"
+						enabled={true}
+						initialPositiveVotes={comment.initialPositiveVotes}
+						signedIn={true}
+						type="thumbs"
+						url="/c/portal/rate_entry"
+					/>
+				</>
 			)}
 
 			{showDeleteMask && (

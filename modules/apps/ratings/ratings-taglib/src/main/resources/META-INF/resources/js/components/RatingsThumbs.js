@@ -68,11 +68,14 @@ const RatingsThumbs = ({
 	thumbDown = false,
 	thumbUp = false,
 }) => {
+	console.log('DDD', initialPositiveVotes);
 	const [state, dispatch] = useReducer(reducer, {
 		negativeVotes: initialNegativeVotes,
 		positiveVotes: initialPositiveVotes,
 		pressed: thumbDown ? PRESSED_DOWN : thumbUp ? PRESSED_UP : null,
 	});
+
+	console.log('AA', state);
 
 	const {negativeVotes, positiveVotes, pressed} = state;
 	const [animatedButtonUp, setAnimatedButtonUp] = useState(false);
@@ -90,7 +93,13 @@ const RatingsThumbs = ({
 
 	const handleSendVoteRequest = useCallback(
 		(score) => {
+			console.log('send');
+
+			console.log(1, score);
+
 			sendVoteRequest(score).then(({totalEntries, totalScore} = {}) => {
+				console.log(2, totalEntries, totalScore);
+
 				if (isMounted() && totalEntries && totalScore) {
 					const positiveVotes = Math.round(totalScore);
 

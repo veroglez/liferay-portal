@@ -21,6 +21,10 @@ import com.liferay.portal.kernel.util.HttpComponentsUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.WebKeys;
+import com.liferay.ratings.kernel.model.RatingsEntry;
+import com.liferay.ratings.kernel.model.RatingsStats;
+import com.liferay.ratings.kernel.service.RatingsEntryLocalServiceUtil;
+import com.liferay.ratings.kernel.service.RatingsStatsLocalServiceUtil;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 
 import jakarta.portlet.ActionRequest;
@@ -33,7 +37,7 @@ import java.util.function.Function;
 /**
  * @author Alejandro Tardín
  */
-public class CommentUtil {
+public class CommentUtil { 
 
 	public static JSONObject getCommentJSONObject(
 			Comment comment, HttpServletRequest httpServletRequest)
@@ -55,6 +59,12 @@ public class CommentUtil {
 				httpServletRequest,
 				System.currentTimeMillis() - modifiedDate.getTime(), true));
 
+
+		RatingsStats ratingsStats = RatingsStatsLocalServiceUtil.fetchStats(
+				comment.getClassName(), comment.getClassPK());
+
+		int positiveVotes = (int)Math.round(_getTotalScore(ratingsStats));
+
 		return JSONUtil.put(
 			"author", _getAuthorJSONObject(comment, httpServletRequest)
 		).put(
@@ -69,8 +79,24 @@ public class CommentUtil {
 			"modifiedDateDescription", modifiedDateDescription
 		).put(
 			"resolved", _isResolved(comment)
+		).put(
+			"className", comment.getClassName()
+		).put(
+			"classPK", comment.getClassPK()
+		)
+		.put(
+			"initialPositiveVotes", positiveVotes
 		);
 	}
+
+	private static double _getTotalScore(RatingsStats ratingsStats) {
+		if (ratingsStats != null) {
+			return ratingsStats.getTotalScore();
+		}
+
+		return 0.0;
+	}
+	
 
 	public static Function<String, ServiceContext> getServiceContextFunction(
 			ActionRequest actionRequest, ThemeDisplay themeDisplay)
@@ -152,5 +178,15 @@ public class CommentUtil {
 
 		return false;
 	}
+
+	private String _className;
+	private long _classPK;
+	private String _contentTitle;
+	private Boolean _inTrash;
+	private RatingsStats _ratingsStats;
+	private boolean _setRatingsEntry;
+	private boolean _setRatingsStats;
+	private String _type;
+	private String _url;
 
 }
