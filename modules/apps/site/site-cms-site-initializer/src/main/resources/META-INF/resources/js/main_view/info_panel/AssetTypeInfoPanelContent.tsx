@@ -51,9 +51,11 @@ const AssetTypeInfoPanelContent = () => {
 					} as IAssetTypeInfoPanelContext
 				}
 			>
-				<AssetTypeInfoPanelHeader />
+				<div className="asset-type-info-panel">
+					<AssetTypeInfoPanelHeader />
 
-				<AssetTypeInfoPanelBody />
+					<AssetTypeInfoPanelBody />
+				</div>
 			</AssetTypeInfoPanelContext.Provider>
 		</>
 	);
