@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
-import ClayButton from '@clayui/button';
+import ClayButton, {ClayButtonWithIcon} from '@clayui/button';
 import ClayIcon from '@clayui/icon';
 import List from '@clayui/list';
 import Sticker from '@clayui/sticker';
@@ -177,6 +177,20 @@ function Comment({
 									{Liferay.Language.get('reply')}
 								</ClayButton>
 							) : null}
+
+							<ClayButtonWithIcon
+								borderless
+								displayType="secondary"
+								size="xs"
+								symbol="thumbs-up"
+							/>
+
+							<ClayButtonWithIcon
+								borderless
+								displayType="secondary"
+								size="xs"
+								symbol="thumbs-down"
+							/>
 						</div>
 					)}
 				</article>
