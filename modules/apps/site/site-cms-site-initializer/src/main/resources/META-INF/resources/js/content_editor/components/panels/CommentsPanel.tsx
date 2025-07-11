@@ -7,9 +7,10 @@ import ClayButton from '@clayui/button';
 import {
 	CKEditor5BalloonEditor,
 	LiferayEditorConfig,
+	TEditor,
 } from 'frontend-editor-ckeditor-web';
 import {fetch, objectToFormData} from 'frontend-js-web';
-import React, {useState} from 'react';
+import React, {useRef, useState} from 'react';
 
 export type Comment = {
 	author: {
@@ -64,10 +65,10 @@ function CommentEditor({
 	addCommentURL: string;
 	editorConfig: LiferayEditorConfig;
 	onAddComment: (comment: Comment, parentId?: string) => void;
-	onCancel?: () => void;
 	parentCommentId?: string | null;
 }) {
 	const [content, setContent] = useState<string>();
+	const editorRef = useRef<TEditor | null>(null);
 
 	return (
 		<>
@@ -75,6 +76,8 @@ function CommentEditor({
 				className="form-control form-control-sm"
 				config={editorConfig}
 				onChange={(_, editor) => {
+					editorRef.current = editor;
+
 					setContent(editor.getData());
 				}}
 			/>
@@ -101,6 +104,18 @@ function CommentEditor({
 					size="sm"
 				>
 					{Liferay.Language.get('save')}
+				</ClayButton>
+
+				<ClayButton
+					borderless
+					className="ml-1"
+					displayType="secondary"
+					onClick={() => {
+						editorRef.current?.setData('');
+					}}
+					size="sm"
+				>
+					{Liferay.Language.get('cancel')}
 				</ClayButton>
 			</div>
 		</>
