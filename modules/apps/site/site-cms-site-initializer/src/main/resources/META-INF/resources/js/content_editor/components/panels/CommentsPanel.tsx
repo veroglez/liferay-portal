@@ -143,6 +143,17 @@ function Comment({
 						dangerouslySetInnerHTML={{__html: comment.body}}
 					/>
 
+					{comment.children?.length ? (
+						<List className="mb-3 ml-2 pl-1">
+							{comment.children.map((child: Comment) => (
+								<Comment
+									comment={child}
+									key={child.commentId}
+								/>
+							))}
+						</List>
+					) : null}
+
 					{showEditor ? (
 						<CommentEditor
 							addCommentURL={addCommentURL!}
