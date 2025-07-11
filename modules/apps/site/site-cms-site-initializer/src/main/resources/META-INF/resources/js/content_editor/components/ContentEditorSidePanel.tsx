@@ -9,12 +9,15 @@ import '../../../css/content_editor/ContentEditorSidePanel.scss';
 
 import {Button, VerticalBar} from '@clayui/core';
 import ClayIcon from '@clayui/icon';
+import {fetch} from 'frontend-js-web';
 import React, {useState} from 'react';
 
 import GeneralPanel from './panels/GeneralPanel';
 
 type Props = {
 	id: string;
+	isSubscribed: boolean;
+	subscribeURL: string;
 	type: string;
 	version: string;
 };
@@ -31,6 +34,11 @@ const items: Item[] = [
 		component: GeneralPanel,
 		icon: 'info-circle',
 		title: Liferay.Language.get('general'),
+	},
+	{
+		component: () => null,
+		icon: 'comments',
+		title: Liferay.Language.get('comments'),
 	},
 ];
 
@@ -55,6 +63,13 @@ export default function ContentEditorSidePanel(props: Props) {
 								</div>
 
 								<div>
+									{item.title === 'Comments' ? (
+										<SubscribeButton
+											isSubscribed={props.isSubscribed}
+											subscribeURL={props.subscribeURL}
+										/>
+									) : null}
+
 									<ClayButtonWithIcon
 										aria-label={Liferay.Language.get(
 											'close'
@@ -86,5 +101,39 @@ export default function ContentEditorSidePanel(props: Props) {
 				)}
 			</VerticalBar.Bar>
 		</VerticalBar>
+	);
+}
+
+function SubscribeButton({
+	isSubscribed,
+	subscribeURL,
+}: {
+	isSubscribed: boolean;
+	subscribeURL: string;
+}) {
+	const [subscribe, setSubscribe] = useState<boolean>(isSubscribed);
+
+	const title = subscribe
+		? Liferay.Language.get('subscribe')
+		: Liferay.Language.get('unsubscribe');
+
+	return (
+		<ClayButtonWithIcon
+			aria-label={title}
+			borderless
+			displayType="secondary"
+			monospaced
+			onClick={async () => {
+				await fetch(
+					`${subscribeURL}&cmd=${!subscribe ? 'subscrib' : 'unsubscribe'}`,
+					{method: 'GET'}
+				);
+
+				setSubscribe(!subscribe);
+			}}
+			size="sm"
+			symbol={subscribe ? 'bell-on' : 'bell-off'}
+			title={title}
+		/>
 	);
 }
