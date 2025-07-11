@@ -144,7 +144,7 @@ function Comment({
 					/>
 
 					{comment.children?.length ? (
-						<List className="mb-3 ml-2 pl-1">
+						<List className="border-left border-secondary mb-3 ml-2 pl-1 rounded-0">
 							{comment.children.map((child: Comment) => (
 								<Comment
 									comment={child}
