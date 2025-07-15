@@ -74,6 +74,8 @@ public class CommentUtil {
 
 				return 0;
 			}
+		).put(
+			"rootComment", comment.isRoot()
 		);
 	}
 
