@@ -5,15 +5,20 @@
 
 import ClayDatePicker from '@clayui/date-picker';
 import ClayForm, {ClayCheckbox} from '@clayui/form';
-import React, {useId, useState} from 'react';
+import {datetimeUtils} from '@liferay/object-js-components-web';
+import React, {RefObject, useId, useState} from 'react';
 
 import FieldWrapper from '../../../common/components/forms/FieldWrapper';
 
 export default function SchedulePanel({
-	expirationDate = '',
+	dateConfig,
+	expirationDateInputRef,
 }: {
-	expirationDate: string;
+	dateConfig: datetimeUtils.DateConfig;
+	expirationDateInputRef: RefObject<HTMLInputElement>;
 }) {
+	const expirationDateInput = expirationDateInputRef.current!;
+
 	return (
 		<div className="px-3">
 			<p className="text-3 text-secondary">
@@ -23,7 +28,8 @@ export default function SchedulePanel({
 			</p>
 
 			<ScheduleField
-				date={expirationDate}
+				date={expirationDateInput.dataset.value}
+				dateConfig={dateConfig}
 				label={Liferay.Language.get('expiration-date')}
 			/>
 		</div>
@@ -32,9 +38,11 @@ export default function SchedulePanel({
 
 function ScheduleField({
 	date: initialDate = '',
+	dateConfig,
 	label,
 }: {
-	date: string;
+	date: string | undefined;
+	dateConfig: datetimeUtils.DateConfig;
 	label: string;
 }) {
 	const [checked, setChecked] = useState<boolean>(initialDate === '');
@@ -46,7 +54,9 @@ function ScheduleField({
 		<div aria-label={label} role="group">
 			<FieldWrapper disabled={checked} fieldId={id} label={label}>
 				<ClayDatePicker
+					dateFormat={dateConfig.clayFormat}
 					disabled={checked}
+					firstDayOfWeek={dateConfig.firstDayOfWeek}
 					id={id}
 					months={[
 						`${Liferay.Language.get('january')}`,
@@ -65,7 +75,7 @@ function ScheduleField({
 					onChange={(value: string) => {
 						setDate(value);
 					}}
-					placeholder="YYYY-MM-DD --:--"
+					placeholder={dateConfig.placeholder}
 					time
 					value={date}
 					years={{

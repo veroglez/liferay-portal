@@ -9,10 +9,12 @@ import '../../../css/content_editor/ContentEditorSidePanel.scss';
 
 import {Button, VerticalBar} from '@clayui/core';
 import ClayIcon from '@clayui/icon';
+import {datetimeUtils} from '@liferay/object-js-components-web';
 import {LiferayEditorConfig} from 'frontend-editor-ckeditor-web';
 import {openToast} from 'frontend-js-components-web';
 import {fetch, objectToFormData} from 'frontend-js-web';
-import React, {useState} from 'react';
+import moment from 'moment';
+import React, {RefObject, useEffect, useRef, useState} from 'react';
 
 import CommentsPanel from './panels/CommentsPanel';
 import GeneralPanel from './panels/GeneralPanel';
@@ -33,8 +35,13 @@ type Props = {
 	version: string;
 };
 
+type SidePanelProps = Props & {
+	dateConfig: datetimeUtils.DateConfig;
+	expirationDateInputRef: RefObject<HTMLInputElement>;
+};
+
 type Item = {
-	component: React.ComponentType<Props>;
+	component: React.ComponentType<SidePanelProps>;
 	divider?: boolean;
 	icon: string;
 	id: string;
@@ -63,6 +70,57 @@ const items: Item[] = [
 ];
 
 export default function ContentEditorSidePanel(props: Props) {
+	const [formId, setFormId] = useState<string | undefined>();
+
+	const expirationDateInputRef = useRef<HTMLInputElement | null>(null);
+
+	const dateConfig = datetimeUtils.generateDateConfigurations({
+		defaultLanguageId: Liferay.ThemeDisplay.getDefaultLanguageId(),
+		locale: Liferay.ThemeDisplay.getLanguageId(),
+		type: 'DateTime',
+	});
+
+	const toMomentDate = (value: string) => {
+		if (!value) {
+			return '';
+		}
+
+		return moment(
+			value.replace('T', ' '),
+			dateConfig.serverFormat,
+			true
+		).format(dateConfig.momentFormat);
+	};
+
+	useEffect(() => {
+		const form = document.querySelector('.lfr-layout-structure-item-form');
+
+		if (form) {
+			setFormId(form.id);
+		}
+	}, []);
+
+	return (
+		<>
+			<SidePanel
+				{...props}
+				dateConfig={dateConfig}
+				expirationDateInputRef={expirationDateInputRef}
+			/>
+			<input
+				data-panel={Liferay.Language.get('schedule')}
+				data-value={toMomentDate(props.expirationDate)}
+				form={formId}
+				name="expirationDate"
+				ref={expirationDateInputRef}
+				type="hidden"
+				value={props.expirationDate}
+			/>
+		</>
+	);
+}
+
+function SidePanel(props: SidePanelProps) {
 	const [panel, setPanel] = useState<React.Key | null>(null);
 
 	return (
