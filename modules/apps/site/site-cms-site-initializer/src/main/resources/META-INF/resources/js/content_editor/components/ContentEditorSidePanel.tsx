@@ -30,6 +30,7 @@ type Props = {
 	expirationDate: string;
 	id: string;
 	isSubscribed: boolean;
+	reviewDate: string;
 	subscribeURL: string;
 	type: string;
 	version: string;
@@ -38,6 +39,7 @@ type Props = {
 type SidePanelProps = Props & {
 	dateConfig: datetimeUtils.DateConfig;
 	expirationDateInputRef: RefObject<HTMLInputElement>;
+	reviewDateInputRef: RefObject<HTMLInputElement>;
 };
 
 type Item = {
@@ -73,6 +75,7 @@ export default function ContentEditorSidePanel(props: Props) {
 	const [formId, setFormId] = useState<string | undefined>();
 
 	const expirationDateInputRef = useRef<HTMLInputElement | null>(null);
+	const reviewDateInputRef = useRef<HTMLInputElement | null>(null);
 
 	const dateConfig = datetimeUtils.generateDateConfigurations({
 		defaultLanguageId: Liferay.ThemeDisplay.getDefaultLanguageId(),
@@ -106,6 +109,7 @@ export default function ContentEditorSidePanel(props: Props) {
 				{...props}
 				dateConfig={dateConfig}
 				expirationDateInputRef={expirationDateInputRef}
+				reviewDateInputRef={reviewDateInputRef}
 			/>
 			<input
 				data-panel={Liferay.Language.get('schedule')}
@@ -115,6 +119,15 @@ export default function ContentEditorSidePanel(props: Props) {
 				ref={expirationDateInputRef}
 				type="hidden"
 				value={props.expirationDate}
+			/>
+			<input
+				data-panel={Liferay.Language.get('schedule')}
+				data-value={toMomentDate(props.reviewDate)}
+				form={formId}
+				name="reviewDate"
+				ref={reviewDateInputRef}
+				type="hidden"
+				value={props.reviewDate}
 			/>
 		</>
 	);

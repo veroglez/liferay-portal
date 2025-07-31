@@ -14,11 +14,14 @@ import FieldWrapper from '../../../common/components/forms/FieldWrapper';
 export default function SchedulePanel({
 	dateConfig,
 	expirationDateInputRef,
+	reviewDateInputRef,
 }: {
 	dateConfig: datetimeUtils.DateConfig;
 	expirationDateInputRef: RefObject<HTMLInputElement>;
+	reviewDateInputRef: RefObject<HTMLInputElement>;
 }) {
 	const expirationDateInput = expirationDateInputRef.current!;
+	const reviewDateInput = reviewDateInputRef.current!;
 
 	return (
 		<div className="px-3">
@@ -35,6 +38,15 @@ export default function SchedulePanel({
 				formInput={expirationDateInput}
 				label={Liferay.Language.get('expiration-date')}
 				neverExpire={expirationDateInput.value === ''}
+			/>
+
+			<ScheduleField
+				date={reviewDateInput.dataset.value}
+				dateConfig={dateConfig}
+				error={reviewDateInput.dataset.error}
+				formInput={reviewDateInput}
+				label={Liferay.Language.get('review-date')}
+				neverExpire={reviewDateInput.value === ''}
 			/>
 		</div>
 	);
