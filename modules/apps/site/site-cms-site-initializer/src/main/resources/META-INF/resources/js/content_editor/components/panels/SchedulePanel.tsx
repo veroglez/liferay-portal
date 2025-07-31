@@ -6,6 +6,7 @@
 import ClayDatePicker from '@clayui/date-picker';
 import ClayForm, {ClayCheckbox} from '@clayui/form';
 import {datetimeUtils} from '@liferay/object-js-components-web';
+import moment from 'moment';
 import React, {RefObject, useId, useState} from 'react';
 
 import FieldWrapper from '../../../common/components/forms/FieldWrapper';
@@ -30,7 +31,9 @@ export default function SchedulePanel({
 			<ScheduleField
 				date={expirationDateInput.dataset.value}
 				dateConfig={dateConfig}
+				formInput={expirationDateInput}
 				label={Liferay.Language.get('expiration-date')}
+				neverExpire={expirationDateInput.value === ''}
 			/>
 		</div>
 	);
@@ -39,13 +42,17 @@ export default function SchedulePanel({
 function ScheduleField({
 	date: initialDate = '',
 	dateConfig,
+	formInput,
 	label,
+	neverExpire,
 }: {
 	date: string | undefined;
 	dateConfig: datetimeUtils.DateConfig;
+	formInput: HTMLInputElement;
 	label: string;
+	neverExpire: boolean;
 }) {
-	const [checked, setChecked] = useState<boolean>(initialDate === '');
+	const [checked, setChecked] = useState<boolean>(neverExpire);
 	const [date, setDate] = useState<string>(initialDate);
 
 	const id = useId();
@@ -91,9 +98,42 @@ function ScheduleField({
 					label={Liferay.Language.get('never-expire')}
 					onChange={({target: {checked}}) => {
 						setChecked(checked);
+
+						updateDateInput({
+							dateConfig,
+							formInput,
+							neverExpire: checked,
+							value: checked ? '' : date,
+						});
 					}}
 				/>
 			</ClayForm.Group>
 		</div>
+	);
+}
+
+function updateDateInput({
+	dateConfig,
+	formInput,
+	neverExpire = false,
+	value,
+}: {
+	dateConfig: datetimeUtils.DateConfig;
+	formInput: HTMLInputElement;
+	neverExpire?: boolean;
+	value: string;
+}) {
+	if (neverExpire) {
+		formInput.value = '';
+	}
+	else {
+		formInput.dataset.value = value;
+		formInput.value = toServerFormat(value, dateConfig).replace(' ', 'T');
+	}
+}
+
+function toServerFormat(value: string, dateConfig: datetimeUtils.DateConfig) {
+	return moment(value, dateConfig.momentFormat, true).format(
+		dateConfig.serverFormat
 	);
 }
