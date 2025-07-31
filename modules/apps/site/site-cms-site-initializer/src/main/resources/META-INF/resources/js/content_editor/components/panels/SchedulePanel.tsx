@@ -31,6 +31,7 @@ export default function SchedulePanel({
 			<ScheduleField
 				date={expirationDateInput.dataset.value}
 				dateConfig={dateConfig}
+				error={expirationDateInput.dataset.error}
 				formInput={expirationDateInput}
 				label={Liferay.Language.get('expiration-date')}
 				neverExpire={expirationDateInput.value === ''}
@@ -42,19 +43,21 @@ export default function SchedulePanel({
 function ScheduleField({
 	date: initialDate = '',
 	dateConfig,
+	error: initialError = '',
 	formInput,
 	label,
 	neverExpire,
 }: {
 	date: string | undefined;
 	dateConfig: datetimeUtils.DateConfig;
+	error?: string;
 	formInput: HTMLInputElement;
 	label: string;
 	neverExpire: boolean;
 }) {
 	const [checked, setChecked] = useState<boolean>(neverExpire);
 	const [date, setDate] = useState<string>(initialDate);
-	const [error, setError] = useState<string>('');
+	const [error, setError] = useState<string>(initialError);
 
 	const id = useId();
 
@@ -73,6 +76,7 @@ function ScheduleField({
 
 		updateDateInput({
 			dateConfig,
+			error,
 			formInput,
 			value,
 		});
@@ -135,6 +139,7 @@ function ScheduleField({
 
 						updateDateInput({
 							dateConfig,
+							error,
 							formInput,
 							neverExpire: checked,
 							value: checked ? '' : date,
@@ -161,15 +166,19 @@ function isPastDate(value: string, dateConfig: datetimeUtils.DateConfig) {
 
 function updateDateInput({
 	dateConfig,
+	error,
 	formInput,
 	neverExpire = false,
 	value,
 }: {
 	dateConfig: datetimeUtils.DateConfig;
+	error: string;
 	formInput: HTMLInputElement;
 	neverExpire?: boolean;
 	value: string;
 }) {
+	formInput.dataset.error = error;
+
 	if (neverExpire) {
 		formInput.value = '';
 	}
