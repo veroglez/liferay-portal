@@ -54,13 +54,40 @@ function ScheduleField({
 }) {
 	const [checked, setChecked] = useState<boolean>(neverExpire);
 	const [date, setDate] = useState<string>(initialDate);
+	const [error, setError] = useState<string>('');
 
 	const id = useId();
 
+	const onBlur = (value: string) => {
+		let error = '';
+		const isValid = moment(value, dateConfig.momentFormat, true).isValid();
+
+		if (value && !isValid) {
+			error = Liferay.Language.get('the-field-value-is-invalid');
+		}
+		else if (isPastDate(date, dateConfig)) {
+			error = Liferay.Language.get('the-date-entered-is-in-the-past');
+		}
+
+		setError(error);
+
+		updateDateInput({
+			dateConfig,
+			formInput,
+			value,
+		});
+	};
+
 	return (
 		<div aria-label={label} role="group">
-			<FieldWrapper disabled={checked} fieldId={id} label={label}>
+			<FieldWrapper
+				disabled={checked}
+				errorMessage={!checked ? error : ''}
+				fieldId={id}
+				label={label}
+			>
 				<ClayDatePicker
+					aria-describedby={error}
 					dateFormat={dateConfig.clayFormat}
 					disabled={checked}
 					firstDayOfWeek={dateConfig.firstDayOfWeek}
@@ -79,8 +106,15 @@ function ScheduleField({
 						`${Liferay.Language.get('november')}`,
 						`${Liferay.Language.get('december')}`,
 					]}
+					onBlur={({target: {value}}) => onBlur(value)}
 					onChange={(value: string) => {
+						setError('');
 						setDate(value);
+					}}
+					onExpandedChange={(open: boolean) => {
+						if (!open) {
+							onBlur(date);
+						}
 					}}
 					placeholder={dateConfig.placeholder}
 					time
@@ -110,6 +144,19 @@ function ScheduleField({
 			</ClayForm.Group>
 		</div>
 	);
+}
+
+function isPastDate(value: string, dateConfig: datetimeUtils.DateConfig) {
+	const languageId = Liferay.ThemeDisplay.getBCP47LanguageId();
+	const timeZone = Liferay.ThemeDisplay.getTimeZone();
+
+	const timeZoneDateTime = new Date(
+		new Date().toLocaleString(languageId, {
+			timeZone,
+		})
+	);
+
+	return timeZoneDateTime >= new Date(toServerFormat(value, dateConfig));
 }
 
 function updateDateInput({
