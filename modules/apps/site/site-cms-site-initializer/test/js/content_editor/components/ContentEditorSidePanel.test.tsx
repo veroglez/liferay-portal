@@ -4,12 +4,17 @@
  */
 
 import '@testing-library/jest-dom/extend-expect';
+import {datetimeUtils} from '@liferay/object-js-components-web';
 import {render, screen, waitFor} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import moment from 'moment';
 import React from 'react';
 
 import ContentEditorSidePanel from '../../../../src/main/resources/META-INF/resources/js/content_editor/components/ContentEditorSidePanel';
 import {mockFetch} from '../../__mocks__/frontend-js-web';
+
+const EXPIRATION_DATE = '2025-08-14T00:01';
+const REVIEW_DATE = '2025-08-15T00:01';
 
 const renderComponent = ({isSubscribed = false} = {}) => {
 	return render(
@@ -19,12 +24,27 @@ const renderComponent = ({isSubscribed = false} = {}) => {
 			deleteCommentURL="deleteCommentURL"
 			editCommentURL="editCommentURL"
 			editorConfig={{}}
+			expirationDate={EXPIRATION_DATE}
 			id="contentId"
 			isSubscribed={isSubscribed}
+			reviewDate={REVIEW_DATE}
 			subscribeURL="subscribeURL"
 			type="Content Type"
 			version="Version 1"
 		/>
+	);
+};
+
+const toMomentDate = (value: string) => {
+	const {momentFormat, serverFormat} =
+		datetimeUtils.generateDateConfigurations({
+			defaultLanguageId: Liferay.ThemeDisplay.getDefaultLanguageId(),
+			locale: Liferay.ThemeDisplay.getLanguageId(),
+			type: 'DateTime',
+		});
+
+	return moment(value.replace('T', ' '), serverFormat, true).format(
+		momentFormat
 	);
 };
 
@@ -131,5 +151,27 @@ describe('ContentEditorSidePanel', () => {
 				)
 			).toBeInTheDocument();
 		});
+	});
+
+	it('renders the hidden inputs with initial values', async () => {
+		renderComponent();
+
+		const expirationInput: HTMLInputElement | null = document.querySelector(
+			'[name="expirationDate"]'
+		);
+		const reviewInput: HTMLInputElement | null = document.querySelector(
+			'[name="reviewDate"]'
+		);
+
+		expect(expirationInput?.value).toBe(EXPIRATION_DATE);
+		expect(expirationInput).toHaveAttribute(
+			'data-value',
+			toMomentDate(EXPIRATION_DATE)
+		);
+		expect(reviewInput?.value).toBe(REVIEW_DATE);
+		expect(reviewInput).toHaveAttribute(
+			'data-value',
+			toMomentDate(REVIEW_DATE)
+		);
 	});
 });
