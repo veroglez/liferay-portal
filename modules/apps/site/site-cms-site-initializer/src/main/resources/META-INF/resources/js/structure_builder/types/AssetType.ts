@@ -25,7 +25,7 @@ export interface IAssetObjectEntry {
 	file?: IAssetFile;
 	friendlyUrlPath: string;
 	id: number;
-	keywords?: string[];
+	keywords: string[];
 	objectEntryFolderExternalReferenceCode: string;
 	objectEntryFolderId: number;
 	reviewDate: string;
