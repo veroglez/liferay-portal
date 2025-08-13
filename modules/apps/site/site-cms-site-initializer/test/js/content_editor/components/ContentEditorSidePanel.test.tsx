@@ -32,11 +32,14 @@ const renderComponent = ({isSubscribed = false} = {}) => {
 			editCommentURL="editCommentURL"
 			editorConfig={{}}
 			expirationDate={EXPIRATION_DATE}
+			getObjectEntryURL="getObjectEntryURL"
+			groupId="21000"
 			id="contentId"
 			isSubscribed={isSubscribed}
 			reviewDate={REVIEW_DATE}
 			subscribeURL="subscribeURL"
 			type="Content Type"
+			updateObjectEntryURL="updateObjectEntryURL"
 			version="Version 1"
 		/>
 	);

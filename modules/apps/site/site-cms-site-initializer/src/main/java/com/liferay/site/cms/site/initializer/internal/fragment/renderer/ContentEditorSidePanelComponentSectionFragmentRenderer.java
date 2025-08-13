@@ -212,6 +212,12 @@ public class ContentEditorSidePanelComponentSectionFragmentRenderer
 					themeDisplay.getLocale());
 			}
 		).put(
+			"getObjectEntryURL",
+			themeDisplay.getPortalURL() + "/o/cms/basic-web-contents/" +
+				objectEntry.getObjectEntryId()
+		).put(
+			"groupId", "20121"
+		).put(
 			"id", String.valueOf(objectEntry.getObjectEntryId())
 		).put(
 			"isSubscribed",
@@ -249,6 +255,10 @@ public class ContentEditorSidePanelComponentSectionFragmentRenderer
 
 				return objectDefinition.getLabel(themeDisplay.getLocale());
 			}
+		).put(
+			"updateObjectEntryURL",
+			themeDisplay.getPortalURL() + "/o/cms/basic-web-contents/" +
+				objectEntry.getObjectEntryId()
 		).put(
 			"version", () -> String.valueOf(objectEntry.getVersion())
 		).build();
