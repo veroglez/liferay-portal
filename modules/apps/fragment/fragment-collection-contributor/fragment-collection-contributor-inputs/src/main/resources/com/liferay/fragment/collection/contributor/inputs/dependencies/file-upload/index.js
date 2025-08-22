@@ -4,6 +4,9 @@
  */
 
 const fileInput = document.getElementById(`${fragmentNamespace}-file-upload`);
+const fileInputReadonly = document.getElementById(
+	`${fragmentNamespace}-file-upload-readonly`
+);
 const fileName = document.getElementById(`${fragmentNamespace}-file-name`);
 const hiddenFileInput = document.getElementById(
 	`${fragmentNamespace}-file-upload-hidden`
@@ -353,13 +356,14 @@ else {
 							if (unlocalizedFieldsState === 'read-only') {
 								selectButton.classList.add('d-none');
 
-								fileName.setAttribute('readonly', 'true');
-								fileName.setAttribute('tabindex', '0');
-								fileName.classList.add('form-control');
+								fileInputReadonly.classList.remove('d-none');
 
-								if (!fileName.innerText) {
-									fileName.innerText =
-										fileName.dataset.placeholder;
+								fileName.classList.add('d-none');
+
+								const file = fileInput.files?.[0];
+
+								if (file) {
+									fileInputReadonly.value = file.name;
 								}
 							}
 							else {
@@ -374,16 +378,10 @@ else {
 							if (unlocalizedFieldsState === 'read-only') {
 								selectButton.classList.remove('d-none');
 
-								fileName.removeAttribute('readonly');
-								fileName.removeAttribute('tabindex');
-								fileName.classList.remove('form-control');
+								fileInputReadonly.classList.add('d-none');
+								fileInputReadonly.value = '';
 
-								if (
-									fileName.innerText ===
-									fileName.dataset.placeholder
-								) {
-									fileName.innerText = '';
-								}
+								fileName.classList.remove('d-none');
 							}
 							else {
 								selectButton.removeAttribute('disabled');

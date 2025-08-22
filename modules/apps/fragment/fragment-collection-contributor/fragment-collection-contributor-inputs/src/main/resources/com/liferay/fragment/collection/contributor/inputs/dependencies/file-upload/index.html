@@ -18,9 +18,9 @@
 			[#if input.required][@clay["icon"] className="reference-mark" symbol="asterisk" /][/#if]
 		</label>
 
-		[#if input.readOnly]
-			<input class="form-control" aria-labelledby="${fragmentEntryLinkNamespace}-file-upload-label" class="form-control" id="${fragmentEntryLinkNamespace}-file-upload" name="${input.name}" placeholder="${languageUtil.get(locale, "no-file-selected")}" readonly type="text" [#if input.attributes.fileName??]value="${htmlUtil.escape(input.attributes.fileName)}"[/#if] />
-		[#else]
+		<input class="form-control [#if !input.readOnly]d-none[/#if]" aria-labelledby="${fragmentEntryLinkNamespace}-file-upload-label" class="form-control" id="${fragmentEntryLinkNamespace}-file-upload-readonly" name="${input.name}" placeholder="${languageUtil.get(locale, "no-file-selected")}" readonly type="text" [#if input.attributes.fileName??]value="${htmlUtil.escape(input.attributes.fileName)}"[/#if] />
+
+		[#if !input.readOnly]
 			<div aria-describedby="${fragmentEntryLinkNamespace}-file-upload-help-text" aria-labelledby="${fragmentEntryLinkNamespace}-file-upload-label [#if  input.errorMessage?has_content]${fragmentEntryLinkNamespace}-file-upload-error-message[/#if]" class="align-items-center d-flex" role="group">
 				<div class="position-relative">
 					<button class="btn btn-secondary" aria-describedby="${fragmentEntryLinkNamespace}-file-name" id="${fragmentEntryLinkNamespace}-file-upload-button-label" type="button">[@clay["icon"] className="inline-item-before" symbol="upload" /] ${htmlUtil.escape(configuration.buttonText)}</button>
