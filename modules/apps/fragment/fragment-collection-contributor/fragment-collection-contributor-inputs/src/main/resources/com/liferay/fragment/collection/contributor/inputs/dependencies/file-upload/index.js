@@ -69,6 +69,8 @@ function onRemoveFile() {
 
 	removeButton.classList.add('d-none');
 	removeButton.removeEventListener('click', onRemoveFile);
+
+	selectButton.focus();
 }
 
 function onSelectFile(event, onChange, setTranslationInputValue) {
@@ -126,7 +128,7 @@ const setFileName = (input) => {
 if (layoutMode === 'edit') {
 	selectButton.classList.add('disabled');
 }
-else {
+else if (fileInput) {
 	let selectFileEvent = onSelectFromUserComputer;
 
 	if (input.attributes.selectFromDocumentLibrary) {
