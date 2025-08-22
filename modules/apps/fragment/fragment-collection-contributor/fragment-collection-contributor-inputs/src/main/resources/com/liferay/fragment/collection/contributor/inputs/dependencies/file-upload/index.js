@@ -3,10 +3,8 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
-const wrapper = fragmentElement;
-
 const fileInput = document.getElementById(`${fragmentNamespace}-file-upload`);
-const fileName = wrapper.querySelector('.forms-file-upload-file-name');
+const fileName = document.getElementById(`${fragmentNamespace}-file-name`);
 const hiddenFileInput = document.getElementById(
 	`${fragmentNamespace}-file-upload-hidden`
 );

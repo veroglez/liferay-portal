@@ -23,15 +23,17 @@
 		[#else]
 			<div aria-describedby="${fragmentEntryLinkNamespace}-file-upload-help-text" aria-labelledby="${fragmentEntryLinkNamespace}-file-upload-label [#if  input.errorMessage?has_content]${fragmentEntryLinkNamespace}-file-upload-error-message[/#if]" class="align-items-center d-flex" role="group">
 				<div class="position-relative">
-					<button class="btn btn-secondary" id="${fragmentEntryLinkNamespace}-file-upload-button-label" type="button">[@clay["icon"] className="inline-item-before" symbol="upload" /] ${htmlUtil.escape(configuration.buttonText)}</button>
+					<button class="btn btn-secondary" aria-describedby="${fragmentEntryLinkNamespace}-file-name" id="${fragmentEntryLinkNamespace}-file-upload-button-label" type="button">[@clay["icon"] className="inline-item-before" symbol="upload" /] ${htmlUtil.escape(configuration.buttonText)}</button>
 
 					<input id="${fragmentEntryLinkNamespace}-file-upload-hidden" [#if localFileUploaded]name="${input.name}"[/#if] type="hidden" value="${input.value?has_content?then(input.value, '')}" />
 
 					<input accept="${(input.attributes.allowedFileExtensions?has_content)?then(input.attributes.allowedFileExtensions, '*')}" aria-hidden="true" class="file-upload-input sr-only" formenctype="multipart/form-data" id="${fragmentEntryLinkNamespace}-file-upload" [#if !localFileUploaded]name="${input.name}"[/#if] ${input.required?then('required', '' )} type="${showDocumentLibrarySelector?then('text', 'file')}" [#if input.value??]value="${input.value}"[/#if] tabIndex="-1" />
 				</div>
 
-				<strong aria-label="${htmlUtil.escape(input.label)}" class="forms-file-upload-file-name pl-2" data-placeholder="${languageUtil.get(locale, "no-file-selected")}" role="textbox" value="">
-					[#if input.attributes.fileName??]${htmlUtil.escape(input.attributes.fileName)}[/#if]
+				<strong aria-live="polite" class="pl-2" id="${fragmentEntryLinkNamespace}-file-name">
+					[#if input.attributes.fileName??]
+						${htmlUtil.escape(input.attributes.fileName)}
+					[/#if]
 				</strong>
 
 				<button class="btn btn-monospaced btn-outline-borderless btn-outline-secondary d-none lfr-portal-tooltip" [#if disabled]disabled[/#if] id="${fragmentEntryLinkNamespace}-file-upload-remove-button" title="${languageUtil.get(locale, 'remove-item')}" type="button">
