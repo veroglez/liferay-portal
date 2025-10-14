@@ -12,6 +12,8 @@ import ClayLink from '@clayui/link';
 import React, {useEffect, useState} from 'react';
 
 import Toolbar from '../../common/components/Toolbar';
+import {toMomentDate} from './ContentEditorSidePanel';
+import SchedulePublicationModal from './SchedulePublicationModal';
 
 export const EVENT_VALIDATE_FORM = 'contentEditor:validateForm';
 
@@ -19,14 +21,20 @@ const STATUS_DRAFT_CODE = 2;
 
 export default function ContentEditorToolbar({
 	backURL,
+	displayDate: initialDisplayDate,
 	hasWorkflow,
 	headerTitle,
+	type,
 }: {
 	backURL: string;
+	displayDate: string;
 	hasWorkflow: boolean;
 	headerTitle: string;
+	type: string;
 }) {
 	const [formId, setFormId] = useState<string | undefined>();
+	const [showModal, setShowModal] = useState<boolean>(false);
+	const [displayDate, setDisplayDate] = useState<string>(initialDisplayDate);
 
 	useEffect(() => {
 		let form = document.querySelector('.lfr-main-form-container');
@@ -44,7 +52,6 @@ export default function ContentEditorToolbar({
 		<ClayButton
 			displayType="primary"
 			form={formId}
-			name="redirect"
 			onClick={(event) => {
 				Liferay.fire(EVENT_VALIDATE_FORM, {event});
 			}}
@@ -103,6 +110,7 @@ export default function ContentEditorToolbar({
 									label: Liferay.Language.get(
 										'schedule-publication'
 									),
+									onClick: () => setShowModal(true),
 									symbolLeft: 'date-time',
 								},
 							]}
@@ -129,6 +137,25 @@ export default function ContentEditorToolbar({
 					value={backURL}
 				/>
 			</Toolbar.Item>
+
+			{showModal ? (
+				<SchedulePublicationModal
+					date={toMomentDate(displayDate)}
+					onCloseModal={() => setShowModal(false)}
+					onSaveModal={(date: string) => {
+						setDisplayDate(date);
+						setShowModal(false);
+					}}
+					type={type}
+				/>
+			) : null}
+
+			<input
+				form={formId}
+				name="displayDate"
+				type="hidden"
+				value={displayDate}
+			/>
 		</Toolbar>
 	);
 }

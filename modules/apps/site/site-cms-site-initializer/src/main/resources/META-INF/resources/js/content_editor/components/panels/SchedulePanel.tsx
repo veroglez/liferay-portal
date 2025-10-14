@@ -59,7 +59,7 @@ export default function SchedulePanel({
 	);
 }
 
-function ScheduleField({
+export function ScheduleField({
 	date: initialDate = '',
 	dateConfig,
 	error: initialError = '',
@@ -73,10 +73,10 @@ function ScheduleField({
 	error?: string;
 	label: string;
 	name: string;
-	neverExpire: boolean;
+	neverExpire?: boolean;
 	updateFieldData: any;
 }) {
-	const [checked, setChecked] = useState<boolean>(neverExpire);
+	const [checked, setChecked] = useState<boolean>(Boolean(neverExpire));
 	const [date, setDate] = useState<string>(initialDate);
 	const [error, setError] = useState<string>(initialError);
 
@@ -144,22 +144,24 @@ function ScheduleField({
 				/>
 			</FieldWrapper>
 
-			<ClayForm.Group>
-				<ClayCheckbox
-					checked={checked}
-					label={Liferay.Language.get('never-expire')}
-					onChange={({target: {checked}}) => {
-						setChecked(checked);
+			{neverExpire !== undefined ? (
+				<ClayForm.Group>
+					<ClayCheckbox
+						checked={checked}
+						label={Liferay.Language.get('never-expire')}
+						onChange={({target: {checked}}) => {
+							setChecked(checked);
 
-						updateFieldData({
-							error,
-							name,
-							neverExpire: checked,
-							value: checked ? '' : date,
-						});
-					}}
-				/>
-			</ClayForm.Group>
+							updateFieldData({
+								error,
+								name,
+								neverExpire: checked,
+								value: checked ? '' : date,
+							});
+						}}
+					/>
+				</ClayForm.Group>
+			) : null}
 		</div>
 	);
 }

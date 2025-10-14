@@ -114,7 +114,7 @@ const items: Item[] = [
 	},
 ];
 
-const dateConfig = datetimeUtils.generateDateConfigurations({
+export const dateConfig = datetimeUtils.generateDateConfigurations({
 	defaultLanguageId: Liferay.ThemeDisplay.getDefaultLanguageId(),
 	locale: Liferay.ThemeDisplay.getLanguageId(),
 	type: 'DateTime',
@@ -389,7 +389,7 @@ function SubscribeButton({
 	);
 }
 
-function toMomentDate(value: string) {
+export function toMomentDate(value: string) {
 	return value ? moment(value).format(dateConfig.momentFormat) : '';
 }
 
