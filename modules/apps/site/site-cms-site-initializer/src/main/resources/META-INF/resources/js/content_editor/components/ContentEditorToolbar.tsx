@@ -152,7 +152,7 @@ export default function ContentEditorToolbar({
 
 			<input
 				form={formId}
-				name="displayDate"
+				name="ObjectEntry_displayDate"
 				type="hidden"
 				value={displayDate}
 			/>

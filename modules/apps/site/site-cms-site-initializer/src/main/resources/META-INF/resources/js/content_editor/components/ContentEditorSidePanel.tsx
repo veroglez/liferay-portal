@@ -200,7 +200,7 @@ export default function ContentEditorSidePanel(props: Props) {
 				<input
 					form={formId}
 					key={name}
-					name={name}
+					name={`ObjectEntry_${name}`}
 					type="hidden"
 					value={serverValue}
 				/>
