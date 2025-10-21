@@ -161,7 +161,7 @@
 									{
 										"definition": {
 											"fragment": {
-												"key": "INPUTS-file-upload"
+												"key": "INPUTS-drag-and-drop-upload"
 											},
 											"fragmentConfig": {
 												"buttonText": "Select File",
