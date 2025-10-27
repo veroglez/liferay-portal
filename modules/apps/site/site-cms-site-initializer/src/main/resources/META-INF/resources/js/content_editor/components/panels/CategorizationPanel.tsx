@@ -51,7 +51,6 @@ export default function CategorizationPanel({
 				getObjectEntryURL={contentAPIURL}
 				inputSize="sm"
 				onUpdateCategorization={updateCategorization}
-				updateObjectEntryURL={contentAPIURL}
 			/>
 		</div>
 	);

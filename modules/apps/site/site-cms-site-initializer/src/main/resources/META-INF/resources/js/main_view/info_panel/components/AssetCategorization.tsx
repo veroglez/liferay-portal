@@ -6,6 +6,7 @@
 import {ClayInput} from '@clayui/form';
 import React, {ComponentProps, useEffect, useState} from 'react';
 
+import CategoryService from '../../../common/services/CategoryService';
 import {IAssetObjectEntry} from '../../../common/types/AssetType';
 import ObjectEntryService, {
 	EntryCategorizationDTO,
@@ -28,7 +29,7 @@ export default function AssetCategorization({
 	getObjectEntryURL: string;
 	inputSize?: CategorizationInputSize;
 	onUpdateCategorization?: (data: IAssetObjectEntry) => void;
-	updateObjectEntryURL: string;
+	updateObjectEntryURL?: string;
 }) {
 	const [objectEntry, setObjectEntry] = useState<IAssetObjectEntry | null>(
 		null
@@ -38,18 +39,70 @@ export default function AssetCategorization({
 		keywords,
 		taxonomyCategoryIds,
 	}: EntryCategorizationDTO): Promise<void> => {
-		const {data, error} = await ObjectEntryService.patchObjectEntry(
-			{
-				keywords: keywords || objectEntry?.keywords!,
-				...(taxonomyCategoryIds ? {taxonomyCategoryIds} : {}),
-			},
-			updateObjectEntryURL
-		);
+		let newObjectEntry: IAssetObjectEntry | null = null;
+		let error: string | null = null;
 
-		if (data) {
-			setObjectEntry(data);
+		if (updateObjectEntryURL) {
+			({data: newObjectEntry, error} =
+				await ObjectEntryService.patchObjectEntry(
+					{
+						keywords: keywords || objectEntry?.keywords!,
+						...(taxonomyCategoryIds ? {taxonomyCategoryIds} : {}),
+					},
+					updateObjectEntryURL
+				));
+		}
+		else {
+			if (!objectEntry) {
+				return;
+			}
 
-			onUpdateCategorization?.(data);
+			newObjectEntry = {
+				...objectEntry,
+				keywords: keywords || [],
+			};
+
+			if (taxonomyCategoryIds) {
+				if (
+					objectEntry.taxonomyCategoryBriefs.length >
+					taxonomyCategoryIds.length
+				) {
+					newObjectEntry = {
+						...newObjectEntry,
+						taxonomyCategoryBriefs:
+							objectEntry.taxonomyCategoryBriefs.filter(
+								({taxonomyCategoryId: id}) =>
+									taxonomyCategoryIds.includes(id)
+							),
+					};
+				}
+				else {
+					const addedCategoryId: number =
+						taxonomyCategoryIds[taxonomyCategoryIds.length - 1];
+
+					const {data: newCategory} =
+						await CategoryService.getCategoryById(addedCategoryId);
+
+					if (newCategory) {
+						newObjectEntry = {
+							...newObjectEntry,
+							taxonomyCategoryBriefs: [
+								...objectEntry.taxonomyCategoryBriefs,
+								{
+									embeddedTaxonomyCategory: newCategory,
+									taxonomyCategoryId: Number(newCategory.id),
+								},
+							],
+						};
+					}
+				}
+			}
+
+			onUpdateCategorization?.(newObjectEntry);
+		}
+
+		if (newObjectEntry) {
+			setObjectEntry(newObjectEntry);
 		}
 		else if (error) {
 			if (keywords?.length) {
