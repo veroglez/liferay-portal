@@ -7,6 +7,7 @@ package com.liferay.layout.type.controller.control.panel.internal.layout.type.co
 
 import com.liferay.application.list.PanelAppRegistry;
 import com.liferay.application.list.constants.ApplicationListWebKeys;
+import com.liferay.application.list.display.context.logic.PanelCategoryHelper;
 import com.liferay.layout.type.controller.BaseLayoutTypeControllerImpl;
 import com.liferay.petra.io.unsync.UnsyncStringWriter;
 import com.liferay.portal.kernel.model.LayoutConstants;
@@ -75,6 +76,9 @@ public class ControlPanelLayoutTypeController
 	protected void addAttributes(HttpServletRequest httpServletRequest) {
 		httpServletRequest.setAttribute(
 			ApplicationListWebKeys.PANEL_APP_REGISTRY, _panelAppRegistry);
+		httpServletRequest.setAttribute(
+			ApplicationListWebKeys.PANEL_CATEGORY_HELPER,
+			new PanelCategoryHelper(_panelAppRegistry));
 	}
 
 	@Override
@@ -105,6 +109,8 @@ public class ControlPanelLayoutTypeController
 	protected void removeAttributes(HttpServletRequest httpServletRequest) {
 		httpServletRequest.removeAttribute(
 			ApplicationListWebKeys.PANEL_APP_REGISTRY);
+		httpServletRequest.removeAttribute(
+			ApplicationListWebKeys.PANEL_CATEGORY_HELPER);
 	}
 
 	private static final String _EDIT_PAGE = "/layout/edit/control_panel.jsp";

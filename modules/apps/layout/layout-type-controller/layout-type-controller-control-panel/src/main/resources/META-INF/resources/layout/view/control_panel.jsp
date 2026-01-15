@@ -7,8 +7,43 @@
 
 <%@ include file="/layout/view/init.jsp" %>
 
-<liferay-application-list:application-content
-	portletId="<%= themeDisplay.getPpid() %>"
-/>
+<%
+PanelCategoryHelper panelCategoryHelper = (PanelCategoryHelper)request.getAttribute(ApplicationListWebKeys.PANEL_CATEGORY_HELPER);
+%>
 
-<liferay-layout:layout-common />
+<c:choose>
+	<c:when test='<%= panelCategoryHelper.containsPortlet(themeDisplay.getPpid(), "applications_menu") %>'>
+		<%--
+		/**
+		 * This would be a React component that receives the navigation menu data
+		 * as properties. The data will be retrieved based on the current
+		 * portlet (ppid) being rendered.
+		 */
+		--%>
+		<div id="--menu-left" class="d-flex">
+			<ul>
+				<li>
+					item 1
+				</li>
+				<li>
+					item 2
+				</li>
+			</ul>
+
+			<div class="w-100">
+				<liferay-application-list:application-content
+					portletId="<%= themeDisplay.getPpid() %>"
+				/>
+			</div>
+
+			<liferay-layout:layout-common />
+		</div>
+	</c:when>
+	<c:otherwise>
+			<liferay-application-list:application-content
+				portletId="<%= themeDisplay.getPpid() %>"
+			/>
+
+			<liferay-layout:layout-common />
+	</c:otherwise>
+</c:choose>

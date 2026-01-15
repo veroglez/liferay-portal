@@ -5,8 +5,14 @@
  */
 --%>
 
+<%@ taglib uri="jakarta.tags.core" prefix="c" %>
+
 <%@ taglib uri="http://liferay.com/tld/application-list" prefix="liferay-application-list" %><%@
 taglib uri="http://liferay.com/tld/layout" prefix="liferay-layout" %><%@
 taglib uri="http://liferay.com/tld/theme" prefix="liferay-theme" %>
+
+<%@ page import="com.liferay.portal.kernel.util.Validator" %><%@
+page import="com.liferay.application.list.display.context.logic.PanelCategoryHelper" %><%@
+page import="com.liferay.application.list.constants.ApplicationListWebKeys" %>
 
 <liferay-theme:defineObjects />
