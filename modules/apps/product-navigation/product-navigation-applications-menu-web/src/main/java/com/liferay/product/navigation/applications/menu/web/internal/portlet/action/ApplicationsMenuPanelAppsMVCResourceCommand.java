@@ -58,6 +58,7 @@ import jakarta.portlet.ResourceResponse;
 
 import jakarta.servlet.http.HttpServletRequest;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -402,19 +403,47 @@ public class ApplicationsMenuPanelAppsMVCResourceCommand
 				PanelCategoryKeys.APPLICATIONS_MENU, themeDisplay);
 
 		for (PanelCategory panelCategory : applicationsMenuPanelCategories) {
-			JSONArray childCategoriesJSONArray =
-				_getChildPanelCategoriesJSONArray(
-					httpServletRequest, panelCategory.getKey(), themeDisplay);
+			PanelApp homeOrFirstPanelApp =
+				_panelAppRegistry.getHomeOrFirstPanelApp(
+					panelCategory.getKey(),
+					themeDisplay.getPermissionChecker(),
+					themeDisplay.getScopeGroup());
 
-			if ((childCategoriesJSONArray == null) ||
-				(childCategoriesJSONArray.length() <= 0)) {
+			if (homeOrFirstPanelApp == null) {
+				List<PanelCategory> childPanelCategories =
+					_panelCategoryHelper.getChildPanelCategories(
+						panelCategory.getKey(), themeDisplay);
 
-				continue;
+				if (childPanelCategories.isEmpty()) {
+					continue;
+				}
+
+				PanelCategory firstChildPanelCategory = childPanelCategories.get(0);
+
+				homeOrFirstPanelApp =
+					_panelAppRegistry.getHomeOrFirstPanelApp(
+						firstChildPanelCategory.getKey(),
+						themeDisplay.getPermissionChecker(),
+						themeDisplay.getScopeGroup());
+
+				if (homeOrFirstPanelApp == null) {
+					continue;
+				}
 			}
+
+//			JSONArray childCategoriesJSONArray =
+//				_getChildPanelCategoriesJSONArray(
+//					httpServletRequest, panelCategory.getKey(), themeDisplay);
+//
+//			if ((childCategoriesJSONArray == null) ||
+//				(childCategoriesJSONArray.length() <= 0)) {
+//
+//				continue;
+//			}
 
 			panelCategoriesJSONArray.put(
 				JSONUtil.put(
-					"childCategories", childCategoriesJSONArray
+					"homeURL", homeOrFirstPanelApp.getPortletURL(httpServletRequest)
 				).put(
 					"key", panelCategory.getKey()
 				).put(

@@ -381,26 +381,37 @@ const AppsPanel = ({
 	sites,
 	virtualInstance,
 }) => {
-	let index = categories.findIndex((category) =>
-		category.childCategories.some((childCategory) =>
-			childCategory.panelApps.some(
-				(panelApp) => panelApp.portletId === selectedPortletId
-			)
-		)
-	);
+	// let index = categories.findIndex((category) =>
+	// 	category.childCategories.some((childCategory) =>
+	// 		childCategory.panelApps.some(
+	// 			(panelApp) => panelApp.portletId === selectedPortletId
+	// 		)
+	// 	)
+	// );
 
-	if (index === -1) {
-		index = 0;
-	}
+	// if (index === -1) {
+	// 	index = 0;
+	// }
 
-	const [activeTab, setActiveTab] = useState(index);
+	// const [activeTab, setActiveTab] = useState(index);
 
 	return (
 		<nav
 			aria-label={Liferay.Language.get('applications-menu')}
 			className="applications-menu-wrapper"
 		>
-			<div className="applications-menu-header">
+			{categories.map(({homeURL, key, label}, index) => {
+				return (
+					<a
+						href={homeURL}
+						key={`tabPane-${index}`}
+					>
+						{label}
+					</a>
+				)
+			})}
+
+			{/* <div className="applications-menu-header">
 				<ClayLayout.ContainerFluid size={false}>
 					<ClayLayout.Row>
 						<ClayLayout.Col>
@@ -520,7 +531,7 @@ const AppsPanel = ({
 						</ClayLayout.Col>
 					</ClayLayout.Row>
 				</ClayLayout.ContainerFluid>
-			</div>
+			</div> */}
 
 			<div className="applications-menu-bg applications-menu-footer">
 				<ClayLayout.ContainerFluid size={false}>
