@@ -21,10 +21,13 @@ import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.service.PortletLocalService;
+import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ListUtil;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
@@ -57,6 +60,53 @@ public class PanelAppRegistry {
 		}
 
 		return panelApps.get(0);
+	}
+
+	public PanelApp getHomeOrFirstPanelApp(
+		String parentPanelCategoryKey, PermissionChecker permissionChecker,
+		Group group) {
+
+		PanelApp homePanelApp = getHomePanelApp(
+			parentPanelCategoryKey, permissionChecker, group);
+
+		if (homePanelApp != null) {
+			return homePanelApp;
+		}
+
+		return getFirstPanelApp(
+			parentPanelCategoryKey, permissionChecker, group);
+	}
+
+	public PanelApp getHomePanelApp(
+		String parentPanelCategoryKey, PermissionChecker permissionChecker,
+		Group group) {
+
+		PanelApp panelApp = _homePanelApps.get(parentPanelCategoryKey);
+
+		if (panelApp == null) {
+			return null;
+		}
+
+		try {
+			for (PanelAppShowFilter panelAppShowFilter : _serviceTrackerList) {
+				if (!panelAppShowFilter.isShow(
+						panelApp, permissionChecker, group)) {
+
+					return null;
+				}
+			}
+
+			if (!panelApp.isShow(permissionChecker, group)) {
+				return null;
+			}
+
+			return panelApp;
+		}
+		catch (PortalException portalException) {
+			_log.error(portalException);
+		}
+
+		return null;
 	}
 
 	public List<PanelApp> getPanelApps(PanelCategory parentPanelCategory) {
@@ -174,11 +224,11 @@ public class PanelAppRegistry {
 					Portlet portlet = _portletLocalService.getPortletById(
 						panelApp.getPortletId());
 
+					String panelCategoryKey = String.valueOf(
+						serviceReference.getProperty("panel.category.key"));
+
 					if (portlet != null) {
-						portlet.setControlPanelEntryCategory(
-							String.valueOf(
-								serviceReference.getProperty(
-									"panel.category.key")));
+						portlet.setControlPanelEntryCategory(panelCategoryKey);
 					}
 					else if (_log.isDebugEnabled()) {
 						_log.debug(
@@ -190,6 +240,13 @@ public class PanelAppRegistry {
 
 						basePanelApp.setPortletLocalService(
 							_portletLocalService);
+					}
+
+					if (GetterUtil.getBoolean(
+							serviceReference.getProperty(
+								"panel.category.home"))) {
+
+						_homePanelApps.put(panelCategoryKey, panelApp);
 					}
 
 					return panelApp;
@@ -205,6 +262,8 @@ public class PanelAppRegistry {
 				public void removedService(
 					ServiceReference<PanelApp> serviceReference,
 					PanelApp panelApp) {
+
+					// TODO: Remove home app from Map
 
 					bundleContext.ungetService(serviceReference);
 				}
@@ -226,6 +285,8 @@ public class PanelAppRegistry {
 
 	@Reference
 	private GroupProvider _groupProvider;
+
+	private final Map<String, PanelApp> _homePanelApps = new HashMap<>();
 
 	@Reference
 	private PortletLocalService _portletLocalService;
