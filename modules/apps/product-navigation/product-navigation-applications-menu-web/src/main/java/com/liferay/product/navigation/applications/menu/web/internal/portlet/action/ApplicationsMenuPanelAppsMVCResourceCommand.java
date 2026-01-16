@@ -265,6 +265,8 @@ public class ApplicationsMenuPanelAppsMVCResourceCommand
 				return !bridge.hasAttribute("cmsFirstTimeAccess");
 			}
 		).put(
+			"key", "cms"
+		).put(
 			"label", LanguageUtil.get(httpServletRequest, "cms")
 		).put(
 			"logoURL",
