@@ -381,6 +381,7 @@ const AppsPanel = ({
 	sites,
 	virtualInstance,
 }) => {
+
 	// let index = categories.findIndex((category) =>
 	// 	category.childCategories.some((childCategory) =>
 	// 		childCategory.panelApps.some(
@@ -402,13 +403,10 @@ const AppsPanel = ({
 		>
 			{categories.map(({homeURL, key, label}, index) => {
 				return (
-					<a
-						href={homeURL}
-						key={`tabPane-${index}`}
-					>
+					<a href={homeURL} key={`tabPane-${index}`}>
 						{label}
 					</a>
-				)
+				);
 			})}
 
 			{/* <div className="applications-menu-header">

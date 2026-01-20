@@ -59,6 +59,7 @@ import jakarta.portlet.ResourceResponse;
 import jakarta.servlet.http.HttpServletRequest;
 
 import java.awt.*;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -405,8 +406,7 @@ public class ApplicationsMenuPanelAppsMVCResourceCommand
 		for (PanelCategory panelCategory : applicationsMenuPanelCategories) {
 			PanelApp homeOrFirstPanelApp =
 				_panelAppRegistry.getHomeOrFirstPanelApp(
-					panelCategory.getKey(),
-					themeDisplay.getPermissionChecker(),
+					panelCategory.getKey(), themeDisplay.getPermissionChecker(),
 					themeDisplay.getScopeGroup());
 
 			if (homeOrFirstPanelApp == null) {
@@ -418,32 +418,34 @@ public class ApplicationsMenuPanelAppsMVCResourceCommand
 					continue;
 				}
 
-				PanelCategory firstChildPanelCategory = childPanelCategories.get(0);
+				PanelCategory firstChildPanelCategory =
+					childPanelCategories.get(0);
 
-				homeOrFirstPanelApp =
-					_panelAppRegistry.getHomeOrFirstPanelApp(
-						firstChildPanelCategory.getKey(),
-						themeDisplay.getPermissionChecker(),
-						themeDisplay.getScopeGroup());
+				homeOrFirstPanelApp = _panelAppRegistry.getHomeOrFirstPanelApp(
+					firstChildPanelCategory.getKey(),
+					themeDisplay.getPermissionChecker(),
+					themeDisplay.getScopeGroup());
 
 				if (homeOrFirstPanelApp == null) {
 					continue;
 				}
 			}
 
-//			JSONArray childCategoriesJSONArray =
-//				_getChildPanelCategoriesJSONArray(
-//					httpServletRequest, panelCategory.getKey(), themeDisplay);
-//
-//			if ((childCategoriesJSONArray == null) ||
-//				(childCategoriesJSONArray.length() <= 0)) {
-//
-//				continue;
-//			}
+			// 			JSONArray childCategoriesJSONArray =
+
+			//				_getChildPanelCategoriesJSONArray(
+			//					httpServletRequest, panelCategory.getKey(), themeDisplay);
+			//
+			//			if ((childCategoriesJSONArray == null) ||
+			//				(childCategoriesJSONArray.length() <= 0)) {
+			//
+			//				continue;
+			//			}
 
 			panelCategoriesJSONArray.put(
 				JSONUtil.put(
-					"homeURL", homeOrFirstPanelApp.getPortletURL(httpServletRequest)
+					"homeURL",
+					homeOrFirstPanelApp.getPortletURL(httpServletRequest)
 				).put(
 					"key", panelCategory.getKey()
 				).put(
