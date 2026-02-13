@@ -164,6 +164,8 @@ public class SideNavigationDisplayContext {
 
 		PanelCategory panelCategory = _getPanelCategory();
 
+		boolean isFirstPanelCategory = true;
+
 		for (PanelCategory childPanelCategory :
 				_panelCategoryHelper.getChildPanelCategories(
 					panelCategory.getKey(), _themeDisplay)) {
@@ -175,12 +177,24 @@ public class SideNavigationDisplayContext {
 				continue;
 			}
 
+			String childPanelCategoryKey = childPanelCategory.getKey();
+
+			if (isFirstPanelCategory) {
+				isFirstPanelCategory = false;
+
+				if (childPanelCategoryKey.endsWith(".home")) {
+					verticalNavItems.addAll(childrenVerticalNavItems);
+
+					continue;
+				}
+			}
+
 			VerticalNavItem verticalNavItem = new VerticalNavItem();
 
 			verticalNavItem.setExpanded(
 				_panelCategoryHelper.containsPortlet(
-					_portletId, childPanelCategory.getKey()));
-			verticalNavItem.setId(childPanelCategory.getKey());
+					_portletId, childPanelCategoryKey));
+			verticalNavItem.setId(childPanelCategoryKey);
 			verticalNavItem.setItems(childrenVerticalNavItems);
 			verticalNavItem.setLabel(
 				childPanelCategory.getLabel(_themeDisplay.getLocale()));
@@ -237,6 +251,8 @@ public class SideNavigationDisplayContext {
 
 		PanelCategory panelCategory = _getPanelCategory();
 
+		boolean isFirstPanelCategory = true;
+
 		for (PanelCategory childPanelCategory :
 				_panelCategoryHelper.getChildPanelCategories(
 					panelCategory.getKey(), _themeDisplay)) {
@@ -248,9 +264,21 @@ public class SideNavigationDisplayContext {
 				continue;
 			}
 
+			String childPanelCategoryKey = childPanelCategory.getKey();
+
+			if (isFirstPanelCategory) {
+				isFirstPanelCategory = false;
+
+				if (childPanelCategoryKey.endsWith(".home")) {
+					propsItems.addAll(childrenPropsItems);
+
+					continue;
+				}
+			}
+
 			propsItems.add(
 				HashMapBuilder.<String, Object>put(
-					"id", childPanelCategory.getKey()
+					"id", childPanelCategoryKey
 				).put(
 					"items", childrenPropsItems
 				).put(
