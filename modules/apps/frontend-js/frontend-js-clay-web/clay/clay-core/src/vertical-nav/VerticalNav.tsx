@@ -261,7 +261,7 @@ function VerticalNav<T extends Record<string, any> | string>({
 			aria-orientation="vertical"
 			nested
 			ref={containerRef}
-			role="menubar"
+			role="tree"
 		>
 			<VerticalNavContextProvider
 				activeKey={

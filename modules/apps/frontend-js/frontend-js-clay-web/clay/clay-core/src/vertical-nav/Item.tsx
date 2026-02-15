@@ -191,7 +191,7 @@ export function Item<T extends Record<string, any>>({
 					}
 				}}
 				ref={itemRef}
-				role="menuitem"
+				role="treeitem"
 				showIcon={!!items}
 				spritemap={spritemap}
 				tabIndex={tabIndex}
@@ -250,7 +250,12 @@ export function Item<T extends Record<string, any>>({
 					timeout={prefersReducedMotion ? 0 : 250}
 					unmountOnExit
 				>
-					<Nav id={ariaControlsId} ref={menusRef} role="menu" stacked>
+					<Nav
+						id={ariaControlsId}
+						ref={menusRef}
+						role="group"
+						stacked
+					>
 						<ParentContext.Provider value={itemRef}>
 							<Collection<T> items={items} parentKey={keyValue}>
 								{childrenRoot.current}
