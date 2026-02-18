@@ -164,7 +164,7 @@ public class SideNavigationDisplayContext {
 
 		PanelCategory panelCategory = _getPanelCategory();
 
-		boolean isFirstPanelCategory = true;
+		boolean firstPanelCategory = true;
 
 		for (PanelCategory childPanelCategory :
 				_panelCategoryHelper.getChildPanelCategories(
@@ -179,8 +179,8 @@ public class SideNavigationDisplayContext {
 
 			String childPanelCategoryKey = childPanelCategory.getKey();
 
-			if (isFirstPanelCategory) {
-				isFirstPanelCategory = false;
+			if (firstPanelCategory) {
+				firstPanelCategory = false;
 
 				if (childPanelCategoryKey.endsWith(".home")) {
 					verticalNavItems.addAll(childrenVerticalNavItems);
@@ -251,7 +251,7 @@ public class SideNavigationDisplayContext {
 
 		PanelCategory panelCategory = _getPanelCategory();
 
-		boolean isFirstPanelCategory = true;
+		boolean firstPanelCategory = true;
 
 		for (PanelCategory childPanelCategory :
 				_panelCategoryHelper.getChildPanelCategories(
@@ -266,8 +266,8 @@ public class SideNavigationDisplayContext {
 
 			String childPanelCategoryKey = childPanelCategory.getKey();
 
-			if (isFirstPanelCategory) {
-				isFirstPanelCategory = false;
+			if (firstPanelCategory) {
+				firstPanelCategory = false;
 
 				if (childPanelCategoryKey.endsWith(".home")) {
 					propsItems.addAll(childrenPropsItems);
