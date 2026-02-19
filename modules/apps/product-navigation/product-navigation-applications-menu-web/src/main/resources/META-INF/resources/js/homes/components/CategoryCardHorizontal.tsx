@@ -25,16 +25,18 @@ const CategoryCardHorizontal = ({
 		>
 			<ClayCard.Body className="c-p-1 c-p-lg-2">
 				<ClayCard.Row>
-					<ClayLayout.ContentCol>
-						<ClaySticker
-							className="border-0"
-							displayType="outline"
-							inline
-							size="sm"
-						>
-							<ClayIcon fontSize={12} symbol={leadingIcon} />
-						</ClaySticker>
-					</ClayLayout.ContentCol>
+					{leadingIcon ? (
+						<ClayLayout.ContentCol>
+							<ClaySticker
+								className="border-0"
+								displayType="outline"
+								inline
+								size="sm"
+							>
+								<ClayIcon fontSize={12} symbol={leadingIcon} />
+							</ClaySticker>
+						</ClayLayout.ContentCol>
+					) : null}
 
 					<ClayLayout.ContentCol expand>
 						<ClayCard.Description
