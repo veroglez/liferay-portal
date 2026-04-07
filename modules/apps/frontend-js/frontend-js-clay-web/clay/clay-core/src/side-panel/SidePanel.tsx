@@ -8,6 +8,7 @@ import {
 	Keys,
 	PanelResizer,
 	useControlledState,
+	useElementMaxWidth,
 	useId,
 	useIsMobileDevice,
 } from '@clayui/shared';
@@ -166,7 +167,7 @@ export function SidePanel({
 	const sidePanelRef = externalSidePanelRef || internalSidePanelRef;
 
 	const isMobile = useIsMobileDevice();
-	const panelWidthMax = usePanelWidthMax(sidePanelRef);
+	const panelWidthMax = useElementMaxWidth(sidePanelRef);
 	const {prefersReducedMotion} = useProvider();
 
 	const closeOnEscape = isMobile || externalCloseOnEscape;
@@ -397,30 +398,6 @@ function useOffsetTop(ref: React.RefObject<HTMLElement>) {
 	}, []);
 
 	return offsetTop;
-}
-
-function usePanelWidthMax(ref: React.RefObject<HTMLElement>) {
-	const [maxWidth, setMaxWidth] = useState<number>(window.innerWidth / 2);
-
-	const handleResize = () => {
-		if (ref.current) {
-			setMaxWidth(
-				parseFloat(window.getComputedStyle(ref.current).maxWidth)
-			);
-		}
-	};
-
-	useEffect(() => {
-		handleResize();
-
-		window.addEventListener('resize', handleResize);
-
-		return () => {
-			window.removeEventListener('resize', handleResize);
-		};
-	}, []);
-
-	return maxWidth;
 }
 
 SidePanel.Header = Header;

@@ -25,6 +25,7 @@ export {throttle} from './throttle';
 export {useControlledState} from './useControlledState';
 export type {InternalDispatch} from './useControlledState';
 export {useDebounce} from './useDebounce';
+export {useElementMaxWidth} from './useElementMaxWidth';
 export {useFocusManagement, FOCUSABLE_ELEMENTS} from './useFocusManagement';
 export {useHover} from './useHover';
 export {useId} from './useId';
