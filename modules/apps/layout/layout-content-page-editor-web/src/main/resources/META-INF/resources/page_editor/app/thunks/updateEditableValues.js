@@ -7,30 +7,49 @@ import updateEditableValuesAction from '../actions/updateEditableValues';
 import FragmentService from '../services/FragmentService';
 import {clearPageContents} from '../utils/usePageContents';
 
+const pendingRequests = new Map();
+
 export default function updateEditableValues({
 	editableValues,
 	fragmentEntryLinkId,
 }) {
-	return (dispatch, getState) => {
+	return async (dispatch, getState) => {
 		const {languageId, segmentsExperienceId} = getState();
 
-		return FragmentService.updateEditableValues({
-			editableValues,
-			fragmentEntryLinkId,
-			languageId,
-			onNetworkStatus: dispatch,
-			segmentsExperienceId,
-		}).then(({fragmentEntryLink}) => {
-			dispatch(
-				updateEditableValuesAction({
-					content: fragmentEntryLink.content,
+		const previousRequest =
+			pendingRequests.get(fragmentEntryLinkId) ?? Promise.resolve();
+
+		const currentRequest = previousRequest
+			.catch(() => {})
+			.then(() =>
+				FragmentService.updateEditableValues({
 					editableValues,
 					fragmentEntryLinkId,
+					languageId,
+					onNetworkStatus: dispatch,
 					segmentsExperienceId,
 				})
 			);
 
-			clearPageContents();
-		});
+		pendingRequests.set(fragmentEntryLinkId, currentRequest);
+
+		const {fragmentEntryLink} = await currentRequest;
+
+		if (pendingRequests.get(fragmentEntryLinkId) !== currentRequest) {
+			return;
+		}
+
+		pendingRequests.delete(fragmentEntryLinkId);
+
+		dispatch(
+			updateEditableValuesAction({
+				content: fragmentEntryLink.content,
+				editableValues,
+				fragmentEntryLinkId,
+				segmentsExperienceId,
+			})
+		);
+
+		clearPageContents();
 	};
 }
