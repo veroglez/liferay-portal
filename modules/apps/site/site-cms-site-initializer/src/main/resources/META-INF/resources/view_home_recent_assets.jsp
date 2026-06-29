@@ -37,6 +37,7 @@ ViewHomeRecentAssetsSectionDisplayContext viewHomeRecentAssetsSectionDisplayCont
 				itemsPerPage="<%= 20 %>"
 				propsTransformer="{HomeRecentAssetsFDSPropsTransformer} from site-cms-site-initializer"
 				showManagementBar="<%= false %>"
+				showPagination="<%= false %>"
 				showSearch="<%= false %>"
 				style="fluid"
 			/>
