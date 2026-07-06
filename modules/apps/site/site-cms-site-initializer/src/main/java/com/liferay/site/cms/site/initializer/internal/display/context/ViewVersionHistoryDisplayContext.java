@@ -108,6 +108,10 @@ public class ViewVersionHistoryDisplayContext {
 				StringPool.BLANK, "view", "view-file",
 				_language.get(_httpServletRequest, "view"), null, null, null),
 			new FDSActionDropdownItem(
+				StringPool.BLANK, "columns", "compare",
+				_language.get(_httpServletRequest, "compare"), null, null,
+				null),
+			new FDSActionDropdownItem(
 				"{actions.restore.href}", "restore", "restore",
 				_language.get(_httpServletRequest, "restore-version"), "put",
 				"restore", null),
