@@ -25,7 +25,10 @@ interface CompareVersionsModalContentProps {
 
 type DiffType = 'additions' | 'removals';
 
-type VersionItem = IAssetObjectEntry & {content?: string};
+type VersionItem = IAssetObjectEntry & {
+	content?: string;
+	content_i18n?: Record<string, string>;
+};
 
 type VersionsState =
 	| {status: 'error' | 'loading'}
@@ -71,6 +74,15 @@ const DIFF_STYLES_BY_TYPE: Record<DiffType, string> = {
 
 const getVersionLabel = (version: number) =>
 	sub(Liferay.Language.get('version-x'), [version]);
+
+function getIframeLiferay(iframe: HTMLIFrameElement | null) {
+	const contentWindow = iframe?.contentWindow as
+		| (Window & {Liferay: typeof Liferay})
+		| null
+		| undefined;
+
+	return contentWindow?.Liferay;
+}
 
 function getVersionItem(items: VersionItem[], version: number) {
 	return items.find(
@@ -132,6 +144,9 @@ export default function CompareVersionsModalContent({
 	objectEntryId,
 }: CompareVersionsModalContentProps) {
 	const [diffHtml, setDiffHtml] = useState<string | null>(null);
+	const [languageId, setLanguageId] = useState<string>(
+		Liferay.ThemeDisplay.getLanguageId()
+	);
 	const [leftVersion, setLeftVersion] = useState<number | null>(null);
 	const [rightVersion, setRightVersion] = useState<number | null>(null);
 	const [versionsState, setVersionsState] = useState<VersionsState>({
@@ -181,16 +196,18 @@ export default function CompareVersionsModalContent({
 
 		let stale = false;
 
+		const getContent = (version: number) => {
+			const item = getVersionItem(versionsState.items, version);
+
+			return item?.content_i18n?.[languageId] ?? item?.content ?? '';
+		};
+
 		const getDiffHtml = async () => {
 			const {data, error} = await ApiHelper.post<{diffHtml: string}>(
 				DIFF_HTML_URL,
 				{
-					source:
-						getVersionItem(versionsState.items, leftVersion)
-							?.content ?? '',
-					target:
-						getVersionItem(versionsState.items, rightVersion)
-							?.content ?? '',
+					source: getContent(leftVersion),
+					target: getContent(rightVersion),
 				}
 			);
 
@@ -204,7 +221,7 @@ export default function CompareVersionsModalContent({
 		return () => {
 			stale = true;
 		};
-	}, [leftVersion, rightVersion, versionsState]);
+	}, [languageId, leftVersion, rightVersion, versionsState]);
 
 	return (
 		<>
@@ -232,7 +249,9 @@ export default function CompareVersionsModalContent({
 						<CompareVersionPane
 							diffHtml={diffHtml}
 							diffType="removals"
+							languageId={languageId}
 							objectEntryId={objectEntryId}
+							onLanguageIdChange={setLanguageId}
 							onVersionChange={setLeftVersion}
 							selectedVersion={leftVersion}
 							versions={versionsState.items}
@@ -241,7 +260,9 @@ export default function CompareVersionsModalContent({
 						<CompareVersionPane
 							diffHtml={diffHtml}
 							diffType="additions"
+							languageId={languageId}
 							objectEntryId={objectEntryId}
+							onLanguageIdChange={setLanguageId}
 							onVersionChange={setRightVersion}
 							selectedVersion={rightVersion}
 							versions={versionsState.items}
@@ -256,14 +277,18 @@ export default function CompareVersionsModalContent({
 function CompareVersionPane({
 	diffHtml,
 	diffType,
+	languageId,
 	objectEntryId,
+	onLanguageIdChange,
 	onVersionChange,
 	selectedVersion,
 	versions,
 }: {
 	diffHtml: string | null;
 	diffType: DiffType;
+	languageId: string;
 	objectEntryId: number;
+	onLanguageIdChange: (languageId: string) => void;
 	onVersionChange: (version: number) => void;
 	selectedVersion: number;
 	versions: VersionItem[];
@@ -279,6 +304,45 @@ function CompareVersionPane({
 			injectContentDiff(iframeRef.current, diffHtml, diffType);
 		}
 	}, [diffHtml, diffType, iframeStatus]);
+
+	useEffect(() => {
+		if (iframeStatus !== 'loaded') {
+			return;
+		}
+
+		const iframeLiferay = getIframeLiferay(iframeRef.current);
+
+		if (!iframeLiferay) {
+			return;
+		}
+
+		const handleLocaleChanged = ({
+			languageId: newLanguageId,
+		}: {
+			languageId: string;
+		}) => onLanguageIdChange(newLanguageId);
+
+		iframeLiferay.on(
+			'localizationSelect:localeChanged',
+			handleLocaleChanged
+		);
+
+		return () =>
+			iframeLiferay.detach(
+				'localizationSelect:localeChanged',
+				handleLocaleChanged
+			);
+	}, [iframeStatus, onLanguageIdChange]);
+
+	useEffect(() => {
+		if (iframeStatus !== 'loaded') {
+			return;
+		}
+
+		const iframeLiferay = getIframeLiferay(iframeRef.current);
+
+		iframeLiferay?.fire('localizationSelect:localeChanged', {languageId});
+	}, [iframeStatus, languageId]);
 
 	const selectedItem = getVersionItem(versions, selectedVersion);
 
