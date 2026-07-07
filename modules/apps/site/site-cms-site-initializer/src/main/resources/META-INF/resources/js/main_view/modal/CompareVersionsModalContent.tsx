@@ -25,17 +25,16 @@ interface CompareVersionsModalContentProps {
 
 type DiffType = 'additions' | 'removals';
 
-type VersionItem = IAssetObjectEntry & {
-	content?: string;
-	content_i18n?: Record<string, string>;
-};
+type Diffs = Record<string, string>;
+
+type VersionItem = IAssetObjectEntry;
 
 type VersionsState =
 	| {status: 'error' | 'loading'}
 	| {items: VersionItem[]; status: 'loaded'};
 
 const BASE_DIFF_STYLES = `
-	[data-field-name="ObjectField_content"] .ck-editor {
+	.form-group:has(.cms-compare-versions-diff) .ck-editor {
 		display: none;
 	}
 	.cms-compare-versions-diff {
@@ -90,42 +89,47 @@ function getVersionItem(items: VersionItem[], version: number) {
 	);
 }
 
-function injectContentDiff(
+function injectContentDiffs(
 	iframe: HTMLIFrameElement,
-	diffHtml: string | null,
+	diffs: Diffs | null,
 	diffType: DiffType
 ) {
 	const document = iframe.contentDocument;
 
-	const wrapper = document?.querySelector(
-		'[data-field-name="ObjectField_content"]'
-	);
-
-	if (!document || !wrapper) {
+	if (!document) {
 		return;
 	}
 
-	let container = wrapper.querySelector('.cms-compare-versions-diff');
+	document
+		.querySelectorAll('.cms-compare-versions-diff')
+		.forEach((element) => element.remove());
+
 	let style = document.getElementById('cms-compare-versions-diff-styles');
 
-	if (diffHtml === null) {
-		container?.remove();
+	if (diffs === null) {
 		style?.remove();
 
 		return;
 	}
 
-	if (!container) {
-		container = document.createElement('div');
+	Object.entries(diffs).forEach(([fieldName, diffHtml]) => {
+		const wrapper = document.querySelector(
+			`[data-field-name="ObjectField_${fieldName}"]`
+		);
+
+		if (!wrapper) {
+			return;
+		}
+
+		const container = document.createElement('div');
 
 		container.className = 'cms-compare-versions-diff';
+		container.innerHTML = diffHtml;
 
 		const formGroup = wrapper.querySelector('.form-group') ?? wrapper;
 
 		formGroup.appendChild(container);
-	}
-
-	container.innerHTML = diffHtml;
+	});
 
 	if (!style) {
 		style = document.createElement('style');
@@ -143,7 +147,7 @@ export default function CompareVersionsModalContent({
 	initialVersion,
 	objectEntryId,
 }: CompareVersionsModalContentProps) {
-	const [diffHtml, setDiffHtml] = useState<string | null>(null);
+	const [diffs, setDiffs] = useState<Diffs | null>(null);
 	const [languageId, setLanguageId] = useState<string>(
 		Liferay.ThemeDisplay.getLanguageId()
 	);
@@ -189,39 +193,35 @@ export default function CompareVersionsModalContent({
 			rightVersion === null ||
 			leftVersion === rightVersion
 		) {
-			setDiffHtml(null);
+			setDiffs(null);
 
 			return;
 		}
 
 		let stale = false;
 
-		const getContent = (version: number) => {
-			const item = getVersionItem(versionsState.items, version);
-
-			return item?.content_i18n?.[languageId] ?? item?.content ?? '';
-		};
-
-		const getDiffHtml = async () => {
-			const {data, error} = await ApiHelper.post<{diffHtml: string}>(
+		const getDiffs = async () => {
+			const {data, error} = await ApiHelper.post<{diffs: Diffs}>(
 				DIFF_HTML_URL,
 				{
-					source: getContent(leftVersion),
-					target: getContent(rightVersion),
+					languageId,
+					objectEntryId,
+					sourceVersion: leftVersion,
+					targetVersion: rightVersion,
 				}
 			);
 
 			if (!stale) {
-				setDiffHtml(error === null ? data.diffHtml : null);
+				setDiffs(error === null ? data.diffs : null);
 			}
 		};
 
-		getDiffHtml();
+		getDiffs();
 
 		return () => {
 			stale = true;
 		};
-	}, [languageId, leftVersion, rightVersion, versionsState]);
+	}, [languageId, leftVersion, objectEntryId, rightVersion, versionsState]);
 
 	return (
 		<>
@@ -247,7 +247,7 @@ export default function CompareVersionsModalContent({
 				rightVersion !== null ? (
 					<div className="cms-compare-versions-panes">
 						<CompareVersionPane
-							diffHtml={diffHtml}
+							diffs={diffs}
 							diffType="removals"
 							languageId={languageId}
 							objectEntryId={objectEntryId}
@@ -258,7 +258,7 @@ export default function CompareVersionsModalContent({
 						/>
 
 						<CompareVersionPane
-							diffHtml={diffHtml}
+							diffs={diffs}
 							diffType="additions"
 							languageId={languageId}
 							objectEntryId={objectEntryId}
@@ -275,7 +275,7 @@ export default function CompareVersionsModalContent({
 }
 
 function CompareVersionPane({
-	diffHtml,
+	diffs,
 	diffType,
 	languageId,
 	objectEntryId,
@@ -284,7 +284,7 @@ function CompareVersionPane({
 	selectedVersion,
 	versions,
 }: {
-	diffHtml: string | null;
+	diffs: Diffs | null;
 	diffType: DiffType;
 	languageId: string;
 	objectEntryId: number;
@@ -301,9 +301,9 @@ function CompareVersionPane({
 
 	useEffect(() => {
 		if (iframeStatus === 'loaded' && iframeRef.current) {
-			injectContentDiff(iframeRef.current, diffHtml, diffType);
+			injectContentDiffs(iframeRef.current, diffs, diffType);
 		}
-	}, [diffHtml, diffType, iframeStatus]);
+	}, [diffs, diffType, iframeStatus]);
 
 	useEffect(() => {
 		if (iframeStatus !== 'loaded') {
