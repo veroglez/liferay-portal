@@ -40,6 +40,7 @@ import openResetAssetPermissionModal from '../default_permission/ResetPermission
 import {handleFindAndReplace} from '../find_and_replace/utils/handleFindAndReplace';
 import AssetTypeInfoPanel from '../info_panel/AssetTypeInfoPanelContent';
 import ExportTranslationModalContent from '../modal/ExportTranslationModalContent';
+import ReviewContentsModalContent from '../modal/ReviewContentsModalContent';
 import UpdateReviewDateModalContent from '../modal/UpdateReviewDateModalContent';
 import AssetNavigationModalContent from '../modal/asset_navigation_view/AssetNavigationModalContent';
 import copyOrMoveBulkAction from './actions/copyOrMoveBulkAction';
@@ -254,10 +255,24 @@ export default function AssetsFDSPropsTransformer({
 		]),
 		creationMenu: {
 			...creationMenu,
-			primaryItems: addOnClickToCreationMenuItems(
-				creationMenu.primaryItems,
-				ACTIONS
-			),
+			primaryItems: [
+				...addOnClickToCreationMenuItems(
+					creationMenu.primaryItems,
+					ACTIONS
+				),
+				{
+					label: 'Review Dates',
+					onClick: () =>
+						openCMSModal({
+							contentComponent: () => (
+								<ReviewContentsModalContent
+									apiURL={bulkActionAPIURL as string}
+								/>
+							),
+							size: 'lg',
+						}),
+				},
+			],
 		},
 		customRenderers: {
 			tableCell: [
