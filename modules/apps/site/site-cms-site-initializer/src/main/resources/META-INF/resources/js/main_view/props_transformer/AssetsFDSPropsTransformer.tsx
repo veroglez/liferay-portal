@@ -54,7 +54,7 @@ import shareAction from './actions/shareAction';
 import {triggerAssetDownloadBulkAction} from './actions/triggerAssetDownloadBulkAction';
 import AdditionalItemInfoRenderer from './cell_renderers/AdditionalItemInfoRenderer';
 import AuthorRenderer from './cell_renderers/AuthorRenderer';
-import ReviewDateRenderer from './cell_renderers/ReviewDateRenderer';
+import ReviewDateInputRenderer from './cell_renderers/ReviewDateInputRenderer';
 import SimpleActionLinkRenderer from './cell_renderers/SimpleActionLinkRenderer';
 import SpaceRendererWithCache from './cell_renderers/SpaceRendererWithCache';
 import TypeRenderer from './cell_renderers/TypeRenderer';
@@ -329,7 +329,7 @@ export default function AssetsFDSPropsTransformer({
 					type: 'internal',
 				} as IInternalRenderer,
 				{
-					component: ReviewDateRenderer,
+					component: ReviewDateInputRenderer,
 					name: 'reviewDateTableCellRenderer',
 					type: 'internal',
 				} as IInternalRenderer,
