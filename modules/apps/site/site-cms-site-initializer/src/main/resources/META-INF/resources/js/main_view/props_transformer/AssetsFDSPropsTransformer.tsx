@@ -10,12 +10,14 @@ import {
 	replaceTokens,
 } from '@liferay/frontend-data-set-web';
 import {getCMSItemSelectorGroupedFilters} from '@liferay/frontend-js-item-selector-web';
+import {openToast} from 'frontend-js-components-web';
 import {sub} from 'frontend-js-web';
 import React from 'react';
 
 import SharedIcon from '../../common/components/SharedIcon';
 import StatusLabel from '../../common/components/StatusLabel';
 import {openAssetUsageListModal} from '../../common/components/asset_usage/utils';
+import ApiHelper from '../../common/services/ApiHelper';
 import {AssetLibrary} from '../../common/types/AssetLibrary';
 import {
 	IBreadcrumbItem,
@@ -432,7 +434,19 @@ export default function AssetsFDSPropsTransformer({
 			}
 
 			return action;
-		}),
+		}).concat([
+			{
+				data: {id: 'never-review'},
+				icon: 'calendar',
+				isVisible: (item: any) =>
+					Boolean(
+						item?.entryClassName !==
+							OBJECT_ENTRY_FOLDER_CLASS_NAME &&
+							item?.actions?.update
+					),
+				label: Liferay.Language.get('never-review'),
+			},
+		]),
 		async onActionDropdownItemClick({
 			action,
 			event,
@@ -627,6 +641,73 @@ export default function AssetsFDSPropsTransformer({
 							items: filteredItems,
 						}),
 					size: 'full-screen',
+				});
+			}
+			else if (action?.data?.id === 'never-review') {
+				event?.preventDefault();
+
+				const getHref = itemData.actions?.get?.href;
+				const updateHref = itemData.actions?.update?.href;
+
+				if (!getHref || !updateHref) {
+					return;
+				}
+
+				// Clearing a system date field is only honored on a full
+				// update (PUT): the Object entry PATCH merge treats a null
+				// reviewDate as "no change". Fetch the entry, strip the
+				// read-only fields the PUT rejects, turn the category briefs
+				// into ids, and send it back with reviewDate nulled. Requires
+				// the "LPD-17564" feature flag.
+
+				const {data: objectEntry, error} = await ApiHelper.get<
+					Record<string, any>
+				>(getHref);
+
+				if (error || !objectEntry) {
+					openToast({
+						message: Liferay.Language.get(
+							'an-unexpected-error-occurred'
+						),
+						type: 'danger',
+					});
+
+					return;
+				}
+
+				const requestBody: Record<string, any> = {
+					...objectEntry,
+					reviewDate: null,
+					taxonomyCategoryIds: (
+						objectEntry.taxonomyCategoryBriefs ?? []
+					).map(
+						(taxonomyCategoryBrief: {taxonomyCategoryId: number}) =>
+							taxonomyCategoryBrief.taxonomyCategoryId
+					),
+				};
+
+				[
+					'actions',
+					'auditEvents',
+					'creator',
+					'dateCreated',
+					'dateModified',
+					'id',
+					'modifiedBy',
+					'removedBy',
+					'removedDate',
+					'scopeId',
+					'scopeKey',
+					'status',
+					'systemProperties',
+					'taxonomyCategoryBriefs',
+				].forEach((readOnlyKey) => delete requestBody[readOnlyKey]);
+
+				executeAsyncItemAction({
+					method: 'PUT',
+					refreshData: loadData,
+					requestBody: JSON.stringify(requestBody),
+					url: updateHref,
 				});
 			}
 		},
