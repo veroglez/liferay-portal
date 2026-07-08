@@ -7,57 +7,19 @@ import ClayDatePicker from '@clayui/date-picker';
 import ClayForm from '@clayui/form';
 import {openToast} from 'frontend-js-components-web';
 import {dateUtils} from 'frontend-js-web';
-import moment from 'moment';
 import React, {useId, useRef, useState} from 'react';
 
 import ErrorFeedback from '../../../common/components/forms/ErrorFeedback';
 import ApiHelper from '../../../common/services/ApiHelper';
+import {
+	getReviewDateError,
+	toObjectEntryDate,
+} from '../../../common/utils/reviewDate';
 import {isReviewDateOverdue} from '../../../common/utils/reviewDateStatus';
 import {
 	dateConfig,
 	toMomentDate,
-	toServerFormat,
 } from '../../../content_editor/components/ScheduleField';
-
-// The Object entry REST API expects dates as "yyyy-MM-dd'T'HH:mm:ss'Z'". Mirror
-// the object entry schedule form (convertToUTC): stamp the entered wall-clock
-// time with a "Z" suffix so the value round-trips with the other date fields.
-
-function toObjectEntryDate(value: string): string {
-	return moment(value, dateConfig.momentFormat, true).format(
-		'YYYY-MM-DDTHH:mm:ss[Z]'
-	);
-}
-
-function isPastDate(value: string): boolean {
-	const languageId = Liferay.ThemeDisplay.getBCP47LanguageId();
-	const timeZone = Liferay.ThemeDisplay.getTimeZone();
-
-	const timeZoneDateTime = new Date(
-		new Date().toLocaleString(languageId, {timeZone})
-	);
-
-	return timeZoneDateTime >= new Date(toServerFormat(value));
-}
-
-function validate(value: string): string {
-
-	// An empty value clears the review date (never review), which is allowed.
-
-	if (!value) {
-		return '';
-	}
-
-	if (!moment(value, dateConfig.momentFormat, true).isValid()) {
-		return Liferay.Language.get('the-field-value-is-invalid');
-	}
-
-	if (isPastDate(value)) {
-		return Liferay.Language.get('the-date-entered-is-in-the-past');
-	}
-
-	return '';
-}
 
 interface IItemData {
 	actions?: {
@@ -118,7 +80,7 @@ const ReviewDateInputRenderer = ({
 			return;
 		}
 
-		const validationError = validate(momentValue);
+		const validationError = getReviewDateError(momentValue);
 
 		if (validationError) {
 			setError(validationError);

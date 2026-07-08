@@ -40,6 +40,7 @@ import openResetAssetPermissionModal from '../default_permission/ResetPermission
 import {handleFindAndReplace} from '../find_and_replace/utils/handleFindAndReplace';
 import AssetTypeInfoPanel from '../info_panel/AssetTypeInfoPanelContent';
 import ExportTranslationModalContent from '../modal/ExportTranslationModalContent';
+import UpdateReviewDateModalContent from '../modal/UpdateReviewDateModalContent';
 import AssetNavigationModalContent from '../modal/asset_navigation_view/AssetNavigationModalContent';
 import copyOrMoveBulkAction from './actions/copyOrMoveBulkAction';
 import ACTIONS from './actions/creationMenuActions';
@@ -243,7 +244,14 @@ export default function AssetsFDSPropsTransformer({
 				rootFolder,
 			}),
 		additionalProps: remainingAdditionalProps,
-		bulkActions: transformFDSBulkActions(bulkActions),
+		bulkActions: transformFDSBulkActions([
+			...bulkActions,
+			{
+				data: {id: 'update-review-date'},
+				icon: 'calendar',
+				label: 'Update Review Date',
+			} as IBulkActionItem,
+		]),
 		creationMenu: {
 			...creationMenu,
 			primaryItems: addOnClickToCreationMenuItems(
@@ -924,6 +932,22 @@ export default function AssetsFDSPropsTransformer({
 					apiURL: bulkActionAPIURL,
 					dataSetId: otherProps.id,
 					selectedData,
+				});
+			}
+			else if (action?.data?.id === 'update-review-date') {
+				openCMSModal({
+					center: true,
+					contentComponent: ({
+						closeModal,
+					}: {
+						closeModal: () => void;
+					}) =>
+						UpdateReviewDateModalContent({
+							closeModal,
+							dataSetId: otherProps.id,
+							selectedData,
+						}),
+					size: 'md',
 				});
 			}
 		},

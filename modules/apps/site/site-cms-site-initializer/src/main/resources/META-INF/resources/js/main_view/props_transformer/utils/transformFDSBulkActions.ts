@@ -22,6 +22,7 @@ const BULK_ACTION_PERMISSION_KEYS: Record<string, string> = {
 	'permissions': 'permissions',
 	'reset-to-default-permissions': 'permissions',
 	'restore': 'restore',
+	'update-review-date': 'update',
 };
 
 export default function transformFDSBulkActions(
