@@ -12,11 +12,13 @@ import ClayPanel from '@clayui/panel';
 import {sub} from 'frontend-js-web';
 import React, {useState} from 'react';
 
+import FieldWrapper from '../../../../common/components/forms/FieldWrapper';
 import {IPermissionItem} from '../../../../common/components/forms/PermissionsTable';
 import PermissionsFormGroup from '../../components/PermissionsFormGroup';
 
 interface Props {
 	category: TaxonomyCategory;
+	categoryFriendlyURLBase: string;
 	defaultLanguageId: string;
 	locales: any[];
 	nameInputError: string;
@@ -29,6 +31,7 @@ interface Props {
 
 const EditCategoryGeneralInfoTab = ({
 	category,
+	categoryFriendlyURLBase,
 	defaultLanguageId,
 	locales,
 	nameInputError,
@@ -76,6 +79,19 @@ const EditCategoryGeneralInfoTab = ({
 			name_i18n: {
 				...category.name_i18n,
 				[getLanguageLabel(languageId)]: newName,
+			},
+		}));
+	};
+
+	const onChangeFriendlyUrlPath = (newFriendlyUrlPath: string) => {
+		setCategory(() => ({
+			...category,
+			...(languageId === defaultLanguageId && {
+				friendlyUrlPath: newFriendlyUrlPath,
+			}),
+			friendlyUrlPath_i18n: {
+				...category.friendlyUrlPath_i18n,
+				[getLanguageLabel(languageId)]: newFriendlyUrlPath,
 			},
 		}));
 	};
@@ -187,6 +203,37 @@ const EditCategoryGeneralInfoTab = ({
 							}
 						/>
 					</div>
+
+					<FieldWrapper
+						className="mb-0"
+						disabled={category.system}
+						fieldId="friendlyUrlPath"
+						label={Liferay.Language.get('friendly-url')}
+					>
+						<span
+							className="d-block mb-2 small text-secondary"
+							id="friendlyUrlPathBase"
+						>
+							{categoryFriendlyURLBase}
+						</span>
+
+						<ClayInput
+							aria-describedby="friendlyUrlPathBase"
+							disabled={category.system}
+							id="friendlyUrlPath"
+							onChange={({target: {value}}) =>
+								onChangeFriendlyUrlPath(value)
+							}
+							type="text"
+							value={
+								category.friendlyUrlPath_i18n
+									? category.friendlyUrlPath_i18n[
+											getLanguageLabel(languageId)
+										] || ''
+									: ''
+							}
+						/>
+					</FieldWrapper>
 				</ClayForm.Group>
 			</ClayPanel>
 

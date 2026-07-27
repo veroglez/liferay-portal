@@ -6,10 +6,20 @@
 
 package com.liferay.site.cms.site.initializer.internal.display.context;
 
+import com.liferay.asset.kernel.model.AssetCategory;
+import com.liferay.asset.kernel.model.AssetVocabulary;
+import com.liferay.asset.kernel.service.AssetCategoryLocalService;
+import com.liferay.asset.kernel.service.AssetVocabularyLocalService;
+import com.liferay.friendly.url.model.FriendlyURLEntry;
+import com.liferay.friendly.url.service.FriendlyURLEntryLocalService;
 import com.liferay.petra.string.StringBundler;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.language.Language;
+import com.liferay.portal.kernel.model.Group;
+import com.liferay.portal.kernel.portlet.constants.FriendlyURLResolverConstants;
+import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.service.LayoutLocalService;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.HashMapBuilder;
@@ -22,6 +32,9 @@ import com.liferay.portal.kernel.util.WebKeys;
 
 import jakarta.servlet.http.HttpServletRequest;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -30,10 +43,18 @@ import java.util.Map;
 public class EditCategoryDisplayContext {
 
 	public EditCategoryDisplayContext(
+		AssetCategoryLocalService assetCategoryLocalService,
+		AssetVocabularyLocalService assetVocabularyLocalService,
+		FriendlyURLEntryLocalService friendlyURLEntryLocalService,
+		GroupLocalService groupLocalService,
 		HttpServletRequest httpServletRequest,
 		LayoutLocalService layoutLocalService, Language language,
 		Portal portal) {
 
+		_assetCategoryLocalService = assetCategoryLocalService;
+		_assetVocabularyLocalService = assetVocabularyLocalService;
+		_friendlyURLEntryLocalService = friendlyURLEntryLocalService;
+		_groupLocalService = groupLocalService;
 		_httpServletRequest = httpServletRequest;
 		_layoutLocalService = layoutLocalService;
 		_language = language;
@@ -80,6 +101,37 @@ public class EditCategoryDisplayContext {
 			getVocabularyId(), "/taxonomy-categories");
 	}
 
+	public String getCategoryFriendlyURLBase() throws PortalException {
+		StringBundler sb = new StringBundler();
+
+		Group group = _groupLocalService.getGroup(
+			_themeDisplay.getScopeGroupId());
+
+		sb.append(
+			_portal.getGroupFriendlyURL(
+				group.getPublicLayoutSet(), _themeDisplay, false, false));
+
+		sb.append(FriendlyURLResolverConstants.URL_SEPARATOR_ASSET_CATEGORY);
+
+		AssetVocabulary assetVocabulary =
+			_assetVocabularyLocalService.fetchAssetVocabulary(
+				getVocabularyId());
+
+		if (assetVocabulary != null) {
+			sb.append(assetVocabulary.getName());
+			sb.append(StringPool.SLASH);
+		}
+
+		for (AssetCategory ancestorAssetCategory :
+				_getAncestorAssetCategories()) {
+
+			sb.append(_getURLTitle(ancestorAssetCategory));
+			sb.append(StringPool.SLASH);
+		}
+
+		return sb.toString();
+	}
+
 	public long getCategoryId() {
 		if (_categoryId != null) {
 			return _categoryId;
@@ -122,6 +174,8 @@ public class EditCategoryDisplayContext {
 			getCategoryByParentCategoryIdAPIURL()
 		).put(
 			"categoryByVocabularyIdAPIURL", getCategoryByVocabularyIdAPIURL()
+		).put(
+			"categoryFriendlyURLBase", getCategoryFriendlyURLBase()
 		).put(
 			"categoryPermissionsAPIURL", getCategoryPermissionsAPIURL()
 		).put(
@@ -166,7 +220,46 @@ public class EditCategoryDisplayContext {
 		return _vocabularyId;
 	}
 
+	private List<AssetCategory> _getAncestorAssetCategories()
+		throws PortalException {
+
+		AssetCategory parentAssetCategory =
+			_assetCategoryLocalService.fetchAssetCategory(
+				getParentCategoryId());
+
+		if (parentAssetCategory == null) {
+			return Collections.emptyList();
+		}
+
+		List<AssetCategory> ancestorAssetCategories = new ArrayList<>(
+			parentAssetCategory.getAncestors());
+
+		Collections.reverse(ancestorAssetCategories);
+
+		ancestorAssetCategories.add(parentAssetCategory);
+
+		return ancestorAssetCategories;
+	}
+
+	private String _getURLTitle(AssetCategory assetCategory) {
+		FriendlyURLEntry friendlyURLEntry =
+			_friendlyURLEntryLocalService.fetchMainFriendlyURLEntry(
+				_portal.getClassNameId(AssetCategory.class),
+				assetCategory.getCategoryId());
+
+		if (friendlyURLEntry == null) {
+			return String.valueOf(assetCategory.getCategoryId());
+		}
+
+		return friendlyURLEntry.getUrlTitle(
+			LocaleUtil.toLanguageId(_themeDisplay.getLocale()));
+	}
+
+	private final AssetCategoryLocalService _assetCategoryLocalService;
+	private final AssetVocabularyLocalService _assetVocabularyLocalService;
 	private Long _categoryId;
+	private final FriendlyURLEntryLocalService _friendlyURLEntryLocalService;
+	private final GroupLocalService _groupLocalService;
 	private final HttpServletRequest _httpServletRequest;
 	private final Language _language;
 	private final LayoutLocalService _layoutLocalService;

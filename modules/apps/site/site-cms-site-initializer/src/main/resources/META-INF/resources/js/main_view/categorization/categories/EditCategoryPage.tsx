@@ -28,6 +28,7 @@ interface Props {
 	categoryByCategoryIdAPIURL: string;
 	categoryByParentCategoryIdAPIURL: string;
 	categoryByVocabularyIdAPIURL: string;
+	categoryFriendlyURLBase: string;
 	categoryId: number;
 	categoryPermissionsAPIURL: string;
 	defaultLanguageId: string;
@@ -43,6 +44,7 @@ const EditCategoryPage = ({
 	categoryByCategoryIdAPIURL,
 	categoryByParentCategoryIdAPIURL,
 	categoryByVocabularyIdAPIURL,
+	categoryFriendlyURLBase,
 	categoryPermissionsAPIURL,
 	defaultLanguageId,
 	isCreateNew,
@@ -309,6 +311,7 @@ const EditCategoryPage = ({
 			component: (
 				<EditCategoryGeneralInfoTab
 					category={category}
+					categoryFriendlyURLBase={categoryFriendlyURLBase}
 					defaultLanguageId={defaultLanguageId}
 					locales={locales}
 					nameInputError={nameInputError}
