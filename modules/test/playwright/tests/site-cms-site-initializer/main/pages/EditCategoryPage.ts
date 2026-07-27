@@ -9,6 +9,7 @@ import {PORTLET_URLS} from '../../../../utils/portletUrls';
 
 export class EditCategoryPage {
 	readonly descriptionInput: Locator;
+	readonly friendlyURLInput: Locator;
 	readonly nameInput: Locator;
 	readonly page: Page;
 	readonly saveButton: Locator;
@@ -30,6 +31,7 @@ export class EditCategoryPage {
 
 		this.descriptionInput = page.getByTestId('description-input');
 		this.editConfirmationModal = page.locator('.modal-content');
+		this.friendlyURLInput = page.getByLabel('Friendly URL', {exact: true});
 		this.nameInput = page.getByTestId('name-input');
 
 		this.permissionsFormGroup = page.getByTestId(
@@ -189,6 +191,11 @@ export class EditCategoryPage {
 	async fillDescription(description: string) {
 		await this.descriptionInput.waitFor();
 		await this.descriptionInput.fill(description);
+	}
+
+	async fillFriendlyURL(friendlyURL: string) {
+		await this.friendlyURLInput.waitFor();
+		await this.friendlyURLInput.fill(friendlyURL);
 	}
 
 	async fillName(name: string) {

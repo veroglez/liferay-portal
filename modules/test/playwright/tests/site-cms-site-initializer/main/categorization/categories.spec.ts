@@ -248,6 +248,40 @@ test.describe("Category tests that don't focus on creation", () => {
 	);
 
 	test(
+		"Edit the friendly URL of a Vocabulary's Category",
+		{tag: '@LPD-97350'},
+		async ({editCategoryPage}) => {
+
+			// A new category has no friendly URL yet
+
+			await editCategoryPage.gotoCreateCategory(vocabularyId);
+
+			await expect(editCategoryPage.friendlyURLInput).toBeEmpty();
+
+			// An empty friendly URL falls back to the category name
+
+			await editCategoryPage.gotoEditCategory(categoryId);
+
+			await expect(editCategoryPage.friendlyURLInput).toHaveValue(
+				categoryName
+			);
+
+			// A friendly URL is normalized and kept
+
+			await editCategoryPage.fillFriendlyURL('Winter Sports');
+
+			await editCategoryPage.clickSave();
+			await editCategoryPage.handleEditConfirmationModal(true);
+
+			await editCategoryPage.gotoEditCategory(categoryId);
+
+			await expect(editCategoryPage.friendlyURLInput).toHaveValue(
+				'winter-sports'
+			);
+		}
+	);
+
+	test(
 		"Visit the edit page of a Vocabulary's Category from dropdown actions",
 		{tag: '@LPD-53252'},
 		async ({categoriesPage, page}) => {
