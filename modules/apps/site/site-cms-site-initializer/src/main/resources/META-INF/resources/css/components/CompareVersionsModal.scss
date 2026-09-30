@@ -19,6 +19,14 @@
 			border-color: map-get($input-readonly, border-color);
 			height: auto;
 
+			&:focus {
+				border-color: map-get(
+					map-get($input-readonly, focus),
+					border-color
+				);
+				box-shadow: none;
+			}
+
 			img {
 				max-width: 100%;
 			}
