@@ -319,6 +319,58 @@ test(
 			}
 		});
 
+		await test.step('Clicking a field scrolls the other version to the same field', async () => {
+			const leftField = leftFrame.locator(
+				'[data-field-name="ObjectField_flag"]'
+			);
+			const rightField = rightFrame.locator(
+				'[data-field-name="ObjectField_flag"]'
+			);
+
+			await leftField.evaluate((field) => field.scrollIntoView());
+
+			await getDiffBox(leftFrame, 'flag').click();
+
+			await expect(async () => {
+				const leftBox = await leftField.boundingBox();
+				const rightBox = await rightField.boundingBox();
+
+				expect(Math.abs(leftBox!.y - rightBox!.y)).toBeLessThan(1);
+			}).toPass({timeout: 10000});
+		});
+
+		await test.step('Moving the focus with the keyboard also aligns the other version', async () => {
+			await getDiffBox(rightFrame, 'moment').click();
+
+			await leftFrame
+				.locator('[data-field-name="ObjectField_title"]')
+				.evaluate((field) => field.scrollIntoView());
+
+			await page.keyboard.press('Tab');
+
+			const fieldName = await rightFrame
+				.locator(':focus')
+				.evaluate(
+					(element) =>
+						element.closest<HTMLElement>('[data-field-name]')
+							?.dataset.fieldName
+				);
+
+			expect(fieldName).toBeTruthy();
+			expect(fieldName).not.toBe('ObjectField_moment');
+
+			await expect(async () => {
+				const leftBox = await leftFrame
+					.locator(`[data-field-name="${fieldName}"]`)
+					.boundingBox();
+				const rightBox = await rightFrame
+					.locator(`[data-field-name="${fieldName}"]`)
+					.boundingBox();
+
+				expect(Math.abs(leftBox!.y - rightBox!.y)).toBeLessThan(1);
+			}).toPass({timeout: 10000});
+		});
+
 		await test.step('Each pane marks its own value of every changed field', async () => {
 			const cases: [string, string, string][] = [
 				['title', revisedTitle, contentTitle],
