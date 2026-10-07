@@ -217,6 +217,7 @@ describe('GovernanceService.getCMSEntryClassNames', () => {
 describe('GovernanceService.getContentProgress', () => {
 	afterEach(() => {
 		jest.restoreAllMocks();
+		jest.useRealTimers();
 	});
 
 	it('requests the status facet as an empty search', () => {
@@ -254,6 +255,26 @@ describe('GovernanceService.getContentProgress', () => {
 
 		expect(url).toBe(
 			'/o/search/v1.0/search?filter=someFilter+and+groupIds%2Fany%28g%3Ag+eq+123%29'
+		);
+	});
+
+	it('limits the content to the one created in the last days', () => {
+		jest.useFakeTimers().setSystemTime(
+			new Date('2026-10-07T12:00:00.000Z')
+		);
+
+		const postSpy = jest
+			.spyOn(ApiHelper, 'post')
+			.mockResolvedValue({data: {}, error: null} as any);
+
+		GovernanceService.getContentProgress('someFilter', 123, 7);
+
+		const [url] = postSpy.mock.calls[0];
+
+		expect(
+			new URL(url, 'http://localhost').searchParams.get('filter')
+		).toBe(
+			'someFilter and groupIds/any(g:g eq 123) and dateCreated ge 2026-09-30T12:00:00.000Z'
 		);
 	});
 });
