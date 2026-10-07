@@ -41,6 +41,8 @@ const DUPLICATE_TITLES_AGGREGATION_NAME = 'duplicateTitles';
 
 const MAX_FACET_TERMS = 10000;
 
+const MILLISECONDS_PER_DAY = 24 * 60 * 60 * 1000;
+
 const MINIMUM_DUPLICATE_FREQUENCY = 2;
 
 const NEEDS_REVIEW_PAGE_SIZE = 8;
@@ -79,10 +81,22 @@ async function getAssetStatistics(
 	};
 }
 
-function getContentProgress(filter: string, groupId?: number) {
-	const searchParams = new URLSearchParams({
-		filter: getScopedFilter(filter, groupId),
-	});
+function getContentProgress(
+	filter: string,
+	groupId?: number,
+	createdInLastDays?: number
+) {
+	let scopedFilter = getScopedFilter(filter, groupId);
+
+	if (createdInLastDays) {
+		const createdSince = new Date(
+			Date.now() - createdInLastDays * MILLISECONDS_PER_DAY
+		);
+
+		scopedFilter = `${scopedFilter} and dateCreated ge ${createdSince.toISOString()}`;
+	}
+
+	const searchParams = new URLSearchParams({filter: scopedFilter});
 
 	// Facet configurations only work in the POST body, where the empty-search
 	// switch must travel as an attribute (the query parameter is ignored).
