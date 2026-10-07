@@ -10,16 +10,16 @@ import {SectionHeader} from '../../common/SectionHeader';
 import {GovernanceAdditionalProps} from '../types';
 import {ContentProgress} from './ContentProgress';
 
-export function WorkflowAndContentProgress({
+export function Operations({
 	additionalProps,
 }: {
 	additionalProps: GovernanceAdditionalProps;
 }) {
-	const title = Liferay.Language.get('workflow-and-content-progress');
+	const title = Liferay.Language.get('operations');
 
 	return (
 		<div className="mb-3 py-4">
-			<SectionHeader icon="workflow" title={title} />
+			<SectionHeader icon="organizations" title={title} />
 
 			<ClayLayout.Row aria-label={title} className="mt-3" role="group">
 				<ClayLayout.Col md={6}>
