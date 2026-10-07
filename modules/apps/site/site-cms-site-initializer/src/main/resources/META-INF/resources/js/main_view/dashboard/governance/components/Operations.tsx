@@ -9,6 +9,7 @@ import React from 'react';
 import {SectionHeader} from '../../common/SectionHeader';
 import {GovernanceAdditionalProps} from '../types';
 import {ContentProgress} from './ContentProgress';
+import {ContributorConcentration} from './ContributorConcentration';
 
 export function Operations({
 	additionalProps,
@@ -24,6 +25,12 @@ export function Operations({
 			<ClayLayout.Row aria-label={title} className="mt-3" role="group">
 				<ClayLayout.Col md={6}>
 					<ContentProgress additionalProps={additionalProps} />
+				</ClayLayout.Col>
+
+				<ClayLayout.Col md={6}>
+					<ContributorConcentration
+						additionalProps={additionalProps}
+					/>
 				</ClayLayout.Col>
 			</ClayLayout.Row>
 		</div>
