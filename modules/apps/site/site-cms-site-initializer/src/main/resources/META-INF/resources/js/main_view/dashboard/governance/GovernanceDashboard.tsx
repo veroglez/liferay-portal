@@ -8,6 +8,7 @@ import React from 'react';
 import {GovernanceContextProvider} from './GovernanceContext';
 import {Filters} from './components/Filters';
 import {Freshness} from './components/Freshness';
+import {GovernanceHealth} from './components/GovernanceHealth';
 import {Operations} from './components/Operations';
 import {Quality} from './components/Quality';
 import {GovernanceAdditionalProps} from './types';
@@ -32,6 +33,8 @@ export default function GovernanceDashboard({
 			spaceIds={spaceIds}
 		>
 			<Filters />
+
+			<GovernanceHealth />
 
 			<Quality additionalProps={additionalProps} />
 
